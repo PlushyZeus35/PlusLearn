@@ -1,0 +1,14 @@
+html 
+  include includes/head
+  link(rel="stylesheet", href="/stylesheets/index.css")
+  body
+    include includes/navbar
+    include includes/offcanvasLogin
+    include includes/offcanvasSignUp
+    //h1.mt-5= title
+    //p Welcome to #{title}
+    div(class=['pt-5'], Id='mainDiv')
+      include includes/mainTitleIndex
+      include includes/mainSecondaryIndex
+      include includes/footer
+      

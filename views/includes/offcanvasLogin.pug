@@ -1,0 +1,14 @@
+//- includes/offcanvasLogin.pug
+div(class=['offcanvas', 'offcanvas-start'] tabindex="-1" id="offcanvasLogin" aria-labelledby="offcanvasWithBackdropLabel")
+    .offcanvas-header 
+        h5(class=['offcanvas-title', 'strong'] id="offcanvasWithBackdropLabel") Log In user
+        button(class=['btn-close', 'text-reset'] type="button" data-bs-dismiss="offcanvas" aria-label="Close")
+    .offcanvas-body 
+        form(action="")
+            .mb-3 
+                label(for="inputLoginEmail" class=['form-label']) Email Address 
+                input(type="email" class=['form-control'] id='inputLoginEmail') 
+            .mb-3 
+                label(for="inputLoginPassword" class=['form-label']) Password 
+                input(type="password" class=['form-control'] id='inputLoginPassword')
+            button(type='submit' class=['btn', 'btn-primary']) Log In 
