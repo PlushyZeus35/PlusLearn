@@ -1,12 +1,6 @@
 language: node_js
 node_js:
   - 16.14.0
-before_script:
-  - apt-get update -qy
-  - apt-get install -y ruby-dev
-  - gem install dpl --pre
-  - gem install bundler
-  - yarn install
 install:
   - npm install
 script:
