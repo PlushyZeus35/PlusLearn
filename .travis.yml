@@ -9,11 +9,12 @@ branches:
   only:
     - main
     - staging
+before_deploy:
+  - rvm $(travis_internal_ruby) --fuzzy do ruby -S gem install faraday -v 1.8.0
 deploy:
   provider: heroku
-  skip_cleanup: true
-  keep_history: true
-  api_key: 1f42c42f-8e4c-4713-b7e1-f491d3d32279
+  api_key:
+    secure: G8kRHZfKEtpjQDdPMc569UeYKKwWWIbTY3xhDJFi+qCOiU5h44OkNETt6QFoXzz7qyBBpMS2qIAsAmIAxyGcNL9F0HzYXa43Zy/tERxgVtZ91mcr5JEWp4iGLw88lL8jDwYd72xRFwklVr8in6vWa8U6DGVRu+sQGrGnLlnpLBDQIAMRlMhMVL951Y8znU9Rc7KFoXv8gjsYqK0Hk9g5cxF13ILxCw92oVhsI160qLf427oMc9D9xgAbYrDVaNvLYAH+hKiL3eVTGkL9rdlu0sg2WgA/V3CN4UY5G/plEhSdDe3+yDQms49aFu8202XBy/BF4JFYTXX3/lDGBbW6EEz2ABcydANv8e0hzsLCqekh3t+V5ecIma5+ybRrVLMTWOMN9ET0/aWzp2ab/wHMqKosNGXjafqwS8I0zRRtLSegFKscU2yFbhslRduH9dduHUq0lW1xW381wNU0esZIWb6dyZQXwDIv1Z06xcb/EC5Y7wpzEVl/DwKEiScZ6/ENNVQ+i09x663lKbHSEnLKwFpxv5cr7ZNZjerzwUSt0SXKwQvQVixTSzO3lDyVB/7pFNGSBZY9Bsemp8WAz+OB5NjTcMv3wcHoZ51O+25RkAADDWx4Sd5jyTdzwLZSkvckGd0Lo0no21kb9WDVPFym+R8bKTGzVjDYaZVIljrWcsM=
   app:
     main: pluslearn-production
     staging: pluslearn-staging
