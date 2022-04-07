@@ -2,13 +2,13 @@ var express = require('express');
 var router = express.Router();
 
 /* GET home page. */
-router.get('/', function(req, res, next) {
-  res.render('index', { title: 'Express' });
-});
+router.get('/', (req, res) => {
+    res.send('Hello World!');
+})
 
-/* GET home page. */
-router.get('/pug', function(req, res, next) {
-  res.render('example');
-});
+/* GET example pug page. */
+router.get('/pug', (req, res) => {
+    res.render('index', { title: 'Hey', message: 'Hello there!' })
+})
 
 module.exports = router;
