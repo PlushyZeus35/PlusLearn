@@ -7,5 +7,5 @@ script:
   - npm run test
 branches:
   only:
-    - master
+    - main
     - staging
