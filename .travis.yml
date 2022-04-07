@@ -14,5 +14,5 @@ deploy:
   api_key:
     secure: 1f42c42f-8e4c-4713-b7e1-f491d3d32279
   app:
-    master: pluslearn-production
+    main: pluslearn-production
     staging: pluslearn-staging
