@@ -8,4 +8,10 @@ router.post('/signup', passport.authenticate('local.signup', {
     failureFlash: true
 }));
 
+router.post('/signin', passport.authenticate('local.signin', {
+    successRedirect: '/profile',
+    failureRedirect: '/',
+    failureFlash: true
+}));
+
 module.exports = router;

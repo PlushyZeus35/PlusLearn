@@ -46,13 +46,13 @@ html
                 h5(class=['offcanvas-title', 'strong'] id="offcanvasWithBackdropLabel") Log In user
                 button(class=['btn-close', 'text-reset'] type="button" data-bs-dismiss="offcanvas" aria-label="Close")
             .offcanvas-body 
-                form(action="")
+                form(action="/authentication/signin" method="POST")
                     .mb-3 
-                        label(for="inputLoginEmail" class=['form-label']) Email Address 
-                        input(type="email" class=['form-control'] id='inputLoginEmail') 
+                        label(for="inputLoginUsername" class=['form-label'] ) Username 
+                        input(type="text" class=['form-control'] id='inputLoginUsername' name="username") 
                     .mb-3 
                         label(for="inputLoginPassword" class=['form-label']) Password 
-                        input(type="password" class=['form-control'] id='inputLoginPassword')
+                        input(type="password" class=['form-control'] id='inputLoginPassword' name="password")
                     button(type='submit' class=['btn', 'btn-primary']) Log In 
 
         //- OFFCANVAS REGISTER
@@ -74,10 +74,10 @@ html
                         input#inputSignUpinputEmail.form-control(type='email' name="email")
                     .mb-3
                         label.form-label(for='inputSignUpPassword') Password
-                        input#inputSignUpPassword.form-control(type='password' name="password")
+                        input#inputSignUpPassword.form-control(type='password' name="rpassword")
                     .mb-3
                         label.form-label(for='inputSignUpPasswordRepeat') Repeat password
-                        input#inputSignUpPasswordRepeat.form-control(type='password' name="rpassword")
+                        input#inputSignUpPasswordRepeat.form-control(type='password' name="password")
                     .mb-3
                         label.form-label(for='userTypeSelect') User type
                         select#userTypeSelect.form-select( name="userType")
@@ -103,6 +103,13 @@ html
         //- MAIN DIV!
         #mainDiv
             //- MAIN INFO!
+            if messages 
+                .container.p-4.mt-5 
+                    .row 
+                        .col-md-4.mx-auto 
+                            .alert.alert-danger.alert-dismissible.fade.show(role="alert")
+                                strong #{message}
+                                button(type="button" class=['btn-close'] data-bs-dismiss="alert" aria-label="Close")
             - var mainDivClasses = ['px-4', 'pt-5', 'my-5', 'text-center', 'border-bottom']
             div(class=mainDivClasses)
                 h1(class=['display-4', 'fw-bold']) Pasate a PlusLearn!
