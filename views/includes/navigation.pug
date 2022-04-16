@@ -1,0 +1,36 @@
+//- Navbar
+- var navClasses = ['navbar', 'navbar-expand-sm', 'bg-dark', 'navbar-dark', 'fixed-top']
+nav(class=navClasses)
+    .container-fluid
+        // BRAND INFO (LOGO & TITLE)
+        a(href='#' class=['navbar-brand']).
+            #[img(src='/static/assets/images/brand/brand.png' alt="img brand" style="width:40px;" class=['rounded-pill'])]
+            Plus Learn
+
+        // COLLAPSE BUTTON
+        button.navbar-toggler(type='button' data-bs-toggle='collapse' data-bs-target='#navbarNav' aria-controls='navbarNav' aria-expanded='false' aria-label='Toggle navigation')
+            span.navbar-toggler-icon
+
+        // NAVEGATION LINKS
+        - var divLinkClasses = ['collapse', 'navbar-collapse', 'justify-content-end']
+        div(class=divLinkClasses, Id='navbarNav')
+            - var navUlLinkClasses = ['navbar-nav', 'd-flex', 'gx-5']
+            - var navLiLinksClases = ['nav-item', 'px-3']
+            - var navALinkClasses = ['nav-link', 'active']
+            if !isAuthenticated
+                ul(class=navUlLinkClasses)
+                    li(class=navLiLinksClases)
+                        a(class=navALinkClasses href='#' data-bs-toggle="offcanvas" data-bs-target="#offcanvasLogin" aria-controls="offcanvasWithBackdrop") Login
+                ul(class=navUlLinkClasses)
+                    li(class=navLiLinksClases)
+                        a(class=navALinkClasses href='#' data-bs-toggle="offcanvas" data-bs-target="#offcanvasSignin" aria-controls="offcanvasWithBackdrop") Register
+            else 
+                ul(class=navUlLinkClasses)
+                    li(class=navLiLinksClases)
+                        a(class=['btn','btn-primary'] href='#') Enter app
+                ul(class=navUlLinkClasses)
+                    li(class=navLiLinksClases)
+                        a(class=['btn','btn-outline-danger'] href='#') Log Out
+            ul(class=navUlLinkClasses)
+                li(class=navLiLinksClases)
+                    button(class=['btn','btn-warning'] data-bs-toggle="modal" data-bs-target="#codeModal") Enter Code
