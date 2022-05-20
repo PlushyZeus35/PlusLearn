@@ -12,13 +12,13 @@ CREATE TABLE User_Types (
 );
 
 
-CREATE TABLE users(
-    id INT(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT = 2;,
+CREATE TABLE Users(
+    id INT(11) NOT NULL AUTO_INCREMENT,
     username VARCHAR(20) NOT NULL,
     password VARCHAR(80) NOT NULL,
     email VARCHAR(100) NOT NULL,
     userType_id INT(11),
-    PRIMARY KEY(id, username)
+    PRIMARY KEY(id, username),
     CONSTRAINT fk_user FOREIGN KEY (userType_id) REFERENCES User_Types(id)
 );
 
@@ -26,5 +26,5 @@ CREATE TABLE users(
 INSERT INTO User_Types VALUES (1, "Teacher");
 INSERT INTO User_Types VALUES (2, "Student");
 
-INSERT INTO users VALUES ("teacherUserName", "password123", "userName@gmail.com", "1");
-INSERT INTO users VALUES ("studentUserName", "password321", "userName@gmail.com", "2");
+INSERT INTO Users VALUES (1, "teacherUserName", "password123", "userName@gmail.com", "1");
+INSERT INTO Users VALUES (2, "studentUserName", "password321", "userName@gmail.com", "2");
