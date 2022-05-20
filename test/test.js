@@ -9,7 +9,7 @@ describe('Basic Test', function () {
       assert.equal([1, 2, 3].indexOf(4), -1);
     });
   });
-});
+}); 
 
 //- Test the availability of routes
 describe('App Endpoints', function() {
