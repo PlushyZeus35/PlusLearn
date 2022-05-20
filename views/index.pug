@@ -1,6 +1,153 @@
-html
-  head
-    title= title
-  body
-    h1= message
-    h2 hola 
+extends layouts/layout.pug 
+
+block content
+    
+
+    //- OFFCANVAS LOGIN
+    div(class=['offcanvas', 'offcanvas-start'] tabindex="-1" id="offcanvasLogin" aria-labelledby="offcanvasWithBackdropLabel")
+        .offcanvas-header 
+            h5(class=['offcanvas-title', 'strong'] id="offcanvasWithBackdropLabel") Log In user
+            button(class=['btn-close', 'text-reset'] type="button" data-bs-dismiss="offcanvas" aria-label="Close")
+        .offcanvas-body 
+            form(action="/authentication/signin" method="POST")
+                .mb-3 
+                    label(for="inputLoginUsername" class=['form-label'] ) Username 
+                    input(type="text" class=['form-control'] id='inputLoginUsername' name="username") 
+                .mb-3 
+                    label(for="inputLoginPassword" class=['form-label']) Password 
+                    input(type="password" class=['form-control'] id='inputLoginPassword' name="password")
+                button(type='submit' class=['btn', 'btn-primary']) Log In 
+
+    //- OFFCANVAS REGISTER
+    #offcanvasSignin.offcanvas.offcanvas-end(tabindex='-1' aria-labelledby='offcanvasWithBackdropLabel')
+        .offcanvas-header
+            h5#offcanvasWithBackdropLabel.offcanvas-title.strong Sign Up user
+            button.btn-close.text-reset(type='button' data-bs-dismiss='offcanvas' aria-label='Close')
+        .offcanvas-body
+            form(action="/authentication/signup" method="POST")
+                .mb-3
+                    label.form-label(for='validationCustomUsername') Username
+                    .input-group.has-validation
+                        span#inputGroupPrepend.input-group-text @
+                        input#validationCustomUsername.form-control(type='text' aria-describedby='inputGroupPrepend' required='' name="username")
+                        .invalid-feedback
+                            | Please choose a username.
+                .mb-3
+                    label.form-label(for='inputSignUpinputEmail') Email address
+                    input#inputSignUpinputEmail.form-control(type='email' name="email")
+                .mb-3
+                    label.form-label(for='inputSignUpPassword') Password
+                    input#inputSignUpPassword.form-control(type='password' name="rpassword")
+                .mb-3
+                    label.form-label(for='inputSignUpPasswordRepeat') Repeat password
+                    input#inputSignUpPasswordRepeat.form-control(type='password' name="password")
+                .mb-3
+                    label.form-label(for='userTypeSelect') User type
+                    select#userTypeSelect.form-select( name="userType")
+                        option Student
+                        option Teacher
+                button.btn.btn-primary(type='submit') Sign Up
+
+    //- MODAL WINDOW CODE
+    div(class=['modal', 'fade'] id='codeModal' data-bs-backdrop="static" data-bs-keyboard="false" tabindex="-1" aria-labelledby="codeModalTitle" aria-hidden="true")
+        .modal-dialog.modal-dialog-centered 
+            .modal-content 
+                .modal-header 
+                    h5.modal-title#codeModalTitle Enter Code
+                    button.btn-close(type='button' data-bs-dismiss="modal" aria-label="Close")
+                .modal-body 
+                    form(action="")
+                        .mb-3 
+                            label.form-label(for="inputCode") Enter Code 
+                            input.form-control(type="text" id='inputCode')  
+                .modal-footer 
+                    button.btn.btn-secondary(type='button' data-bs-dismiss="modal") Close 
+                    button.btn.btn-primary(type='button') Enter
+    //- MAIN DIV!
+    #mainDiv
+        //- MAIN INFO!
+        - var mainDivClasses = ['px-4', 'pt-5', 'my-5', 'text-center', 'border-bottom']
+        div(class=mainDivClasses)
+            h1(class=['display-4', 'fw-bold']) Pasate a PlusLearn!
+            div(class=['col-lg-6', 'mx-auto'])
+                p(class=['lead', 'mb-4']).
+                    La nueva forma de e-learning proporcionando técnicas de gamificación.
+                    Una perfecta mezcla entre juego y aprendizaje continuo. Consiga capacitación práctica 
+                    y aprenda desde cualquier lugar y de manera gratuita.
+                if !isAuthenticated
+                    div(class=['d-grid', 'gap-2', 'd-sm-flex', 'justify-content-sm-center', 'mb-5'])
+                        button(class=['btn', 'btn-primary', 'btn-lg', 'px-4', 'me-sm-3'] data-bs-toggle="offcanvas" data-bs-target="#offcanvasLogin" aria-controls="offcanvasWithBackdrop") Log In
+                        button(class=['btn', 'btn-outline-secondary', 'btn-lg', 'px-4'] data-bs-toggle="offcanvas" data-bs-target="#offcanvasSignin" aria-controls="offcanvasWithBackdrop") Register
+                else 
+                    div(class=['d-grid', 'gap-2', 'd-sm-flex', 'justify-content-sm-center', 'mb-5'])
+                        button(class=['btn', 'btn-primary', 'px-4', 'me-sm-3'] ) Enter App
+                        button(class=['btn', 'btn-outline-danger', 'px-4']) Log Out
+            div(class=['overflow-hidden'] style='max-height: 30vh')
+                div(class=['container', 'px-5'])
+                    img(class=['img-fluid', 'border', 'rounded-3', 'shadow-lg', 'mb-4'], src="static/assets/images/brand/mainTitle.jpg", alt="Main Img" width='700' height='500' loading='lazy')
+        
+        //- SECONDARY INFO!
+        #hanging-icons.container.px-4.py-5
+            h2.pb-2.border-bottom Grandes Ventajas
+            .row.g-4.py-5.row-cols-1.row-cols-lg-3
+                .col.d-flex.align-items-start
+                    .text-dark.flex-shrink-0.me-3
+                        img(class=['bi'], src="/static/assets/images/brand/trail.png", alt="Main Img" width='50px' height='50px' loading='lazy')
+                    div
+                        h2 Enseñanza dirigida
+                        p
+                            | Disponible la creación y realización de trails de conocimientos a adquirir para conseguir un objetivo.  Basta de buscar fuentes fiables y rápidas de información, aquí te mostramos el camino.
+                        //-a.btn.btn-primary(href='#')
+                        //-    | Primary button
+                .col.d-flex.align-items-start
+                    .text-dark.flex-shrink-0.me-3
+                        img(class=['bi'], src="/static/assets/images/brand/test.png", alt="Main Img" width='50px' height='50px' loading='lazy')
+                    div
+                        h2 Aprendizaje interactivo
+                        p
+                            | Creación de tests interactivos. Por fin podremos adoptar las nuevas tecnologías en las formaciones educativas tradicionales.
+                        //-a.btn.btn-primary(href='#')
+                        //-    | Primary button
+                .col.d-flex.align-items-start
+                    .text-dark.flex-shrink-0.me-3
+                        img(class=['bi'], src="/static/assets/images/brand/goals.png", alt="Main Img" width='50px' height='50px' loading='lazy')
+                    div
+                        h2 Estudio motivado
+                        p
+                            | Estudiar es duro, pero no te será tan duro si te damos un empujón extra a través de logros y rangos entre los compañeros. ¡Aprovechamos la competitividad sana!
+                        //-a.btn.btn-primary(href='#')
+                        //-    | Primary button
+        
+        //- CONTACT US FORM!
+        #contactUs 
+            .container.border.border-light.rounded.p-4 
+                h3 Contact Us
+                form.row.g-3(action="")
+                    .col-md-6 
+                        label.form-label(for="contactMailInput") Email 
+                        input.form-control#contactMailInput(type="email")
+                    .col-md-6 
+                        label.form-label(for="contactNameInput") Name 
+                        input.form-control#contactNameInput(type="text")
+                    .col-12 
+                        .form-check 
+                            input.form-check-input#sendNotInput(type="checkbox")
+                            label.form-check-label(for="sendNotInput") Acepto recibir información adicional
+                    .col-12 
+                        .form-group
+                            label.form-label(for="contactDescriptionInput") Description
+                            textarea.form-control#contactDescriptionInput(name="contactDescriptionInput" rows="10" aria-describedby="infoHelp")   
+                            small(id="infoHelp" class="form-text text-muted") Si tienes que comentarnos cualquier cosa aquí nos lo podrás dejar.
+                    .col-12 
+                        button.btn.btn-primary(type='submit') Send 
+
+
+        include includes/footer
+
+    //- JQUERY & BOOTSTRAP LIBS
+    script(src='https://code.jquery.com/jquery-3.2.1.min.js'
+        integrity='sha256-hwg4gsxgFZhOsEEamdOYGBf13FyQuiTwlAQgxVSNgt4='
+        crossorigin='anonymous')
+        
+    script(src='https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js'
+        integrity='sha384-Tc5IQib027qvyjSMfHjOMaLkfuWVxZxUPnCJA7l2mCWNIpG9mGCD8wGNIcPD7Txa' crossorigin='anonymous')
