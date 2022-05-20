@@ -4,6 +4,7 @@
   "description": "Entorno pruebas",
   "main": "index.js",
   "scripts": {
+    "heroku-prebuild": "npm install pm2 -g",
     "test": "mocha -R nyan",
     "start": "node ./bin/www",
     "nodemon": "nodemon ./bin/www"
