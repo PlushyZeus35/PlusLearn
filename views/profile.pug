@@ -1,0 +1,59 @@
+doctype html
+head
+  meta(charset='UTF-8')
+  meta(http-equiv='X-UA-Compatible' content='IE=edge')
+  meta(name='viewport' content='width=device-width, initial-scale=1.0')
+  title Document
+  script(src='https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js')
+  link(href='https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/css/bootstrap.min.css' rel='stylesheet' integrity='sha384-1BmE4kWBq78iYhFldvKuhfTAU6auU8tT94WrHftjDbrCEXSU1oBoqyl2QvZ6jIW3' crossorigin='anonymous')
+  link(rel='stylesheet' href='https://cdn.jsdelivr.net/npm/bootstrap-icons@1.8.1/font/bootstrap-icons.css')
+  link(rel='stylesheet' href='/static/css/style.css')
+// NAVBAR!!
+nav.navbar.navbar-dark.bg-dark.fixed-top.text-white
+  .container-fluid
+    button#sidebar-toggler.navbar-toggler.b-0(type='button')
+      svg.feather.feather-menu(xmlns='http://www.w3.org/2000/svg' width='24' height='24' viewbox='0 0 24 24' fill='none' stroke='currentColor' stroke-width='2' stroke-linecap='round' stroke-linejoin='round')
+        line(x1='3' y1='12' x2='21' y2='12')
+        line(x1='3' y1='6' x2='21' y2='6')
+        line(x1='3' y1='18' x2='21' y2='18')
+    h4.mx-auto Hola, #{user.username}!
+#main
+  #sidebar.d-flex.position-fixed.flex-column.flex-shrink-0.pt-4.text-white.bg-dark.hidesidebar(style='width: 280px; height:95vh;')
+    a#mainSidebarBtn.d-flex.align-items-center.mx-auto.text-white.text-decoration-none(href='#')
+      img.bi.me-2.imgOption.imgLarge(src='/static/assets/images/brand/brand.png' width='32' height='32' alt='')
+      span.fs-4.option.hidesideoptions Sidebar
+    hr
+    ul.nav.nav-pills.flex-column.mb-auto
+      li.nav-item
+        a#homeSidebarBtn.nav-link.active(href='#')
+          svg.bi.me-2.imgOption.imgLarge(xmlns='http://www.w3.org/2000/svg' width='16' height='16' viewbox='0 0 24 24' fill='none' stroke='currentColor' stroke-width='2' stroke-linecap='round' stroke-linejoin='round')
+            path(d='M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z')
+            polyline(points='9 22 9 12 15 12 15 22')
+          span.option.hidesideoptions Home
+      li
+        a#dashboardSidebarBtn.nav-link.text-white(href='#')
+          svg.bi.me-2.imgOption.imgLarge(xmlns='http://www.w3.org/2000/svg' width='16' height='16' viewbox='0 0 24 24' fill='none' stroke='currentColor' stroke-width='2' stroke-linecap='round' stroke-linejoin='round')
+            line(x1='18' y1='20' x2='18' y2='10')
+            line(x1='12' y1='20' x2='12' y2='4')
+            line(x1='6' y1='20' x2='6' y2='14')
+          span.option.hidesideoptions Dashboard
+      li
+        a#trailsSidebarBtn.nav-link.text-white(href='#')
+          img.bi.me-2.imgOption.imgLarge(src='/static/assets/images/brand/trail.png' width='16' height='16' alt='')
+          span.option.hidesideoptions Trails
+      li
+        a#quizesSidebarBtn.nav-link.text-white(href='#')
+          img.bi.me-2.imgOption.imgLarge(src='/static/assets/images/brand/test.png' width='16' height='16' alt='')
+          span.option.hidesideoptions Quizes
+      li
+        a#logOutSidebarBtn.nav-link.text-white(href='#')
+          svg.bi.me-2.imgOption.imgLarge(xmlns='http://www.w3.org/2000/svg' width='16' height='16' viewbox='0 0 24 24' fill='none' stroke='currentColor' stroke-width='2' stroke-linecap='round' stroke-linejoin='round')
+            path(d='M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4')
+            polyline(points='16 17 21 12 16 7')
+            line(x1='21' y1='12' x2='9' y2='12')
+          span.option.hidesideoptions Log Out
+  #dataField
+    h3.text-center.pt-5 Hola
+script(src='/static/js/teacher.js')
+script(src='https://kit.fontawesome.com/043d7654b9.js' crossorigin='anonymous')
+script(src='https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/js/bootstrap.bundle.min.js' integrity='sha384-ka7Sk0Gln4gmtz2MlQnikT1wXgYsOg+OMhuP+IlRH9sENBO0LRn5q+8nbTov4+1p' crossorigin='anonymous')
