@@ -1,7 +1,7 @@
 module.exports = {
 
     database: {
-        host: '192.168.0.200',
+        host: 'pluslearn.ddns.net',
         user: 'plushlearn',
         password: 'plushlearnmariadb',
         database: 'plusLearnDev',
