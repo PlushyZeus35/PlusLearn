@@ -1,6 +1,6 @@
 var assert = require('assert');
 const request = require('supertest');
-const app = require('../app');
+const helpers = require('../lib/helpers');
 
 //- Test the test framework :)
 describe('Basic Test', function () {
@@ -11,31 +11,19 @@ describe('Basic Test', function () {
   });
 }); 
 
-//- Test the availability of routes
-describe('App Endpoints', function() {
+//- Test password encryption
+describe('Password Encryption Test', function(){
 
-  it('should return the index page', function(done) {
-    request(app)
-      .get('/')
-      .expect(200, done);
-  });
+  it('Should encrypt the password correctly', async () => {
+    var correctPasswordExample = 'testPassword';
+    var incorrectPasswordExample = 'testpassword';
 
-  it('Should return the hello world page', function() {
-    request(app)
-      .get('/test')
-      .expect(200)
-      .then(res => {
-        assert.ok(res.body == 'Hello World!');
-      });
-  });
+    var encryptedPassword = await helpers.encryptPassword(correctPasswordExample);
+    assert.notEqual(encryptedPassword, correctPasswordExample);
 
-  it('Should return the pug sample page', function() {
-    request(app)
-      .get('/pug')
-      .expect(200)
-      .then(res => {
-        assert.ok(res.header.title == 'Hey');
-      });
+    assert.equal(true, await helpers.matchPasswords(correctPasswordExample, encryptedPassword), 'Comparing to correct password should return true');
+
+    assert.equal(false, await helpers.matchPasswords(incorrectPasswordExample, encryptedPassword), 'Comparing to incorrect password should return false');
+    
   });
-  
-}); 
+});
