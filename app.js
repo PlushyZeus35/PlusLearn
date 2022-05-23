@@ -12,6 +12,7 @@ const passport = require('passport');
 // INITIALIZATIONS
 const app = express();
 require('./lib/passport');
+require('./models/db');
 
 // SETTINGS
 // Set static path to serve static files
