@@ -34,19 +34,32 @@ block content
                             | Please choose a username.
                 .mb-3
                     label.form-label(for='inputSignUpinputEmail') Email address
-                    input#inputSignUpinputEmail.form-control(type='email' name="email")
+                    input#inputSignUpinputEmail.form-control(type='email' name="email" required='')
                 .mb-3
                     label.form-label(for='inputSignUpPassword') Password
-                    input#inputSignUpPassword.form-control(type='password' name="rpassword")
+                    input#inputSignUpPassword.form-control(type='password' name="rpassword" oninput='passwordChange()')
+                    #passwordInfo.form-text Password may contain 8 or more characters.
+                        svg#incorrectPasswordSvg.feather.feather-frown.ms-3.d-none(xmlns='http://www.w3.org/2000/svg' width='24' height='24' viewbox='0 0 24 24' fill='none' stroke='red' stroke-width='2' stroke-linecap='round' stroke-linejoin='round')
+                            circle(cx='12' cy='12' r='10')
+                            path(d='M16 16s-1.5-2-4-2-4 2-4 2')
+                            line(x1='9' y1='9' x2='9.01' y2='9')
+                            line(x1='15' y1='9' x2='15.01' y2='9')
+                        svg#correctPasswordSvg.feather.feather-smile.ms-3.d-none(xmlns='http://www.w3.org/2000/svg' width='24' height='24' viewbox='0 0 24 24' fill='none' stroke='green' stroke-width='2' stroke-linecap='round' stroke-linejoin='round')
+                            circle(cx='12' cy='12' r='10')
+                            path(d='M8 14s1.5 2 4 2 4-2 4-2')
+                            line(x1='9' y1='9' x2='9.01' y2='9')
+                            line(x1='15' y1='9' x2='15.01' y2='9')
+
                 .mb-3
                     label.form-label(for='inputSignUpPasswordRepeat') Repeat password
-                    input#inputSignUpPasswordRepeat.form-control(type='password' name="password")
+                    input#inputSignUpPasswordRepeat.form-control(type='password' name="password" oninput='passwordChange()')
+                    #passwordRepeatInfo.form-text Passwords may match each other.
                 .mb-3
                     label.form-label(for='userTypeSelect') User type
                     select#userTypeSelect.form-select( name="userType")
                         option Student
                         option Teacher
-                button.btn.btn-primary(type='submit') Sign Up
+                button#signUpButton.btn.btn-primary.disabled(type='submit') Sign Up
 
     //- MODAL WINDOW CODE
     div(class=['modal', 'fade'] id='codeModal' data-bs-backdrop="static" data-bs-keyboard="false" tabindex="-1" aria-labelledby="codeModalTitle" aria-hidden="true")
@@ -144,6 +157,7 @@ block content
 
         include includes/footer
 
+    script(src='/static/js/index.js')
     //- JQUERY & BOOTSTRAP LIBS
     script(src='https://code.jquery.com/jquery-3.2.1.min.js'
         integrity='sha256-hwg4gsxgFZhOsEEamdOYGBf13FyQuiTwlAQgxVSNgt4='
