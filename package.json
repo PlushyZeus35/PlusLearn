@@ -7,7 +7,7 @@
     "heroku-prebuild": "npm install pm2 -g",
     "test": "mocha test/test.js",
     "start": "node ./bin/www",
-    "nodemon": "nodemon ./bin/www"
+    "nodemon": "set NODE_ENV=dev && nodemon ./bin/www"
   },
   "author": "",
   "license": "ISC",
@@ -30,6 +30,7 @@
     "path": "^0.12.7",
     "pug": "^3.0.2",
     "sequelize": "^6.20.0",
+    "sequelize-cli": "^6.4.1",
     "serve-favicon": "^2.5.0",
     "supertest": "^6.2.2"
   }
