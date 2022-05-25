@@ -93,8 +93,8 @@ block content
                         button(class=['btn', 'btn-outline-secondary', 'btn-lg', 'px-4'] data-bs-toggle="offcanvas" data-bs-target="#offcanvasSignin" aria-controls="offcanvasWithBackdrop") Register
                 else 
                     div(class=['d-grid', 'gap-2', 'd-sm-flex', 'justify-content-sm-center', 'mb-5'])
-                        button(class=['btn', 'btn-primary', 'px-4', 'me-sm-3'] ) Enter App
-                        button(class=['btn', 'btn-outline-danger', 'px-4']) Log Out
+                        a(class=['btn', 'btn-primary', 'px-4', 'me-sm-3'] href='./profile' ) Enter App
+                        a.btn.px-4(href='authentication/logout') Log Out
             div(class=['overflow-hidden'] style='max-height: 30vh')
                 div(class=['container', 'px-5'])
                     img(class=['img-fluid', 'border', 'rounded-3', 'shadow-lg', 'mb-4'], src="static/assets/images/brand/mainTitle.jpg", alt="Main Img" width='700' height='500' loading='lazy')

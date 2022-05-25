@@ -5,13 +5,24 @@ const morgan = require('morgan');
 const flash = require('connect-flash');
 const session = require('express-session');
 const mysqlstore = require('express-mysql-session');
-const { database } = require('./models/keys');
+const { database } = require('./lib/keys');
 const passport = require('passport');
+const sequelize = require('./models/db');
+const User_Type = require('./models/User_Type');
+const User = require('./models/User');
+const Quiz = require('./models/Quiz');
+const Asociations = require('./models/asociations');
 
 
 // INITIALIZATIONS
 const app = express();
 require('./lib/passport');
+sequelize.sync( {force: true }).then(() => {
+    console.log("Conectado a la base de datos!");
+}).catch(error => {
+    console.log("Se ha producido un error!", error);
+}); 
+
 
 // SETTINGS
 // Set static path to serve static files
