@@ -3,7 +3,7 @@ var router = express.Router();
 
 /* GET Index page. */
 router.get('/', (req, res) => {
-    res.render('index', { isAuthenticated: false })
+    res.render('index', { isAuthenticated: req.isAuthenticated() })
 })
 
 /* GET test page. */
@@ -13,7 +13,7 @@ router.get('/test', (req, res) => {
 
 /* GET example pug page. */
 router.get('/pug', (req, res) => {
-    res.render('sample', { title: 'Hey', message: 'Hello there!' })
+    res.render('sample', { isAuthenticated: req.isAuthenticated() })
 })
 
 module.exports = router;
