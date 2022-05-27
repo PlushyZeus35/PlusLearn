@@ -3,7 +3,7 @@ const {database} = require('../config');
 
 const sequelize = new Sequelize(
     database.database,
-    database.username,
+    database.user,
     database.password,
     {
         host: database.host,
