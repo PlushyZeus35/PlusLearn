@@ -21,10 +21,7 @@ User.init({
     },
     email: {
         type: DataTypes.STRING,
-        allowNull: false,
-        validate: {
-            isEmail: true
-        }
+        allowNull: false
     },
     role: DataTypes.INTEGER
 }, {
