@@ -17,7 +17,7 @@ const Asociations = require('./models/asociations');
 // INITIALIZATIONS
 const app = express();
 require('./lib/passport');
-sequelize.sync( {force: true }).then(() => {
+sequelize.sync( {force: false }).then(() => {
     console.log("Conectado a la base de datos!");
 }).catch(error => {
     console.log("Se ha producido un error!", error);
