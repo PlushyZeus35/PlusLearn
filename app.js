@@ -5,7 +5,7 @@ const morgan = require('morgan');
 const flash = require('connect-flash');
 const session = require('express-session');
 const mysqlstore = require('express-mysql-session');
-const { database } = require('./lib/keys');
+const { database } = require('./config');
 const passport = require('passport');
 const sequelize = require('./models/db');
 const User_Type = require('./models/User_Type');
@@ -17,7 +17,7 @@ const Asociations = require('./models/asociations');
 // INITIALIZATIONS
 const app = express();
 require('./lib/passport');
-sequelize.sync( {force: true }).then(() => {
+sequelize.sync( {force: false }).then(() => {
     console.log("Conectado a la base de datos!");
 }).catch(error => {
     console.log("Se ha producido un error!", error);
