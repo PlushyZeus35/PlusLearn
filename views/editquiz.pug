@@ -22,6 +22,35 @@ body
                     line(x1='3' y1='18' x2='21' y2='18')
             h4.mx-auto Quiz #{quiz.name}
     
+    // ADD QUIZ MODAL!
+    #addQuestionModal.modal.fade(tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true")
+        .modal-dialog.modal-dialog-centered.modal-fullscreen-sm-down
+            .modal-content 
+                .modal-header 
+                    h3 Crear nueva question
+                    button(type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close")
+                .modal-body 
+                    form(action="/question/add" method="POST")
+                        .mb-3 
+                        label(for="questionNameInput" class="form-label") Pregunta:
+                        input(type="text" name="questionName" class="form-control" id="questionNameInput")
+                        .mb-3 
+                        label(for="correctResponseInput" class="form-label") Respuesta correcta:
+                        input(type="text" name="correctAnswer" class="form-control" id="correctResponseInput")
+                        .mb-3 
+                        label(for="incorrectResponseInput1" class="form-label") Respuesta incorrecta:
+                        input(type="text" name="incorrectAnswer1" class="form-control" id="incorrectResponseInput1")
+                        .mb-3 
+                        label(for="incorrectResponseInput2" class="form-label") Respuesta incorrecta:
+                        input(type="text" name="incorrectAnswer2" class="form-control" id="incorrectResponseInput2")
+                        .mb-0
+                        label(for="incorrectResponseInput3" class="form-label") Respuesta incorrecta:
+                        input(type="text" name="incorrectAnswer3" class="form-control" id="incorrectResponseInput3")
+                        input(type="text" name="quizId" class="form-control d-none" value=`${quiz.id}`)
+                        .modal-footer
+                        button(type="button" class="btn btn-secondary" data-bs-dismiss="modal") Close
+                        button(type="submit" class="btn btn-primary") Save changes
+
     // MAIN DIV
     #main.container-fluid(style='margin-top: 100px;')
         #questions.container.mt-4 
@@ -29,7 +58,7 @@ body
                 h3 Questions
                 - deleteUrl = "/quiz/delete?quizId=" + quiz.id
                 div
-                    a.btn.btn-primary(href="") Añadir question
+                    button.btn.btn-primary(data-bs-toggle="modal" data-bs-target="#addQuestionModal") Añadir question
                     a.btn.btn-danger(href=`${deleteUrl}`) Eliminar quiz
             hr
             #questionAccordion.accordion 
@@ -37,7 +66,7 @@ body
                     h2#heading.accordion-header 
                         button.accordion-button(type="button" data-bs-toggle="collapse" data-bs-target="#collapseOne" aria-expanded="true" aria-controls="collapseOne")
                             | Q #1: ¿Cuál es la palabra mágica?
-                    #collapseOne.accordion-collapse.collapse.show(aria-labelledby="heading" data-bs-parent="#questionAccordion")
+                    #collapseOne.accordion-collapse.collapse(aria-labelledby="heading" data-bs-parent="#questionAccordion")
                         .accordion-body 
                             ul.list-group 
                                 li.list-group-item
