@@ -21,6 +21,8 @@ body
           line(x1='3' y1='6' x2='21' y2='6')
           line(x1='3' y1='18' x2='21' y2='18')
       h4.mx-auto Hola, #{user.username}!
+
+  // ADD QUIZ MODAL!
   #addQuizModal.modal.fade(tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true")
     .modal-dialog.modal-dialog-centered.modal-fullscreen-sm-down
       .modal-content 
@@ -28,7 +30,7 @@ body
           h3 Crear nuevo quiz
           button(type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close")
         .modal-body 
-          form(action="/quizzes" method="POST")
+          form(action="/quiz/add" method="POST")
             .mb-3 
               label(for="quizNameInput" class="form-label") Nombre:
               input(type="text" name="quizName" class="form-control" id="quizNameInput")
@@ -89,7 +91,11 @@ body
                   p.card-text #{quiz.description}
                   div(class=['d-grid', 'gap-2', 'd-sm-flex', 'justify-content-sm-center'])
                     a.btn.btn-primary(href="#") Enter
-                    a.btn.btn-danger(href="#") Delete 
+                    - deleteQuizUrl = "/quiz/delete?quizId=" + quiz.id
+                    a.btn.btn-danger(href=`${deleteQuizUrl}`) Delete 
+                    - editQuizUrl = "/quiz/edit?quizId=" + quiz.id
+                    a.btn.btn-warning(href=`${editQuizUrl}`)
+                      <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="3" stroke-linecap="round" stroke-linejoin="round" class="feather feather-settings"><circle cx="12" cy="12" r="3"></circle><path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1 0 2.83 2 2 0 0 1-2.83 0l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-2 2 2 2 0 0 1-2-2v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83 0 2 2 0 0 1 0-2.83l.06-.06a1.65 1.65 0 0 0 .33-1.82 1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1-2-2 2 2 0 0 1 2-2h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 0-2.83 2 2 0 0 1 2.83 0l.06.06a1.65 1.65 0 0 0 1.82.33H9a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 2-2 2 2 0 0 1 2 2v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 0 2 2 0 0 1 0 2.83l-.06.06a1.65 1.65 0 0 0-.33 1.82V9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 2 2 2 2 0 0 1-2 2h-.09a1.65 1.65 0 0 0-1.51 1z"></path></svg> 
 
 
 script(src='/static/js/profile.js')

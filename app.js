@@ -62,6 +62,6 @@ app.use(require('./routes'));
 app.use(require('./routes/index'));
 app.use('/authentication', require('./routes/authentication'));
 app.use(require('./routes/profiles'));
-app.use(require('./routes/quizzes'));
+app.use('/quiz', require('./routes/quizzes'));
 
 module.exports = app;
