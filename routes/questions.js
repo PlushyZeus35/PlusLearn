@@ -22,4 +22,34 @@ router.post('/add', isLoggedIn, async (req, res) => {
     
 })
 
+router.get('/delete', isLoggedIn, async (req, res) => {
+    let questionId = req.query.questionId;
+    console.log(questionId);
+    
+    if(await questionHelper.deleteQuestion(questionId)){
+        req.flash('success', 'Quiz borrado');
+    }else{
+        req.flash('message', 'Algo ha ido mal!');
+    }
+    res.redirect('/profile');
+    
+})
+
+router.post('/edit', isLoggedIn, async (req, res) => {
+    
+    let questionId = req.body.questionIdInput;
+    let questionName = req.body.editedQuestionName;
+    let correctResponse = req.body.editedCorrectAnswer;
+    let incorrectResponse1 = req.body.editedIncorrectAnswer1;
+    let incorrectResponse2 = req.body.editedIncorrectAnswer2;
+    let incorrectResponse3 = req.body.editedIncorrectAnswer3;
+
+    console.log(questionId);
+    console.log(incorrectResponse1);
+    console.log(incorrectResponse3);
+
+    await questionHelper.editQuestion(questionId, questionName, correctResponse, incorrectResponse1, incorrectResponse2, incorrectResponse3);
+    res.redirect('/profile');
+})
+
 module.exports = router;
