@@ -45,6 +45,7 @@ router.post('/add', isLoggedIn, async (req, res) => {
 router.get('/delete', isLoggedIn, async (req, res) => {
     let quizId = req.query.quizId;
     console.log(quizId);
+    const quiz = await quizHelper.getQuiz(quizId);
     if(quiz.userId == req.user.id){
         if(await quizHelper.deleteQuiz(quizId)){
             req.flash('success', 'Quiz borrado');

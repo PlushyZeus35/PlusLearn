@@ -13,12 +13,13 @@ router.post('/add', isLoggedIn, async (req, res) => {
     let quizId = req.body.quizId;
     console.log(quizId);
 
+    let editQuizUrl = "/quiz/edit?quizId=" + quizId;
     if(await questionHelper.isQuestionRepeated(questionName)){
         req.flash('message', 'That Question already exists!');
     }else{
         await questionHelper.setNewQuestion(req, questionName, correctAnswer, incorrectAnswer1, incorrectAnswer2, incorrectAnswer3, quizId);
     }
-    res.redirect('/profile');
+    res.redirect(editQuizUrl);
     
 })
 
@@ -37,19 +38,20 @@ router.get('/delete', isLoggedIn, async (req, res) => {
 
 router.post('/edit', isLoggedIn, async (req, res) => {
     
+    // Get input data
     let questionId = req.body.questionIdInput;
     let questionName = req.body.editedQuestionName;
     let correctResponse = req.body.editedCorrectAnswer;
     let incorrectResponse1 = req.body.editedIncorrectAnswer1;
     let incorrectResponse2 = req.body.editedIncorrectAnswer2;
     let incorrectResponse3 = req.body.editedIncorrectAnswer3;
+    let quizId = req.body.quizIdInput;
+    let editQuizUrl = "/quiz/edit?quizId=" + quizId;
 
-    console.log(questionId);
-    console.log(incorrectResponse1);
-    console.log(incorrectResponse3);
-
+    // Edit selected question
     await questionHelper.editQuestion(questionId, questionName, correctResponse, incorrectResponse1, incorrectResponse2, incorrectResponse3);
-    res.redirect('/profile');
+    // Redirect to same url
+    res.redirect(editQuizUrl);
 })
 
 module.exports = router;
