@@ -6,7 +6,7 @@ const databaseHelper = require('../lib/databaseHelper');
 router.get('/profile', isLoggedIn, async (req, res) => {
     let quizzes = await databaseHelper.getAllQuizzes();
     console.log(quizzes);
-    res.render('profile', {quizzes})
+    res.render('teacher', {quizzes})
 })
 
 
