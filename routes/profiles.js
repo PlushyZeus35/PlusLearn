@@ -5,8 +5,13 @@ const databaseHelper = require('../lib/databaseHelper');
 
 router.get('/profile', isLoggedIn, async (req, res) => {
     let quizzes = await databaseHelper.getAllQuizzes();
-    console.log(quizzes);
-    res.render('teacher', {quizzes})
+    console.log(req.user);
+    
+    if(req.user.role == 1){
+        res.render('teacher', {quizzes})
+    }else if(req.user.role == 2){
+        res.render('student', {quizzes})
+    }
 })
 
 
