@@ -76,13 +76,13 @@ body
               line(x1='21' y1='12' x2='9' y2='12')
             span.option.hidesideoptions Log Out
     #dataField
-      #quizzes.container
+      #myquizzes.container
         .container-fluid.d-flex.justify-content-between#quizzestitle
-          h3 Quizzes
+          h3 Mis Quizzes
           button.btn.btn-primary(data-bs-toggle="modal" data-bs-target="#addQuizModal") Crear quiz 
         hr
         .row.row-cols-1.row-cols-md-2.row-cols-lg-3.row-cols-xl-4.g-4.justify-content-center
-          each quiz, i in quizzes
+          each quiz, i in myquizzes
             .col 
               .card.text-center.mx-auto(style="width: 18rem;")
                 .card-body
@@ -99,6 +99,21 @@ body
                       a.btn.btn-warning(href=`${editQuizUrl}`)
                         <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="3" stroke-linecap="round" stroke-linejoin="round" class="feather feather-settings"><circle cx="12" cy="12" r="3"></circle><path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1 0 2.83 2 2 0 0 1-2.83 0l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-2 2 2 2 0 0 1-2-2v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83 0 2 2 0 0 1 0-2.83l.06-.06a1.65 1.65 0 0 0 .33-1.82 1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1-2-2 2 2 0 0 1 2-2h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 0-2.83 2 2 0 0 1 2.83 0l.06.06a1.65 1.65 0 0 0 1.82.33H9a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 2-2 2 2 0 0 1 2 2v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 0 2 2 0 0 1 0 2.83l-.06.06a1.65 1.65 0 0 0-.33 1.82V9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 2 2 2 2 0 0 1-2 2h-.09a1.65 1.65 0 0 0-1.51 1z"></path></svg> 
 
+      #otherquizzes.container
+        .container-fluid.d-flex.justify-content-between#quizzestitle
+          h3 Other Quizzes
+        hr
+        .row.row-cols-1.row-cols-md-2.row-cols-lg-3.row-cols-xl-4.g-4.justify-content-center
+          each quiz, i in quizzes
+            .col 
+              .card.text-center.mx-auto(style="width: 18rem;")
+                .card-body
+                  img(class=['bi'], src="/static/assets/images/brand/test.png", alt="Main Img" width='50px' height='50px' loading='lazy')
+                  h5.card-title #{quiz.name} 
+                  p.card-text #{quiz.description}
+                  div(class=['d-grid', 'gap-2', 'd-sm-flex', 'justify-content-sm-center'])
+                    a.btn.btn-primary(href="#") Enter
+                    
 
 script(src='/static/js/profile.js')
 script(src='https://kit.fontawesome.com/043d7654b9.js' crossorigin='anonymous')

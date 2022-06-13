@@ -31,22 +31,23 @@ body
                     h3 Crear nueva question
                     button(type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close")
                 .modal-body 
-                    form(action="/question/add" method="POST")
+                    form.was-validated(action="/question/add" method="POST")
                         .mb-3 
                         label(for="questionNameInput" class="form-label") Pregunta:
-                        input(type="text" name="questionName" class="form-control" id="questionNameInput")
+                        input(type="text" name="questionName" class="form-control is-invalid" id="questionNameInput" required)
+                        
                         .mb-3 
                         label(for="correctResponseInput" class="form-label") Respuesta correcta:
-                        input(type="text" name="correctAnswer" class="form-control" id="correctResponseInput")
+                        input(type="text" name="correctAnswer" class="form-control" id="correctResponseInput" required)
                         .mb-3 
                         label(for="incorrectResponseInput1" class="form-label") Respuesta incorrecta:
-                        input(type="text" name="incorrectAnswer1" class="form-control" id="incorrectResponseInput1")
+                        input(type="text" name="incorrectAnswer1" class="form-control" id="incorrectResponseInput1" required)
                         .mb-3 
                         label(for="incorrectResponseInput2" class="form-label") Respuesta incorrecta:
-                        input(type="text" name="incorrectAnswer2" class="form-control" id="incorrectResponseInput2")
+                        input(type="text" name="incorrectAnswer2" class="form-control" id="incorrectResponseInput2" required)
                         .mb-0
                         label(for="incorrectResponseInput3" class="form-label") Respuesta incorrecta:
-                        input(type="text" name="incorrectAnswer3" class="form-control" id="incorrectResponseInput3")
+                        input(type="text" name="incorrectAnswer3" class="form-control" id="incorrectResponseInput3" required)
                         input(type="text" name="quizId" class="form-control d-none" value=`${quiz.id}`)
                         .modal-footer
                         button(type="button" class="btn btn-secondary" data-bs-dismiss="modal") Close
