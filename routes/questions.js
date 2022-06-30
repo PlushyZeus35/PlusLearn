@@ -25,8 +25,11 @@ router.post('/add', isLoggedIn, async (req, res) => {
 
 router.get('/delete', isLoggedIn, async (req, res) => {
     let questionId = req.query.questionId;
+    console.log("QuestionId a borrar: ");
     console.log(questionId);
     let quizId = await questionHelper.getQuizIdFromQuestionId(questionId);
+    console.log("QuizId del question a borrar: ");
+    console.log(quizId);
     let editQuizUrl = "/quiz/edit?quizId=" + quizId;
     if(await questionHelper.deleteQuestion(questionId)){
         req.flash('success', 'Quiz borrado');

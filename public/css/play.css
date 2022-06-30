@@ -1,0 +1,12 @@
+#main{
+    height: 100vh;
+    width: 100vw;
+    overflow: scroll;
+    scroll-behavior: smooth;
+    overflow-x: auto;
+
+    background-image: url('/static/assets/images/background/white-wall.jpg');
+    background-position: center center;
+    background-repeat: no-repeat;
+    background-size: 100% 100%;
+}

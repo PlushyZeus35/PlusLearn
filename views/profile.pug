@@ -112,8 +112,10 @@ body
                   h5.card-title #{quiz.name} 
                   p.card-text #{quiz.description}
                   div(class=['d-grid', 'gap-2', 'd-sm-flex', 'justify-content-sm-center'])
-                    a.btn.btn-primary(href="#") Enter
-                    
+                    -let playUrl = "/quiz/play?quizId=" + quiz.id 
+                    a.btn.btn-primary(href=`${playUrl}`) Enter
+  script.
+    let ejemplo =  myquizzes;
 
 script(src='/static/js/profile.js')
 script(src='https://kit.fontawesome.com/043d7654b9.js' crossorigin='anonymous')

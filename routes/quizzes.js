@@ -1,4 +1,5 @@
 var express = require('express');
+const answerHelper = require('../lib/answerHelper');
 var router = express.Router();
 const { isLoggedIn } = require('../lib/auth');
 const questionHelper = require('../lib/questionHelper');
@@ -58,6 +59,26 @@ router.get('/delete', isLoggedIn, async (req, res) => {
         res.redirect('/profile');
     }
     
+})
+
+router.get('/play', async (req, res) => {
+    let quizId = req.query.quizId;
+    const quiz = await quizHelper.getQuiz(quizId);
+    const quizQuestions = await questionHelper.getQuestions(quizId);
+    quizQuestions.forEach(function(element){
+        answerHelper.randomizeAnswers(element.answers);
+    })
+    console.log(quizQuestions[0].answers);
+    res.render('play', {quiz, quizQuestions});
+})
+
+router.post('/played', (req, res) => {
+    let answers = req.body.results;
+    console.log("resultados!");
+    let results = answers.split("#");
+    console.log(results);
+    //res.render('play', {quiz, quizQuestions});
+    res.redirect('/profile');
 })
 
 

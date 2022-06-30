@@ -31,7 +31,7 @@ body
                     h3 Crear nueva question
                     button(type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close")
                 .modal-body 
-                    form.was-validated(action="/question/add" method="POST")
+                    form(action="/question/add" method="POST")
                         .mb-3 
                         label(for="questionNameInput" class="form-label") Pregunta:
                         input(type="text" name="questionName" class="form-control is-invalid" id="questionNameInput" required)
@@ -93,7 +93,7 @@ body
                     button.btn.btn-primary(data-bs-toggle="modal" data-bs-target="#addQuestionModal") Añadir question
                     a.btn.btn-danger(href=`${deleteUrl}`) Eliminar quiz
             hr
-            #questionAccordion.accordion 
+            form#questionAccordion.accordion 
                 each question, i in quizQuestions
                     - collapseName = "collapse" + question.id
                     .accordion-item 
@@ -105,22 +105,19 @@ body
                         .accordion-collapse.collapse(aria-labelledby="heading" data-bs-parent="#questionAccordion" id='question'+i)
                             .accordion-body.bg-light.bg-gradient
                                 ul.list-group 
-                                    li.list-group-item.list-group-item-success
-                                        - correctResponseId = "correctResponse" + question.id
-                                        <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="green" stroke-width="3" stroke-linecap="round" stroke-linejoin="round" class="feather feather-check"><polyline points="20 6 9 17 4 12"></polyline></svg>
-                                        span(id=`${correctResponseId}`) #{question.response1}
-                                    li.list-group-item.list-group-item-danger
-                                        - incorrectResponse1Id = "incorrectResponse1" + question.id
-                                        <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="red" stroke-width="3" stroke-linecap="round" stroke-linejoin="round" class="feather feather-x"><line x1="18" y1="6" x2="6" y2="18"></line><line x1="6" y1="6" x2="18" y2="18"></line></svg> 
-                                        span(id=`${incorrectResponse1Id}`) #{question.response2}
-                                    li.list-group-item.list-group-item-danger
-                                        - incorrectResponse2Id = "incorrectResponse2" + question.id
-                                        <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="red" stroke-width="3" stroke-linecap="round" stroke-linejoin="round" class="feather feather-x"><line x1="18" y1="6" x2="6" y2="18"></line><line x1="6" y1="6" x2="18" y2="18"></line></svg>
-                                        span(id=`${incorrectResponse2Id}`) #{question.response3} 
-                                    li.list-group-item.list-group-item-danger
-                                        - incorrectResponse3Id = "incorrectResponse3" + question.id
-                                        <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="red" stroke-width="3" stroke-linecap="round" stroke-linejoin="round" class="feather feather-x"><line x1="18" y1="6" x2="6" y2="18"></line><line x1="6" y1="6" x2="18" y2="18"></line></svg>
-                                        span(id=`${incorrectResponse3Id}`) #{question.response4}
+                                    - let contador = 0
+                                    each answer, i in question.answers
+                                        if answer.isCorrect
+                                            li.list-group-item.list-group-item-success
+                                                - correctResponseId = "correctResponse" + question.id
+                                                <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="green" stroke-width="3" stroke-linecap="round" stroke-linejoin="round" class="feather feather-check"><polyline points="20 6 9 17 4 12"></polyline></svg>
+                                                span(id=`${correctResponseId}`) #{answer.name}
+                                        else 
+                                            li.list-group-item.list-group-item-danger
+                                                - contador++
+                                                - incorrectResponseId = "incorrectResponse" + contador + question.id
+                                                <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="red" stroke-width="3" stroke-linecap="round" stroke-linejoin="round" class="feather feather-x"><line x1="18" y1="6" x2="6" y2="18"></line><line x1="6" y1="6" x2="18" y2="18"></line></svg>
+                                                span(id=`${incorrectResponseId}`) #{answer.name} 
                                 #botonera.mt-3
                                     - questionId = question.id
                                     button.btn.btn-outline-warning.me-3(data-bs-toggle="modal" onclick="editQuestion(this.id);" data-bs-target="#editQuestionModal" id=`${questionId}`) Editar question
