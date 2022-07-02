@@ -4,19 +4,22 @@ var router = express.Router();
 const { isLoggedIn } = require('../lib/auth');
 const questionHelper = require('../lib/questionHelper');
 const quizHelper = require('../lib/quizHelper');
+const responseHelper = require('../lib/responseHelper');
 //const databaseHelper = require('../lib/databaseHelper');
 
 router.get('/edit', isLoggedIn, async (req, res) => {
     let quizId = req.query.quizId;
     const quiz = await quizHelper.getQuiz(quizId);
-    console.log(quiz.userId);
+    //console.log(quiz.userId);
     if(quiz.userId == req.user.id){
 
         const quizQuestions = await questionHelper.getQuestions(quizId);
-        console.log(quizQuestions);
+        const quizResponses = await responseHelper.getQuizResponses(quizId);
+        console.log("devuelto:")
+        console.log(quizResponses);
         console.log(quiz);
         if(quiz != null){
-            res.render('editquiz', {quiz, quizQuestions});
+            res.render('editquiz', {quiz, quizQuestions, quizResponses});
         }else{
             req.flash('message', 'Algo ha ido mal!');
             res.redirect('/profile');
@@ -72,13 +75,15 @@ router.get('/play', async (req, res) => {
     res.render('play', {quiz, quizQuestions});
 })
 
-router.post('/played', (req, res) => {
+router.post('/played', async (req, res) => {
     let answers = req.body.results;
+    const quizId = req.body.quizId;
     console.log("resultados!");
-    let results = answers.split("#");
+    answers = answers.split("#");
+    const results = await quizHelper.checkAnswers(quizId, answers, req.user.id);
+    console.log("Final:");
     console.log(results);
-    //res.render('play', {quiz, quizQuestions});
-    res.redirect('/profile');
+    res.render('results', {results});
 })
 
 

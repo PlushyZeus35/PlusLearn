@@ -14,11 +14,8 @@ router.post('/add', isLoggedIn, async (req, res) => {
     console.log(quizId);
 
     let editQuizUrl = "/quiz/edit?quizId=" + quizId;
-    if(await questionHelper.isQuestionRepeated(questionName)){
-        req.flash('message', 'That Question already exists!');
-    }else{
-        await questionHelper.setNewQuestion(req, questionName, correctAnswer, incorrectAnswer1, incorrectAnswer2, incorrectAnswer3, quizId);
-    }
+    
+    await questionHelper.setNewQuestion(req, questionName, correctAnswer, incorrectAnswer1, incorrectAnswer2, incorrectAnswer3, quizId);
     res.redirect(editQuizUrl);
     
 })
