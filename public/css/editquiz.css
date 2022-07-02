@@ -10,3 +10,20 @@
     background-repeat: no-repeat;
     background-size: 100% 100%;
 }
+
+#statsCounter, #statsNotas{
+    min-height: 250px;
+    max-height: 250px;
+    
+}
+
+#statsCounter{
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+}
+
+#myChart2{
+    max-height: 250px;
+}
