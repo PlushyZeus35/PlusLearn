@@ -7,9 +7,14 @@ Response.init({
     nota: {
         type: DataTypes.DECIMAL,
         allowNull: false,
+    },
+    createdAt: {
+        type: DataTypes.DATE,
+        allowNull: false
     }
 }, {
     sequelize,
+    timestamps: false,
     modelName: "response"
 });
 
