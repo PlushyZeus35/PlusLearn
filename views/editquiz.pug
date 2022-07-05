@@ -8,21 +8,37 @@ head
     link(href='https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/css/bootstrap.min.css' rel='stylesheet' integrity='sha384-1BmE4kWBq78iYhFldvKuhfTAU6auU8tT94WrHftjDbrCEXSU1oBoqyl2QvZ6jIW3' crossorigin='anonymous')
     link(rel='stylesheet' href='https://cdn.jsdelivr.net/npm/bootstrap-icons@1.8.1/font/bootstrap-icons.css')
     link(rel='stylesheet' href='/static/css/editquiz.css')
-    //link(rel='stylesheet' href='/static/css/style.css')
-body
+body(onload="cronstructChart()")
     // Flash messages
     include ./includes/messages
 
     // NAVBAR!!
     nav.navbar.navbar-dark.bg-dark.fixed-top.text-white
         .container-fluid
-            button#sidebar-toggler.navbar-toggler.b-0(type='button')
+            button#sidebar-toggler.navbar-toggler.b-0(data-bs-toggle="offcanvas" data-bs-target="#offcanvasLogin" aria-controls="offcanvasExample")
                 svg.feather.feather-menu(xmlns='http://www.w3.org/2000/svg' width='24' height='24' viewbox='0 0 24 24' fill='none' stroke='currentColor' stroke-width='2' stroke-linecap='round' stroke-linejoin='round')
                     line(x1='3' y1='12' x2='21' y2='12')
                     line(x1='3' y1='6' x2='21' y2='6')
                     line(x1='3' y1='18' x2='21' y2='18')
             h4.mx-auto Quiz #{quiz.name}
     
+
+    // OFFCANVAS
+    div(class=['offcanvas', 'offcanvas-start'] tabindex="-1" id="offcanvasLogin" aria-labelledby="offcanvasWithBackdropLabel")
+        .offcanvas-header 
+            h5(class=['offcanvas-title', 'strong'] id="offcanvasWithBackdropLabel") Log In user
+            button(class=['btn-close', 'text-reset'] type="button" data-bs-dismiss="offcanvas" aria-label="Close")
+        .offcanvas-body 
+            form(action="/authentication/signin" method="POST")
+                .mb-3 
+                    label(for="inputLoginUsername" class=['form-label'] ) Username 
+                    input(type="text" class=['form-control'] id='inputLoginUsername' name="username") 
+                .mb-3 
+                    label(for="inputLoginPassword" class=['form-label']) Password 
+                    input(type="password" class=['form-control'] id='inputLoginPassword' name="password")
+                button(type='submit' class=['btn', 'btn-primary']) Log In 
+
+
     // ADD QUESTION MODAL!
     #addQuestionModal.modal.fade(tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true")
         .modal-dialog.modal-dialog-centered.modal-fullscreen-sm-down
@@ -34,19 +50,20 @@ body
                     form(action="/question/add" method="POST")
                         .mb-3 
                         label(for="questionNameInput" class="form-label") Pregunta:
-                        input(type="text" name="questionName" class="form-control" id="questionNameInput")
+                        input(type="text" name="questionName" class="form-control is-invalid" id="questionNameInput" required)
+                        
                         .mb-3 
                         label(for="correctResponseInput" class="form-label") Respuesta correcta:
-                        input(type="text" name="correctAnswer" class="form-control" id="correctResponseInput")
+                        input(type="text" name="correctAnswer" class="form-control" id="correctResponseInput" required)
                         .mb-3 
                         label(for="incorrectResponseInput1" class="form-label") Respuesta incorrecta:
-                        input(type="text" name="incorrectAnswer1" class="form-control" id="incorrectResponseInput1")
+                        input(type="text" name="incorrectAnswer1" class="form-control" id="incorrectResponseInput1" required)
                         .mb-3 
                         label(for="incorrectResponseInput2" class="form-label") Respuesta incorrecta:
-                        input(type="text" name="incorrectAnswer2" class="form-control" id="incorrectResponseInput2")
+                        input(type="text" name="incorrectAnswer2" class="form-control" id="incorrectResponseInput2" required)
                         .mb-0
                         label(for="incorrectResponseInput3" class="form-label") Respuesta incorrecta:
-                        input(type="text" name="incorrectAnswer3" class="form-control" id="incorrectResponseInput3")
+                        input(type="text" name="incorrectAnswer3" class="form-control" id="incorrectResponseInput3" required)
                         input(type="text" name="quizId" class="form-control d-none" value=`${quiz.id}`)
                         .modal-footer
                         button(type="button" class="btn btn-secondary" data-bs-dismiss="modal") Close
@@ -76,13 +93,25 @@ body
                         .mb-0
                         label(for="incorrectResponseInput3" class="form-label") Respuesta incorrecta:
                         input(type="text" name="editedIncorrectAnswer3" class="form-control" id="editIncorrectResponseInput3")
-                        input(type="text" name="questionIdInput" id="questionIdInput" class="form-control")
+                        input.d-none(type="text" name="questionIdInput" id="questionIdInput" class="form-control")
+                        input.d-none(type="text" name="quizIdInput" id="quizIdInput" class="form-control" value=`${quiz.id}`)
                         .modal-footer
                         button.me-3(type="button" class="btn btn-secondary" data-bs-dismiss="modal") Close
                         button(type="submit" class="btn btn-primary") Save changes
 
     // MAIN DIV
     #main.container-fluid(style='padding-top: 100px;')
+        #questionsStats.container
+            .row
+                .col-sm-12.col-lg-6
+                    #statsCounter.container.fluid.bg-primary.rounded-2.p-4.mt-3.overflow-hidden
+                        h3.text-center Total Questions 
+                        h5.text-center #{quizQuestions.length}
+                        h3.text-center Total Respuestas 
+                        h5.text-center #{quizResponses.responses.length}
+                .col-sm-12.col-lg-6
+                    #statsNotas.container.fluid.bg-warning.rounded-2.mt-3.overflow-hidden
+                        canvas#myChart2
         #questions.container.mt-4 
             .container-fluid.d-flex.justify-content-between#questionstitle
                 h3 Questions
@@ -91,42 +120,66 @@ body
                     button.btn.btn-primary(data-bs-toggle="modal" data-bs-target="#addQuestionModal") Añadir question
                     a.btn.btn-danger(href=`${deleteUrl}`) Eliminar quiz
             hr
-            #questionAccordion.accordion 
+            #questionAccordion.accordion
+            - counter = 0 
                 each question, i in quizQuestions
                     - collapseName = "collapse" + question.id
+                    - counter++
                     .accordion-item 
                         h2#heading.accordion-header
                             button.accordion-button(type="button" data-bs-toggle="collapse" data-bs-target='#question'+i aria-expanded="true" aria-controls='question'+i)
-                                | Q #1: 
+                                | Q #{counter}: 
                                 - questionName = "questionName" + question.id
                                 span.ms-3(id=`${questionName}`) #{question.name}
                         .accordion-collapse.collapse(aria-labelledby="heading" data-bs-parent="#questionAccordion" id='question'+i)
                             .accordion-body.bg-light.bg-gradient
                                 ul.list-group 
-                                    li.list-group-item.list-group-item-success
-                                        - correctResponseId = "correctResponse" + question.id
-                                        <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="green" stroke-width="3" stroke-linecap="round" stroke-linejoin="round" class="feather feather-check"><polyline points="20 6 9 17 4 12"></polyline></svg>
-                                        span(id=`${correctResponseId}`) #{question.response1}
-                                    li.list-group-item.list-group-item-danger
-                                        - incorrectResponse1Id = "incorrectResponse1" + question.id
-                                        <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="red" stroke-width="3" stroke-linecap="round" stroke-linejoin="round" class="feather feather-x"><line x1="18" y1="6" x2="6" y2="18"></line><line x1="6" y1="6" x2="18" y2="18"></line></svg> 
-                                        span(id=`${incorrectResponse1Id}`) #{question.response2}
-                                    li.list-group-item.list-group-item-danger
-                                        - incorrectResponse2Id = "incorrectResponse2" + question.id
-                                        <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="red" stroke-width="3" stroke-linecap="round" stroke-linejoin="round" class="feather feather-x"><line x1="18" y1="6" x2="6" y2="18"></line><line x1="6" y1="6" x2="18" y2="18"></line></svg>
-                                        span(id=`${incorrectResponse2Id}`) #{question.response3} 
-                                    li.list-group-item.list-group-item-danger
-                                        - incorrectResponse3Id = "incorrectResponse3" + question.id
-                                        <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="red" stroke-width="3" stroke-linecap="round" stroke-linejoin="round" class="feather feather-x"><line x1="18" y1="6" x2="6" y2="18"></line><line x1="6" y1="6" x2="18" y2="18"></line></svg>
-                                        span(id=`${incorrectResponse3Id}`) #{question.response4}
+                                    - let contador = 0
+                                    each answer, i in question.answers
+                                        if answer.isCorrect
+                                            li.list-group-item.list-group-item-success
+                                                - correctResponseId = "correctResponse" + question.id
+                                                <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="green" stroke-width="3" stroke-linecap="round" stroke-linejoin="round" class="feather feather-check"><polyline points="20 6 9 17 4 12"></polyline></svg>
+                                                span(id=`${correctResponseId}`) #{answer.name}
+                                        else 
+                                            li.list-group-item.list-group-item-danger
+                                                - contador++
+                                                - incorrectResponseId = "incorrectResponse" + contador + question.id
+                                                <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="red" stroke-width="3" stroke-linecap="round" stroke-linejoin="round" class="feather feather-x"><line x1="18" y1="6" x2="6" y2="18"></line><line x1="6" y1="6" x2="18" y2="18"></line></svg>
+                                                span(id=`${incorrectResponseId}`) #{answer.name} 
                                 #botonera.mt-3
                                     - questionId = question.id
                                     button.btn.btn-outline-warning.me-3(data-bs-toggle="modal" onclick="editQuestion(this.id);" data-bs-target="#editQuestionModal" id=`${questionId}`) Editar question
                                     - deleteQuestionUrl = "/question/delete?questionId=" + question.id
                                     a.btn.btn-outline-danger.justify-content-end(href=`${deleteQuestionUrl}`) Eliminar question
+        #answers.container.mt-4
+            .container-fluid
+                h3 Answers
+                hr
+                table.table
+                    thead 
+                        tr 
+                            th(scope="col") #
+                            th(scope="col") Username
+                            th(scope="col") Nota
+                            th(scope="col") Fecha
+                    tbody 
+                        - counter = 1
+                        each response, i in quizResponses.responses
+                            tr 
+                                th(scope="row") #{counter}
+                                th(scope="row") #{response.username}
+                                th(scope="row") #{response.nota}
+                                th(scope="row") #{response.fecha}
+                
+            
+                
     script(src='https://code.jquery.com/jquery-3.2.1.min.js'
         integrity='sha256-hwg4gsxgFZhOsEEamdOYGBf13FyQuiTwlAQgxVSNgt4='
         crossorigin='anonymous')
     script(src='/static/js/editquiz.js')
+    script(src='https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js'
+        integrity='sha384-Tc5IQib027qvyjSMfHjOMaLkfuWVxZxUPnCJA7l2mCWNIpG9mGCD8wGNIcPD7Txa' crossorigin='anonymous')
+    script(src='https://cdnjs.cloudflare.com/ajax/libs/Chart.js/3.8.0/chart.min.js' integrity='sha512-sW/w8s4RWTdFFSduOTGtk4isV1+190E/GghVffMA9XczdJ2MDzSzLEubKAs5h0wzgSJOQTRYyaz73L3d6RtJSg==' crossorigin='anonymous' referrerpolicy='no-referrer')
     script(src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.11.5/dist/umd/popper.min.js" integrity="sha384-Xe+8cL9oJa6tN/veChSP7q+mnSPaj5Bcu9mPX5F5xIGE0DVittaqT5lorf0EI7Vk" crossorigin="anonymous")
     script(src="https://cdn.jsdelivr.net/npm/bootstrap@5.2.0-beta1/dist/js/bootstrap.min.js" integrity="sha384-kjU+l4N0Yf4ZOJErLsIcvOU2qSb74wXpOhqTvwVx3OElZRweTnQ6d31fXEoRD1Jy" crossorigin="anonymous")

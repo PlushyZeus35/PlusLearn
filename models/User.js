@@ -23,9 +23,26 @@ User.init({
         type: DataTypes.STRING,
         allowNull: false
     },
-    role: DataTypes.INTEGER
+    role: DataTypes.INTEGER,
+    numQuizzes: {
+        type: DataTypes.INTEGER,
+        defaultValue: 0
+    },
+    averageScore: {
+        type: DataTypes.INTEGER,
+        defaultValue: 0
+    },
+    createdAt: {
+        type: DataTypes.DATE,
+        allowNull: false
+    },
+    activityAt: {
+        type: DataTypes.DATE,
+        allowNull: false
+    }
 }, {
     sequelize,
+    timestamps: false,
     modelName: "user"
 });
 
