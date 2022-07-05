@@ -1,0 +1,81 @@
+doctype html
+head
+    script.
+        var responsesLabels = !{JSON.stringify(responsesLabels)};
+        var responsesData = !{JSON.stringify(responsesData)};
+        var usersData = !{JSON.stringify(usersInfo)};
+        var newUsersData = !{JSON.stringify(usersData)};
+    meta(charset='UTF-8')
+    meta(http-equiv='X-UA-Compatible' content='IE=edge')
+    meta(name='viewport' content='width=device-width, initial-scale=1.0')
+    title Admin Dashboard
+    
+    script(src='https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js')
+    link(rel="stylesheet", href="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/css/bootstrap.min.css", integrity="sha384-1BmE4kWBq78iYhFldvKuhfTAU6auU8tT94WrHftjDbrCEXSU1oBoqyl2QvZ6jIW3", crossorigin="anonymous")
+    script(src="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/js/bootstrap.bundle.min.js", integrity="sha384-ka7Sk0Gln4gmtz2MlQnikT1wXgYsOg+OMhuP+IlRH9sENBO0LRn5q+8nbTov4+1p", crossorigin="anonymous")
+    link(rel='stylesheet' href='/static/css/admin.css')
+        
+body()
+    // Flash messages
+    include ./includes/messages
+
+    // NAVBAR!!
+    nav.navbar.navbar-dark.bg-dark.fixed-top.text-white
+        .container-fluid
+            button#sidebar-toggler.navbar-toggler.b-0(type="button" data-bs-toggle="offcanvas" data-bs-target="#offcanvasLogin" aria-controls="offcanvasExample")
+                svg.feather.feather-menu(xmlns='http://www.w3.org/2000/svg' width='24' height='24' viewbox='0 0 24 24' fill='none' stroke='currentColor' stroke-width='2' stroke-linecap='round' stroke-linejoin='round')
+                    line(x1='3' y1='12' x2='21' y2='12')
+                    line(x1='3' y1='6' x2='21' y2='6')
+                    line(x1='3' y1='18' x2='21' y2='18')
+            h4.mx-auto Hola admin #{user.username}!
+    
+
+    // OFFCANVAS
+    div.bg-dark.bg-gradient(class=['offcanvas', 'offcanvas-start'] tabindex="-1" id="offcanvasLogin" aria-labelledby="offcanvasWithBackdropLabel")
+        .offcanvas-header 
+            h5(class=['offcanvas-title', 'strong', 'text-center'] id="offcanvasWithBackdropLabel") Options
+            button(class=['btn-close', 'text-reset'] type="button" data-bs-dismiss="offcanvas" aria-label="Close")
+        .offcanvas-body
+            .container-fluid
+                .list-group
+                    a.list-group-item.active(href="") 
+                        <svg xmlns="http://www.w3.org/2000/svg" width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" class="feather feather-bar-chart-2"><line x1="18" y1="20" x2="18" y2="10"></line><line x1="12" y1="20" x2="12" y2="4"></line><line x1="6" y1="20" x2="6" y2="14"></line></svg>
+                        | Stats
+                    a.list-group-item(href="")
+                        <svg xmlns="http://www.w3.org/2000/svg" width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" class="feather feather-users"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"></path><circle cx="9" cy="7" r="4"></circle><path d="M23 21v-2a4 4 0 0 0-3-3.87"></path><path d="M16 3.13a4 4 0 0 1 0 7.75"></path></svg>
+                        | Users
+                    a.list-group-item.bg-warning(href="")
+                        img.bi.me-2.imgOption.imgLarge(src='/static/assets/images/brand/test.png' width='25' height='25' alt='')
+                        | Quizzes
+                    a.list-group-item.list-group-item-dark(href='./authentication/logout')
+                        svg.bi.me-2.imgOption.imgLarge(xmlns='http://www.w3.org/2000/svg' width='16' height='16' viewbox='0 0 24 24' fill='none' stroke='currentColor' stroke-width='2' stroke-linecap='round' stroke-linejoin='round')
+                            path(d='M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4')
+                            polyline(points='16 17 21 12 16 7')
+                            line(x1='21' y1='12' x2='9' y2='12')
+                        | Log Out
+
+    // MAIN DIV
+    #main.container-fluid(style='padding-top: 100px;')
+        .container.mainStats
+            .row
+                .col-sm-12.col-lg-6
+                    #userStats.border.container.fluid.border-primary.rounded-2.p-3.mt-3.overflow-hidden
+                        canvas#userChart
+                .col-sm-12.col-lg-6
+                    #responsesStats.border.container.fluid.border-warning.rounded-2.mt-3.overflow-hidden
+                        canvas#responseChart
+            .row 
+                .col-sm-12
+                    #otherStats.container-fluid.bg-secondary.rounded-2.overflow-hidden.p-4.mt-3
+    //#data.d-none 
+        span#usersInfo #{usersInfo}
+        span#responsesInfo #{responsesInfoString}
+            
+
+    //JQUERY
+    script(src='https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js')
+    // CHARTJS
+    script(src='https://cdnjs.cloudflare.com/ajax/libs/Chart.js/3.8.0/chart.min.js' integrity='sha512-sW/w8s4RWTdFFSduOTGtk4isV1+190E/GghVffMA9XczdJ2MDzSzLEubKAs5h0wzgSJOQTRYyaz73L3d6RtJSg==' crossorigin='anonymous' referrerpolicy='no-referrer')
+    // LOCAL JS
+    script(src='/static/js/admin_stats.js')
+        

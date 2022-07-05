@@ -1,0 +1,23 @@
+#userStats, #responsesStats, #otherStats{
+    min-height: 350px;
+    max-height: 350px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+#statsCounter{
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+}
+
+#userChart, #responsesChart{
+    max-height: 300px;
+}
+
+#main{
+    min-height: 100vh;
+    background: #334553;
+}

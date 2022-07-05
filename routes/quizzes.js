@@ -51,7 +51,7 @@ router.get('/delete', isLoggedIn, async (req, res) => {
     console.log(quizId);
     const quiz = await quizHelper.getQuiz(quizId);
     if(quiz.userId == req.user.id){
-        if(await quizHelper.deleteQuiz(quizId)){
+        if(await quizHelper.deleteQuiz(req, quizId)){
             req.flash('success', 'Quiz borrado');
         }else{
             req.flash('message', 'Algo ha ido mal!');
