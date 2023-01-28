@@ -1,7 +1,9 @@
 module.exports = {
-    option: 'option',
-    optionObject: {
-        option1: 'option1',
-        option2: 2
+    database: {
+        password: process.env.PLUSLEARNDB_PASSWORD,
+        database: process.env.PLUSLEARNDB_DATABASE,
+        host: process.env.PLUSLEARNDB_HOST,
+        user: process.env.PLUSLEARNDB_USER,
+        port: 3306
     }
 }
