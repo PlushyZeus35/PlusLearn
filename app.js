@@ -15,6 +15,11 @@ sequelize.sync( {force: false }).then(async () => {
 app.use('/static', express.static(path.join(__dirname, 'public')));
 
 // TEMPLATE ENGINE
+// Set Pug Template Engine
+// Set directory where the template files are located
+app.set('views', './views');
+// Set template engine to use
+app.set('view engine', 'pug');
 
 // MIDDLEWARES
 
