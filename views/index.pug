@@ -3,6 +3,11 @@ html(lang="es")
     head
         include ./includes/head.pug
         include ./includes/bootstrap.pug
+        link(rel='preconnect' href='https://fonts.googleapis.com')
+        link(rel='preconnect' href='https://fonts.gstatic.com' crossorigin='')
+        link(href='https://fonts.googleapis.com/css2?family=Ubuntu:wght@500&display=swap' rel='stylesheet')
+        link(href='https://fonts.googleapis.com/css2?family=Nunito&display=swap' rel='stylesheet')
+        link(rel="stylesheet", href="/static/css/index.css")
     body(style="background-color: #FAF7F0;") 
         include ./includes/index_nav.pug
         #home.px-4.pt-3.my-5.text-center.border-bottom
@@ -11,8 +16,8 @@ html(lang="es")
                 p.lead.mb-4
                 | Realiza tests interactivos para comprobar los conocimientos adquiridos en clase, o para demostrar todo lo que sabes delante de tus compa&ntilde;eros.
                 .d-grid.gap-2.d-sm-flex.justify-content-sm-center.mb-5.mt-3
-                    button.btn.btn-primary.btn-lg.px-4.me-sm-3(type='button' data-bs-toggle='offcanvas' data-bs-target='#loginOffCanvas' aria-controls='loginOffCanvas') Inicia sesi&oacute;n
-                    button.btn.btn-outline-secondary.btn-lg.px-4(type='button' data-bs-toggle='offcanvas' data-bs-target='#signupOffCanvas' aria-controls='signupOffCanvas') Registrate
+                    a.btn.btn-primary.btn-lg.px-4.me-sm-3(href='/login') Inicia sesi&oacute;n
+                    a.btn.btn-outline-secondary.btn-lg.px-4(href='/register') Registrate
             .overflow-hidden(style='max-height: 30vh;')
                 .container.px-5
                 img.img-fluid.border.rounded-3.shadow-lg.mb-4(src='/static/img/landing.png' alt='Example image' width='700' height='500' loading='lazy')
