@@ -10,23 +10,23 @@ html(lang="en")
         link(href='https://fonts.googleapis.com/css2?family=Nunito&display=swap' rel='stylesheet')
     body 
         #test4
-            .test4card
-                form
+            form(action="") 
+                .test4card
                     .cardHeader
                         img(src='/static/img/logo.png' width='70px' alt='')
-                        h5.text-white.pt-3 Login
+                        h5.text-white.pt-3 Registro
                     .cardBody.mt-4
+                        .form-floating.mb-3
+                            input#floatingInput.form-control(type='email' placeholder='name@example.com')
+                            label(for='floatingInput') Correo electrónico
                         .form-floating.mb-3
                             input#floatingInput.form-control(type='text' placeholder='nombre')
                             label(for='floatingInput') Nombre de usuario
                         .form-floating
                             input#floatingPassword.form-control(type='password' placeholder='Password')
-                            label(for='floatingPassword') Contrase&ntilde;a
+                            label(for='floatingPassword') Contraseña
                     .cardFooter.mt-3
                         .d-grid.gap-2
-                            button.btn.btn-primary(type='submit') Acceder
-                            a.btn.btn-outline-secondary(href='/register') Registro
+                            button.btn.btn-primary(type='submit') Registrarse
+                            a.btn.btn-outline-secondary(href='/login') Acceder
                             a.link-info.text-center(href='#') Recuperar la contraseña
-
-
-                        
