@@ -1,0 +1,31 @@
+doctype html
+html(lang="en")
+    head
+        include ./includes/head.pug
+        include ./includes/bootstrap.pug
+        link(rel="stylesheet", href="/static/css/login.css")
+        link(rel='preconnect' href='https://fonts.googleapis.com')
+        link(rel='preconnect' href='https://fonts.gstatic.com' crossorigin='')
+        link(href='https://fonts.googleapis.com/css2?family=Ubuntu:wght@500&display=swap' rel='stylesheet')
+        link(href='https://fonts.googleapis.com/css2?family=Nunito&display=swap' rel='stylesheet')
+    body 
+        #test4
+            .test4card
+                .cardHeader
+                    img(src='/static/img/logo.png' width='70px' alt='')
+                    h5.text-white.pt-3 Login
+                .cardBody.mt-4
+                    .form-floating.mb-3
+                        input#floatingInput.form-control(type='email' placeholder='name@example.com')
+                        label(for='floatingInput') Nombre de usuario
+                    .form-floating
+                        input#floatingPassword.form-control(type='password' placeholder='Password')
+                        label(for='floatingPassword') Contrase&ntilde;a
+                .cardFooter.mt-3
+                    .d-grid.gap-2
+                        button.btn.btn-primary(type='button') Acceder
+                        button.btn.btn-outline-secondary(type='button') Registro
+                        a.link-info.text-center(href='#') Recuperar la contraseña
+
+
+                        

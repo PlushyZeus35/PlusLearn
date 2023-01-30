@@ -1,0 +1,37 @@
+#test4{
+    height: 100vh;
+    /* svg: pal1-primary colors */
+    background: url('/static/img/raining_background.svg');
+    background-repeat: no-repeat;
+    background-size: cover;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+.test4card{
+    padding: 15px;
+    width: 350px;
+    border-radius: 10px;
+    background: rgba(255,255,255,0.2);
+    -webkit-backdrop-filter: blur(10px);
+    backdrop-filter: blur(10px);
+    border: 1px solid rgba(255,255,255,0.25);
+}
+
+.cardHeader{
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+}
+
+.cardHeader h5{
+    font-size: 45px;
+    font-family: 'Ubuntu', sans-serif;
+    /* font-family: 'Nunito', sans-serif;*/
+}
+
+.cardFooter button{
+    font-family: 'Nunito', sans-serif;
+}
