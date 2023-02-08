@@ -16,4 +16,9 @@ router.get('/register', (req, res) => {
     res.render('signup');
 })
 
+/* GET Home page. */
+router.get('/home', (req, res) => {
+    res.render('home');
+})
+
 module.exports = router;
