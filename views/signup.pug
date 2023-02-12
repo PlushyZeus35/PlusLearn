@@ -9,24 +9,26 @@ html(lang="en")
         link(href='https://fonts.googleapis.com/css2?family=Ubuntu:wght@500&display=swap' rel='stylesheet')
         link(href='https://fonts.googleapis.com/css2?family=Nunito&display=swap' rel='stylesheet')
     body 
+        include ./includes/flashMessages.pug
         #test4
-            form(action="") 
+            form(method="POST" action="/auth/signup") 
                 .test4card
                     .cardHeader
                         img(src='/static/img/logo.png' width='70px' alt='')
                         h5.text-white.pt-3 Registro
                     .cardBody.mt-4
                         .form-floating.mb-3
-                            input#floatingInput.form-control(type='email' placeholder='name@example.com')
+                            input#floatingInput.form-control(type='email' placeholder='name@example.com' name='email')
                             label(for='floatingInput') Correo electrónico
                         .form-floating.mb-3
-                            input#floatingInput.form-control(type='text' placeholder='nombre')
+                            input#floatingInput.form-control(type='text' placeholder='nombre' name='username')
                             label(for='floatingInput') Nombre de usuario
                         .form-floating
-                            input#floatingPassword.form-control(type='password' placeholder='Password')
+                            input#floatingPassword.form-control(type='password' placeholder='Password' name='password')
                             label(for='floatingPassword') Contraseña
                     .cardFooter.mt-3
                         .d-grid.gap-2
                             button.btn.btn-primary(type='submit') Registrarse
                             a.btn.btn-outline-secondary(href='/login') Acceder
                             a.link-info.text-center(href='#') Recuperar la contraseña
+        script(src='/static/js/signup.js')
