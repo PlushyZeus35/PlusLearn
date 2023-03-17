@@ -2,6 +2,7 @@ const express = require('express');
 const path = require('path');
 const bodyParser = require('body-parser');
 const sequelize = require('./models/index');
+const passport = require('passport');
 const flash = require('connect-flash');
 var session = require('express-session');
 
@@ -13,7 +14,8 @@ sequelize.sync( {force: false }).then(async () => {
     console.log("Se ha producido un error!", error);
 }); 
 app.use(bodyParser.urlencoded({ extended: true }));
-require('./models/associations')
+require('./models/associations');
+require('./helpers/identification');
 
 // SETTINGS
 // Set static path to serve static files
@@ -32,6 +34,8 @@ app.set('views', './views');
 app.set('view engine', 'pug');
 
 // MIDDLEWARES
+app.use(passport.initialize());
+app.use(passport.session());
 
 // GLOBAL VARIABLES
 app.use((req,res,next) => {

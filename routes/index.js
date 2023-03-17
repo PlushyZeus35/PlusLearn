@@ -1,5 +1,6 @@
 var express = require('express');
 var router = express.Router();
+const { isLoggedIn } = require('../helpers/identification');
 
 /* GET Index page. */
 router.get('/', (req, res) => {
@@ -17,7 +18,7 @@ router.get('/register', (req, res) => {
 })
 
 /* GET Home page. */
-router.get('/home', (req, res) => {
+router.get('/home', isLoggedIn, (req, res) => {
     res.render('home');
 })
 
