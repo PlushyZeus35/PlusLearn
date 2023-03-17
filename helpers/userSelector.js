@@ -1,6 +1,6 @@
 const userSelector = {};
 const User = require('../models/user')
-const { Op } = require("sequelize");
+const { Op, where } = require("sequelize");
 
 userSelector.createUser = async (username, password, email) => {
     return await User.create(
@@ -23,6 +23,19 @@ userSelector.getUser = async (username, email) => {
             }
           }
     )
+}
+
+userSelector.updateLastLogin = async (userId) => {
+	return await User.update(
+		{
+			lastLogin: new Date()
+		},
+		{
+			where: {
+				id: userId
+			}
+		}
+	)
 }
 
 module.exports = userSelector;
