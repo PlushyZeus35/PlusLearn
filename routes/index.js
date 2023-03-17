@@ -22,12 +22,4 @@ router.get('/home', isLoggedIn, (req, res) => {
     res.render('home');
 })
 
-/*function isAuth(req , res , next){
-    if(req.isAuthenticated()){
-        next();
-    } else{
-        res.redirect("/login");
-    }
-}*/
-
 module.exports = router;

@@ -1,6 +1,6 @@
 const userSelector = {};
 const User = require('../models/user')
-const { Op, where } = require("sequelize");
+const { Op } = require("sequelize");
 
 userSelector.createUser = async (username, password, email) => {
     return await User.create(
