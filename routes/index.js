@@ -1,6 +1,7 @@
 var express = require('express');
 var router = express.Router();
 const { isLoggedIn } = require('../helpers/identification');
+const testSelector = require('../helpers/testSelector');
 
 /* GET Index page. */
 router.get('/', (req, res) => {
@@ -18,8 +19,21 @@ router.get('/register', (req, res) => {
 })
 
 /* GET Home page. */
-router.get('/home', isLoggedIn, (req, res) => {
-    res.render('home');
+router.get('/home', isLoggedIn, async (req, res) => {
+    let tests = [];
+    if(req.user){
+        tests = await testSelector.getUserTests(req.user.id);
+    }
+    res.render('home',{userTests: tests});
+})
+
+router.post('/test', isLoggedIn, async (req, res) => {
+    // Retrieve form data
+    const testTitle = req.body.title;
+    if(testTitle && req.user){
+        await testSelector.createTest(testTitle,req.user.id);
+    }
+    res.redirect('/home');
 })
 
 module.exports = router;
