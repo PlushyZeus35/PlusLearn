@@ -3,6 +3,9 @@
   "version": "1.0.0",
   "description": "",
   "main": "index.js",
+  "jest": {
+    "testPathIgnorePatterns": ["models"]
+  },
   "scripts": {
     "start": "node ./bin/www",
     "test": "jest",
