@@ -11,14 +11,15 @@ passport.use(new LocalStrategy({
     const userSelected = await UserSelector.getUser(username, username);
     if(userSelected.length==0 || userSelected.length>1){
         done(null, false);
-        return;
+    }else{
+        if(await Crypt.checkPassword(userSelected[0].password,password)){
+            await UserSelector.updateLastLogin(userSelected[0].id);
+            done(null, userSelected[0]);
+        }else{
+            done(null, false);
+        }
     }
-    if(await Crypt.checkPassword(userSelected[0].password,password)){
-        await UserSelector.updateLastLogin(userSelected[0].id);
-        done(null, userSelected[0]);
-        return;
-    }
-    done(null, false);
+
 }))
 
 passport.serializeUser(function(user, done) {
