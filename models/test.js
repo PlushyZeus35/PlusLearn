@@ -7,6 +7,20 @@ Test.init({
     title: {
         type: DataTypes.STRING,
         allowNull: false
+    },
+    description: {
+        type: DataTypes.STRING
+    },
+    active: {
+        type: DataTypes.BOOLEAN,
+        defaultValue: false
+    },
+    interactive: {
+        type: DataTypes.BOOLEAN,
+        defaultValue: false
+    },
+    interactiveCode: {
+        type: DataTypes.STRING
     }
 }, {
     sequelize,

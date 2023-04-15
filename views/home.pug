@@ -20,6 +20,9 @@ html(lang="es")
                         .mb-3 
                             label.form-label(for="testTitleInput") Título de test 
                             input#testTitleInput.form-control(type="text" name="title" required)
+                        .mb-3
+                            label.form-label(for='testDescriptionInput') Descripci&oacute;n
+                            textarea#testDescriptionInput.form-control(style='height: 100px' name="description")  
                     .modal-footer
                         button.btn.btn-secondary(type='button' data-bs-dismiss='modal') Cancelar
                         button.btn.btn-primary(type='submit') Crear test

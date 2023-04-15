@@ -30,8 +30,9 @@ router.get('/home', isLoggedIn, async (req, res) => {
 router.post('/test', isLoggedIn, async (req, res) => {
     // Retrieve form data
     const testTitle = req.body.title;
+    const testDescription = req.body.description;
     if(testTitle && req.user){
-        await testSelector.createTest(testTitle,req.user.id);
+        await testSelector.createTest(testTitle, testDescription, req.user.id);
     }
     res.redirect('/home');
 })

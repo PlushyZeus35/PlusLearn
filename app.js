@@ -34,7 +34,7 @@ app.set('views', './views');
 app.set('view engine', 'pug');
 
 // MIDDLEWARES
-app.use(session({ cookie: { maxAge: 60000 }, 
+app.use(session({ cookie: { maxAge: 600000 }, 
     secret: process.env.SESSION_SECRET,
     resave: false, 
     saveUninitialized: false,
@@ -57,6 +57,7 @@ app.use((req,res,next) => {
 app.use(require('./routes'));
 app.use(require('./routes/index'));
 app.use('/auth',require('./routes/auth'));
+app.use('/test',require('./routes/test'));
 
 
 module.exports = app;
