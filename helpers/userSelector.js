@@ -25,6 +25,10 @@ userSelector.getUser = async (username, email) => {
     )
 }
 
+userSelector.getUserById = async (userId) => {
+	return await User.findByPk(userId);
+}
+
 userSelector.updateLastLogin = async (userId) => {
 	return await User.update(
 		{

@@ -22,4 +22,8 @@ testSelector.getUserTests = async (userId) => {
     )
 }
 
+testSelector.getTest = async (testId) => {
+    return await Test.findByPk(testId);
+}
+
 module.exports = testSelector;
