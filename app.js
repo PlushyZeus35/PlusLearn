@@ -2,6 +2,10 @@ const express = require('express');
 const path = require('path');
 const bodyParser = require('body-parser');
 const sequelize = require('./models/index');
+const { database} = require('./config');
+const MariaDBStore = require('express-session-mariadb-store');
+require('./models/associations');
+const passport = require('passport');
 const flash = require('connect-flash');
 var session = require('express-session');
 
@@ -12,17 +16,15 @@ sequelize.sync( {force: false }).then(async () => {
 }).catch(error => {
     console.log("Se ha producido un error!", error);
 }); 
-app.use(bodyParser.urlencoded({ extended: true }));
-require('./models/associations')
+require('./helpers/identification');
 
 // SETTINGS
 // Set static path to serve static files
 app.use('/static', express.static(path.join(__dirname, 'public')));
-app.use(session({ cookie: { maxAge: 60000 }, 
-    secret: 'woot',
-    resave: false, 
-    saveUninitialized: false}));
-app.use(flash());
+app.use(bodyParser.urlencoded({ 
+    extended: true 
+}));
+
 
 // TEMPLATE ENGINE
 // Set Pug Template Engine
@@ -32,6 +34,16 @@ app.set('views', './views');
 app.set('view engine', 'pug');
 
 // MIDDLEWARES
+app.use(session({ cookie: { maxAge: 600000 }, 
+    secret: process.env.SESSION_SECRET,
+    resave: false, 
+    saveUninitialized: false,
+    store: new MariaDBStore(database)
+}));
+app.use(flash());
+app.use(express.json());
+app.use(passport.initialize());
+app.use(passport.session());
 
 // GLOBAL VARIABLES
 app.use((req,res,next) => {
@@ -45,6 +57,7 @@ app.use((req,res,next) => {
 app.use(require('./routes'));
 app.use(require('./routes/index'));
 app.use('/auth',require('./routes/auth'));
+app.use('/test',require('./routes/test'));
 
 
 module.exports = app;

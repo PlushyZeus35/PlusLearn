@@ -2,6 +2,13 @@ var express = require('express');
 var router = express.Router();
 const Crypt = require('../helpers/crypt');
 const UserSelector = require('../helpers/userSelector');
+const passport = require('passport');
+
+router.post('/login', passport.authenticate('local', {
+    successRedirect: '/home',
+    failureRedirect: '/login',
+    failureFlash: true
+}));
 
 router.post('/signup',async (req, res) => {
     // Retrieve form data
@@ -27,5 +34,12 @@ router.post('/signup',async (req, res) => {
         }
     }
 })
+
+router.get('/logout', async (req, res) => {
+    req.logout(function(err) {
+        if (err) { return next(err); }
+        res.redirect('/');
+    });
+});
 
 module.exports = router;

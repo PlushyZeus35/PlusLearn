@@ -1,0 +1,44 @@
+
+
+#main{
+    min-height: 100vh;
+    background: url('/static/img/raining_background.svg');
+    background-repeat: no-repeat;
+    background-size: cover;
+}
+
+#mainContainer{
+    background-color: whitesmoke;
+    border-radius: 12px;
+}
+
+.noData{
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+}
+
+.noData h3{
+    padding: 0;
+    margin: 0;
+}
+
+#noDataAnimation{
+    width: 250px;
+}
+
+#testMainInfo{
+    display: flex;
+    justify-content: space-between;
+}
+
+@media screen and (max-width: 768px) {
+   
+    #testMainInfo{
+        flex-direction: column;
+    }
+    #buttons button{
+        margin-left: 0;
+    }
+}
