@@ -48,7 +48,7 @@ html(lang="es")
                             else
                                 .dataList 
                                     each test in userTests
-                                        .test.py-3(onclick="handleOnClickTest()")
+                                        .test.py-3(id=test.id onclick="handleOnClickTest(this.id)")
                                             .testIcon 
                                                 .testIconOverflow 
                                                     .testIconUnderflow

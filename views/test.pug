@@ -4,43 +4,38 @@ html(lang="en")
         include ./includes/head.pug
         include ./includes/bootstrap.pug
         include ./includes/fonts.pug
-        link(rel="stylesheet", href="/static/css/test.css")
+        link(rel="stylesheet", href="/static/css/test2.css")
         script(src='https://cdnjs.cloudflare.com/ajax/libs/lottie-web/5.10.2/lottie.min.js' integrity='sha512-fTTVSuY9tLP+l/6c6vWz7uAQqd1rq3Q/GyKBN2jOZvJSLC5RjggSdboIFL1ox09/Ezx/AKwcv/xnDeYN9+iDDA==' crossorigin='anonymous' referrerpolicy='no-referrer')
-    body.bg-secondary 
+        script(src='https://cdn.socket.io/4.5.4/socket.io.min.js')
+    body 
         include ./includes/app_nav.pug
-        .bg-primary 
-            .container.py-4 
-                .row 
-                    .col-12.col-md-8 
-                        h2#quizTitle #{test.title}
-                        a.link-info#quizOwner(href="#") #{user.username}
-                    .col-12.col-md-4.bg-secondary.rounded.d-flex.flex-column.justify-content-center.align-items-center.p-4
-                        h5 Detalles
-                        #options1.d-flex.justify-content-around 
-                            div
-                                if test.active
-                                    svg.bi.bi-check-circle-fill.me-2(xmlns='http://www.w3.org/2000/svg' width='16' height='16' fill='#198754' viewbox='0 0 16 16')
-                                        path(d='M16 8A8 8 0 1 1 0 8a8 8 0 0 1 16 0zm-3.97-3.03a.75.75 0 0 0-1.08.022L7.477 9.417 5.384 7.323a.75.75 0 0 0-1.06 1.06L6.97 11.03a.75.75 0 0 0 1.079-.02l3.992-4.99a.75.75 0 0 0-.01-1.05z')
-                                else 
-                                    svg.bi.bi-x-circle-fill.me-2(xmlns='http://www.w3.org/2000/svg' width='16' height='16' fill='#dc3545' viewbox='0 0 16 16')
-                                        path(d='M16 8A8 8 0 1 1 0 8a8 8 0 0 1 16 0zM5.354 4.646a.5.5 0 1 0-.708.708L7.293 8l-2.647 2.646a.5.5 0 0 0 .708.708L8 8.707l2.646 2.647a.5.5 0 0 0 .708-.708L8.707 8l2.647-2.646a.5.5 0 0 0-.708-.708L8 7.293 5.354 4.646z')
-                                span Activo 
-                            div
-                                if test.interactive
-                                    svg.bi.bi-check-circle-fill.me-2(xmlns='http://www.w3.org/2000/svg' width='16' height='16' fill='#198754' viewbox='0 0 16 16')
-                                        path(d='M16 8A8 8 0 1 1 0 8a8 8 0 0 1 16 0zm-3.97-3.03a.75.75 0 0 0-1.08.022L7.477 9.417 5.384 7.323a.75.75 0 0 0-1.06 1.06L6.97 11.03a.75.75 0 0 0 1.079-.02l3.992-4.99a.75.75 0 0 0-.01-1.05z')
-                                else 
-                                    svg.bi.bi-x-circle-fill.me-2(xmlns='http://www.w3.org/2000/svg' width='16' height='16' fill='#dc3545' viewbox='0 0 16 16')
-                                        path(d='M16 8A8 8 0 1 1 0 8a8 8 0 0 1 16 0zM5.354 4.646a.5.5 0 1 0-.708.708L7.293 8l-2.647 2.646a.5.5 0 0 0 .708.708L8 8.707l2.646 2.647a.5.5 0 0 0 .708-.708L8.707 8l2.647-2.646a.5.5 0 0 0-.708-.708L8 7.293 5.354 4.646z')
-                                span Interactivo
-                        #options2.d-flex.justify-content-around.mt-2 
-                            div 
-                                span 10 min.
-                            div
-                                span 15 preguntas
-                        button.mt-3.btn.btn-primary Comenzar
-        .bg-secondary
-            .container.py-4
-                h2 Descripcion 
-                span #{test.description}
-                
+        #staticBackdrop.modal.fade(data-bs-backdrop='static' data-bs-keyboard='false' tabindex='-1' aria-labelledby='staticBackdropLabel' aria-hidden='true')
+            .modal-dialog.modal-dialog-centered
+                .modal-content
+                    .modal-header
+                        h1#staticBackdropLabel.modal-title.fs-5 Modal title
+                        //button.btn-close(type='button' data-bs-dismiss='modal' aria-label='Close')
+                    .modal-body
+                        .form-floating.mb-3
+                            input#guestNameInput.form-control(type='text' placeholder='Nombre')
+                            label(for='guestNameInput') Nombre
+                    .modal-footer
+                        //button.btn.btn-secondary(type='button' data-bs-dismiss='modal') Close
+                        button.btn.btn-primary(type='button' onclick='setGuestUser();') Acceder
+        .mainContainer
+            .container.rounded.participantContainer.mt-5.p-5 
+                h3 Master
+                .ownerContainer 
+                    ul#masterList.list-group
+                        //li.list-group-item Plushy
+                h3 Participantes
+                .studentContainer
+                    ul#userList.list-group
+                        //li.list-group-item Plushy
+            //.loaderContainer
+                #loadingAnimation
+                h2.text-center Cargando...
+        include ./includes/jquery.pug
+        script(src="https://unpkg.com/axios/dist/axios.min.js")
+        script(src="/static/js/test.js") 
+        //CDF0EA F9F9F9 F6C6EA FAF4B7

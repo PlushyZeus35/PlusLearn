@@ -5,233 +5,58 @@ html(lang="en")
         include ./includes/bootstrap.pug
         include ./includes/fonts.pug
         link(rel="stylesheet", href="/static/css/editTest.css")
+        //script(src="https://cdn.jsdelivr.net/npm/chart.js")
+        script(src='https://cdnjs.cloudflare.com/ajax/libs/lottie-web/5.10.2/lottie.min.js' integrity='sha512-fTTVSuY9tLP+l/6c6vWz7uAQqd1rq3Q/GyKBN2jOZvJSLC5RjggSdboIFL1ox09/Ezx/AKwcv/xnDeYN9+iDDA==' crossorigin='anonymous' referrerpolicy='no-referrer')
         script(src='https://cdnjs.cloudflare.com/ajax/libs/lottie-web/5.10.2/lottie.min.js' integrity='sha512-fTTVSuY9tLP+l/6c6vWz7uAQqd1rq3Q/GyKBN2jOZvJSLC5RjggSdboIFL1ox09/Ezx/AKwcv/xnDeYN9+iDDA==' crossorigin='anonymous' referrerpolicy='no-referrer')
     body 
         include ./includes/app_nav.pug
 
-        #newQuestionModal.modal.fade(tabindex='-1' aria-labelledby='newQuestionModal' aria-hidden='true')
-            .modal-dialog.modal-dialog-centered.modal-fullscreen-sm-down.modal-dialog-scrollable
-                .modal-content
-                    .modal-header
-                        h1#exampleModalLabel.modal-title.fs-5 Nueva pregunta
-                        button.btn-close(type='button' data-bs-dismiss='modal' aria-label='Close')
-                    .modal-body
-                        .form-floating.mb-2
-                            input#questionNameInput.form-control(type='text' placeholder='Nombre')
-                            label(for='questionNameInput') Nombre
-                        .form-floating.mb-2
-                            input#correctAnswerInput.form-control(placeholder='Respuesta correcta')
-                            label(for='correctAnswerInput') Respuesta correcta
-                        .form-floating.mb-2.incorrectAnswer
-                            input#incorrectAnswerInput1.form-control(placeholder='Respuesta incorrecta')
-                            label(for='incorrectAnswerInput1') Respuesta incorrecta
-                        #additionalIncorrectAnswers
-                            #aditionalIncorrectAnswer2.input-group.mb-3.incorrectAnswer
-                                button#2.btn.btn-outline-danger(onclick='onClickDeleteAnswerButton(this.id)' type='button')
-                                    svg.bi.bi-trash-fill(xmlns='http://www.w3.org/2000/svg' width='20' height='20' fill='currentColor' viewbox='0 0 16 16')
-                                        path(d='M2.5 1a1 1 0 0 0-1 1v1a1 1 0 0 0 1 1H3v9a2 2 0 0 0 2 2h6a2 2 0 0 0 2-2V4h.5a1 1 0 0 0 1-1V2a1 1 0 0 0-1-1H10a1 1 0 0 0-1-1H7a1 1 0 0 0-1 1H2.5zm3 4a.5.5 0 0 1 .5.5v7a.5.5 0 0 1-1 0v-7a.5.5 0 0 1 .5-.5zM8 5a.5.5 0 0 1 .5.5v7a.5.5 0 0 1-1 0v-7A.5.5 0 0 1 8 5zm3 .5v7a.5.5 0 0 1-1 0v-7a.5.5 0 0 1 1 0z')
-                                .form-floating
-                                    input#incorrectAnswerInput2.form-control(placeholder='Respuesta incorrecta')
-                                    label(for='incorrectAnswerInput2') Respuesta incorrecta
-                        .mb-2
-                            .d-grid.gap-2
-                                button.btn.btn-lg.btn-outline-secondary(type='button' onclick='onClickAddNewAnswer()')
-                                    svg.bi.bi-plus-circle-fill(xmlns='http://www.w3.org/2000/svg' width='20' height='20' fill='currentColor' viewbox='0 0 16 16')
-                                        path(d='M16 8A8 8 0 1 1 0 8a8 8 0 0 1 16 0zM8.5 4.5a.5.5 0 0 0-1 0v3h-3a.5.5 0 0 0 0 1h3v3a.5.5 0 0 0 1 0v-3h3a.5.5 0 0 0 0-1h-3v-3z')
-                    .modal-footer
-                        button.btn.btn-secondary(type='button' data-bs-dismiss='modal') Cancelar
-                        button.btn.btn-primary(type='button') Guardar
-
-
-        #configurationModal.modal.fade(tabindex='-1' aria-labelledby='configurationModal' aria-hidden='true')
-            .modal-dialog.modal-dialog-centered.modal-fullscreen-sm-down.modal-dialog-scrollable
-                .modal-content
-                    .modal-header
-                        h1#exampleModalLabel.modal-title.fs-5 Configuraci&oacute;n
-                        button.btn-close(type='button' data-bs-dismiss='modal' aria-label='Close')
-                    .modal-body
-                        .form-floating.mb-2
-                            input#floatingInputGroup1.form-control(type='text' placeholder='Nombre' value='Lorem ipsum dolor sit amet, consectetur adipisicing elit.')
-                            label(for='floatingInputGroup1') Nombre
-                        .form-floating.mb-2
-                            textarea#floatingTextarea2.form-control(placeholder='Descripción' style='height: 100px')
-                            label(for='floatingTextarea2') Descripci&oacute;n
-                        .form-floating.mb-2
-                            select#floatingSelect.form-select(aria-label='Temática')
-                                option(selected='') General
-                                option(value='3') Cine
-                                option(value='1') Ciencia y tecnolog&iacute;a
-                                option(value='2') M&uacute;sica
-                            label(for='floatingSelect') Tem&aacute;tica
-                        .mb-2
-                            label.form-label.me-2(for='customRange2') Preguntas por test: 
-                            input#allQuestionsInput.form-check-input(type='checkbox' value='' onchange='onChangeAllQuestionsCheckbox()' checked='')
-                            label.form-check-label(for='allQuestionsInput')
-                                | Todas
-                            span.d-inline-block(tabindex='0' data-bs-toggle='tooltip' data-bs-title='¡Elige cuantas preguntas mostrar por test!')
-                                svg.bi.bi-question-circle-fill(xmlns='http://www.w3.org/2000/svg' width='16' height='16' fill='currentColor' viewbox='0 0 16 16')
-                                    path(d='M16 8A8 8 0 1 1 0 8a8 8 0 0 1 16 0zM5.496 6.033h.825c.138 0 .248-.113.266-.25.09-.656.54-1.134 1.342-1.134.686 0 1.314.343 1.314 1.168 0 .635-.374.927-.965 1.371-.673.489-1.206 1.06-1.168 1.987l.003.217a.25.25 0 0 0 .25.246h.811a.25.25 0 0 0 .25-.25v-.105c0-.718.273-.927 1.01-1.486.609-.463 1.244-.977 1.244-2.056 0-1.511-1.276-2.241-2.673-2.241-1.267 0-2.655.59-2.75 2.286a.237.237 0 0 0 .241.247zm2.325 6.443c.61 0 1.029-.394 1.029-.927 0-.552-.42-.94-1.029-.94-.584 0-1.009.388-1.009.94 0 .533.425.927 1.01.927z')
-                            #questionsInput
-                                input#questionsRangeInput.form-range(type='range' min='0' max='5' value='1' oninput="$('#rangeval').html($(this).val())")
-                                span#rangeval 1
-                        .form-check.form-switch
-                            input#activeInput.form-check-input(type='checkbox' role='switch')
-                            label.form-check-label(for='activeInput') Activo
-                        .form-check.form-switch
-                            input#interactiveInput.form-check-input(type='checkbox' onchange='onChangeInteractiveSwitch()' role='switch')
-                            label.form-check-label(for='interactiveInput') Test interactivo
-                            span.d-inline-block(tabindex='0' data-bs-toggle='tooltip' data-bs-title='¡Activa tu test para hacerlo interactivo!')
-                                svg.bi.bi-question-circle-fill(xmlns='http://www.w3.org/2000/svg' width='16' height='16' fill='currentColor' viewbox='0 0 16 16')
-                                    path(d='M16 8A8 8 0 1 1 0 8a8 8 0 0 1 16 0zM5.496 6.033h.825c.138 0 .248-.113.266-.25.09-.656.54-1.134 1.342-1.134.686 0 1.314.343 1.314 1.168 0 .635-.374.927-.965 1.371-.673.489-1.206 1.06-1.168 1.987l.003.217a.25.25 0 0 0 .25.246h.811a.25.25 0 0 0 .25-.25v-.105c0-.718.273-.927 1.01-1.486.609-.463 1.244-.977 1.244-2.056 0-1.511-1.276-2.241-2.673-2.241-1.267 0-2.655.59-2.75 2.286a.237.237 0 0 0 .241.247zm2.325 6.443c.61 0 1.029-.394 1.029-.927 0-.552-.42-.94-1.029-.94-.584 0-1.009.388-1.009.94 0 .533.425.927 1.01.927z')
-                        #interactiveCodeInput.input-group.mb-3
-                            button#button-addon1.btn.btn-outline-secondary(type='button' onclick='onClickCopyCode()')
-                                span#copyTooltip.d-inline-block(tabindex='0' data-bs-toggle='tooltip' data-bs-title='Copiar código')
-                                svg#noCopiedSVG.bi.bi-clipboard-fill(xmlns='http://www.w3.org/2000/svg' width='20' height='20' fill='currentColor' viewbox='0 0 16 16')
-                                    path(fill-rule='evenodd' d='M10 1.5a.5.5 0 0 0-.5-.5h-3a.5.5 0 0 0-.5.5v1a.5.5 0 0 0 .5.5h3a.5.5 0 0 0 .5-.5v-1Zm-5 0A1.5 1.5 0 0 1 6.5 0h3A1.5 1.5 0 0 1 11 1.5v1A1.5 1.5 0 0 1 9.5 4h-3A1.5 1.5 0 0 1 5 2.5v-1Zm-2 0h1v1A2.5 2.5 0 0 0 6.5 5h3A2.5 2.5 0 0 0 12 2.5v-1h1a2 2 0 0 1 2 2V14a2 2 0 0 1-2 2H3a2 2 0 0 1-2-2V3.5a2 2 0 0 1 2-2Z')
-                                svg#copiedSVG.bi.bi-check-lg(xmlns='http://www.w3.org/2000/svg' width='20' height='20' fill='currentColor' viewbox='0 0 16 16')
-                                    path(d='M12.736 3.97a.733.733 0 0 1 1.047 0c.286.289.29.756.01 1.05L7.88 12.01a.733.733 0 0 1-1.065.02L3.217 8.384a.757.757 0 0 1 0-1.06.733.733 0 0 1 1.047 0l3.052 3.093 5.4-6.425a.247.247 0 0 1 .02-.022Z')
-                            .form-floating
-                                input#codeInput.form-control(disabled='' type='text' value='HCDX12')
-                                label(for='interactiveCodeInput') C&oacute;digo
-                    .modal-footer
-                        button.btn.btn-danger(type='button') Eliminar test
-                        button.btn.btn-secondary(type='button' data-bs-dismiss='modal') Cancelar
-                        button.btn.btn-primary(type='button') Guardar              
-
-        #main
-            .container.pt-4.pb-4
-                #mainContainer.p-4
-                    #testMainInfo 
-                        h3 Este es mi título del test, esto es un ejemplo.
-                        #buttons.d-flex
-                            button.btn.btn-outline-primary.d-flex.justify-content-center.align-items-center.me-2(type='button'  data-bs-toggle="modal" data-bs-target="#newQuestionModal") 
-                                svg.bi.bi-plus-circle-fill.me-2(xmlns='http://www.w3.org/2000/svg' width='16' height='16' fill='currentColor' viewbox='0 0 16 16')
+        div#main.container-fluid.m-0.p-0
+            .row 
+                .col-sm-3.hidesm
+                    #sidebar
+                        #actionButtons 
+                            button.btn.btn-primary(onclick='newQuestion();')
+                                svg.bi.bi-plus-circle-fill(xmlns='http://www.w3.org/2000/svg' width='16' height='16' fill='currentColor' viewbox='0 0 16 16')
                                     path(d='M16 8A8 8 0 1 1 0 8a8 8 0 0 1 16 0zM8.5 4.5a.5.5 0 0 0-1 0v3h-3a.5.5 0 0 0 0 1h3v3a.5.5 0 0 0 1 0v-3h3a.5.5 0 0 0 0-1h-3v-3z')
-                                .inner Añadir pregunta
-                            button.btn.btn-warning.d-flex.justify-content-center.align-items-center(type='button' data-bs-toggle="modal" data-bs-target="#configurationModal") 
+                            button.btn.btn-warning
                                 svg.bi.bi-gear-fill(xmlns='http://www.w3.org/2000/svg' width='16' height='16' fill='currentColor' viewbox='0 0 16 16')
                                     path(d='M9.405 1.05c-.413-1.4-2.397-1.4-2.81 0l-.1.34a1.464 1.464 0 0 1-2.105.872l-.31-.17c-1.283-.698-2.686.705-1.987 1.987l.169.311c.446.82.023 1.841-.872 2.105l-.34.1c-1.4.413-1.4 2.397 0 2.81l.34.1a1.464 1.464 0 0 1 .872 2.105l-.17.31c-.698 1.283.705 2.686 1.987 1.987l.311-.169a1.464 1.464 0 0 1 2.105.872l.1.34c.413 1.4 2.397 1.4 2.81 0l.1-.34a1.464 1.464 0 0 1 2.105-.872l.31.17c1.283.698 2.686-.705 1.987-1.987l-.169-.311a1.464 1.464 0 0 1 .872-2.105l.34-.1c1.4-.413 1.4-2.397 0-2.81l-.34-.1a1.464 1.464 0 0 1-.872-2.105l.17-.31c.698-1.283-.705-2.686-1.987-1.987l-.311.169a1.464 1.464 0 0 1-2.105-.872l-.1-.34zM8 10.93a2.929 2.929 0 1 1 0-5.86 2.929 2.929 0 0 1 0 5.858z')
-                    hr
-                    #questionsContainer 
-                        h5 Preguntas 
-                        #questionList.my-3 
-                            .noData.d-none
-                                h3 ¡Aún no hay nada!
-                                #noDataAnimation
-                                button.btn.btn-outline-primary.d-flex.justify-content-center.align-items-center(type='button' data-bs-toggle="modal" data-bs-target="#newQuestionModal") 
-                                    svg.bi.bi-plus-circle-fill.me-2(xmlns='http://www.w3.org/2000/svg' width='16' height='16' fill='currentColor' viewbox='0 0 16 16')
+                            button.btn.btn-success(onclick="saveDataServer();")
+                                svg.bi.bi-save-fill(xmlns='http://www.w3.org/2000/svg' width='16' height='16' fill='currentColor' viewbox='0 0 16 16')
+                                    path(d='M8.5 1.5A1.5 1.5 0 0 1 10 0h4a2 2 0 0 1 2 2v12a2 2 0 0 1-2 2H2a2 2 0 0 1-2-2V2a2 2 0 0 1 2-2h6c-.314.418-.5.937-.5 1.5v7.793L4.854 6.646a.5.5 0 1 0-.708.708l3.5 3.5a.5.5 0 0 0 .708 0l3.5-3.5a.5.5 0 0 0-.708-.708L8.5 9.293V1.5z')
+                        #questionOrder
+                            //.cube 1
+                            //.cube 2
+                .col-sm-9
+                    #questionContainer
+                        #questionInfoContainer
+                            #animationContainer
+                                #loadingAnimation
+                                //h3.text-white.mb-3 ¡No hay ninguna pregunta!
+                                //button#noQuestionButton.btn.btn-primary(onclick='newQuestion();')
+                                    | Nueva pregunta 
+                                    svg.bi.bi-plus-circle-fill(xmlns='http://www.w3.org/2000/svg' width='16' height='16' fill='currentColor' viewbox='0 0 16 16')
                                         path(d='M16 8A8 8 0 1 1 0 8a8 8 0 0 1 16 0zM8.5 4.5a.5.5 0 0 0-1 0v3h-3a.5.5 0 0 0 0 1h3v3a.5.5 0 0 0 1 0v-3h3a.5.5 0 0 0 0-1h-3v-3z')
-                                    |Añadir pregunta
-                            .questions 
-                                #accordionFlushExample.accordion.accordion-flush
-                                    .accordion-item
-                                        h2#flush-headingOne.accordion-header
-                                            button.accordion-button.collapsed(type='button' data-bs-toggle='collapse' data-bs-target='#flush-1' aria-expanded='false' aria-controls='flush-collapseOne')
-                                                | Esto es un ejemplo de una pregunta de este test. Aquí te pregunto algo, si clickas en mí aparecerán las opciones y podrás ver la correcta!
-                                        #flush-1.accordion-collapse.collapse(aria-labelledby='flush-headingOne' data-bs-parent='#accordionFlushExample')
-                                            .accordion-body.m-0.p-0
-                                                ul.list-group.list-group-flush.m-0.p-0
-                                                    li.list-group-item.list-group-item-success.d-flex.align-items-center 
-                                                        svg.bi.bi-check-circle-fill.me-3(xmlns='http://www.w3.org/2000/svg' width='30' height='30' fill='currentColor' viewbox='0 0 16 16')
-                                                            path(d='M16 8A8 8 0 1 1 0 8a8 8 0 0 1 16 0zm-3.97-3.03a.75.75 0 0 0-1.08.022L7.477 9.417 5.384 7.323a.75.75 0 0 0-1.06 1.06L6.97 11.03a.75.75 0 0 0 1.079-.02l3.992-4.99a.75.75 0 0 0-.01-1.05z')
-                                                        | Esto es un ejemplo de respuesta correcta, debería ser capaz de contener múltiples palabra o incluso un párrafo entero. Esta es la opción que debes elegir si quieres aprobar el examen.
-                                                    li.list-group-item.list-group-item-danger.d-flex.align-items-center 
-                                                        svg.bi.bi-x-circle-fill.me-3(xmlns='http://www.w3.org/2000/svg' width='30' height='30' fill='currentColor' viewbox='0 0 16 16')
-                                                            path(d='M16 8A8 8 0 1 1 0 8a8 8 0 0 1 16 0zM5.354 4.646a.5.5 0 1 0-.708.708L7.293 8l-2.647 2.646a.5.5 0 0 0 .708.708L8 8.707l2.646 2.647a.5.5 0 0 0 .708-.708L8.707 8l2.647-2.646a.5.5 0 0 0-.708-.708L8 7.293 5.354 4.646z')
-                                                        | Esto es un ejemplo de respuesta correcta, debería ser capaz de contener múltiples palabra o incluso un párrafo entero. Esta es la opción que debes elegir si quieres aprobar el examen.
-                                                    li.list-group-item.list-group-item-danger.d-flex.align-items-center 
-                                                        svg.bi.bi-x-circle-fill.me-3(xmlns='http://www.w3.org/2000/svg' width='30' height='30' fill='currentColor' viewbox='0 0 16 16')
-                                                            path(d='M16 8A8 8 0 1 1 0 8a8 8 0 0 1 16 0zM5.354 4.646a.5.5 0 1 0-.708.708L7.293 8l-2.647 2.646a.5.5 0 0 0 .708.708L8 8.707l2.646 2.647a.5.5 0 0 0 .708-.708L8.707 8l2.647-2.646a.5.5 0 0 0-.708-.708L8 7.293 5.354 4.646z')
-                                                        | Esto es un ejemplo de respuesta correcta, debería ser capaz de contener múltiples palabra o incluso un párrafo entero. Esta es la opción que debes elegir si quieres aprobar el examen.
-                                                    li.list-group-item.list-group-item-danger.d-flex.align-items-center 
-                                                        svg.bi.bi-x-circle-fill.me-3(xmlns='http://www.w3.org/2000/svg' width='30' height='30' fill='currentColor' viewbox='0 0 16 16')
-                                                            path(d='M16 8A8 8 0 1 1 0 8a8 8 0 0 1 16 0zM5.354 4.646a.5.5 0 1 0-.708.708L7.293 8l-2.647 2.646a.5.5 0 0 0 .708.708L8 8.707l2.646 2.647a.5.5 0 0 0 .708-.708L8.707 8l2.647-2.646a.5.5 0 0 0-.708-.708L8 7.293 5.354 4.646z')
-                                                        | Esto es un ejemplo de respuesta correcta, debería ser capaz de contener múltiples palabra o incluso un párrafo entero. Esta es la opción que debes elegir si quieres aprobar el examen.
-                                                    li.list-group-item.list-group-item-danger.d-flex.align-items-center 
-                                                        svg.bi.bi-x-circle-fill.me-3(xmlns='http://www.w3.org/2000/svg' width='30' height='30' fill='currentColor' viewbox='0 0 16 16')
-                                                            path(d='M16 8A8 8 0 1 1 0 8a8 8 0 0 1 16 0zM5.354 4.646a.5.5 0 1 0-.708.708L7.293 8l-2.647 2.646a.5.5 0 0 0 .708.708L8 8.707l2.646 2.647a.5.5 0 0 0 .708-.708L8.707 8l2.647-2.646a.5.5 0 0 0-.708-.708L8 7.293 5.354 4.646z')
-                                                        | Esto es un ejemplo de respuesta correcta, debería ser capaz de contener múltiples palabra o incluso un párrafo entero. Esta es la opción que debes elegir si quieres aprobar el examen.
-                                    .accordion-item
-                                        h2#flush-headingOne.accordion-header
-                                            button.accordion-button.collapsed(type='button' data-bs-toggle='collapse' data-bs-target='#flush-2' aria-expanded='false' aria-controls='flush-collapseOne')
-                                                | Esto es un ejemplo de una pregunta de este test. Aquí te pregunto algo, si clickas en mí aparecerán las opciones y podrás ver la correcta!
-                                        #flush-2.accordion-collapse.collapse(aria-labelledby='flush-headingOne' data-bs-parent='#accordionFlushExample')
-                                            .accordion-body.m-0.p-0
-                                                ul.list-group.list-group-flush.m-0.p-0
-                                                    li.list-group-item.list-group-item-success.d-flex.align-items-center 
-                                                        svg.bi.bi-check-circle-fill.me-3(xmlns='http://www.w3.org/2000/svg' width='30' height='30' fill='currentColor' viewbox='0 0 16 16')
-                                                            path(d='M16 8A8 8 0 1 1 0 8a8 8 0 0 1 16 0zm-3.97-3.03a.75.75 0 0 0-1.08.022L7.477 9.417 5.384 7.323a.75.75 0 0 0-1.06 1.06L6.97 11.03a.75.75 0 0 0 1.079-.02l3.992-4.99a.75.75 0 0 0-.01-1.05z')
-                                                        | Esto es un ejemplo de respuesta correcta, debería ser capaz de contener múltiples palabra o incluso un párrafo entero. Esta es la opción que debes elegir si quieres aprobar el examen.
-                                                    li.list-group-item.list-group-item-danger.d-flex.align-items-center 
-                                                        svg.bi.bi-x-circle-fill.me-3(xmlns='http://www.w3.org/2000/svg' width='30' height='30' fill='currentColor' viewbox='0 0 16 16')
-                                                            path(d='M16 8A8 8 0 1 1 0 8a8 8 0 0 1 16 0zM5.354 4.646a.5.5 0 1 0-.708.708L7.293 8l-2.647 2.646a.5.5 0 0 0 .708.708L8 8.707l2.646 2.647a.5.5 0 0 0 .708-.708L8.707 8l2.647-2.646a.5.5 0 0 0-.708-.708L8 7.293 5.354 4.646z')
-                                                        | Esto es un ejemplo de respuesta correcta, debería ser capaz de contener múltiples palabra o incluso un párrafo entero. Esta es la opción que debes elegir si quieres aprobar el examen.
-                                                    li.list-group-item.list-group-item-danger.d-flex.align-items-center 
-                                                        svg.bi.bi-x-circle-fill.me-3(xmlns='http://www.w3.org/2000/svg' width='30' height='30' fill='currentColor' viewbox='0 0 16 16')
-                                                            path(d='M16 8A8 8 0 1 1 0 8a8 8 0 0 1 16 0zM5.354 4.646a.5.5 0 1 0-.708.708L7.293 8l-2.647 2.646a.5.5 0 0 0 .708.708L8 8.707l2.646 2.647a.5.5 0 0 0 .708-.708L8.707 8l2.647-2.646a.5.5 0 0 0-.708-.708L8 7.293 5.354 4.646z')
-                                                        | Esto es un ejemplo de respuesta correcta, debería ser capaz de contener múltiples palabra o incluso un párrafo entero. Esta es la opción que debes elegir si quieres aprobar el examen.
-                                                    li.list-group-item.list-group-item-danger.d-flex.align-items-center 
-                                                        svg.bi.bi-x-circle-fill.me-3(xmlns='http://www.w3.org/2000/svg' width='30' height='30' fill='currentColor' viewbox='0 0 16 16')
-                                                            path(d='M16 8A8 8 0 1 1 0 8a8 8 0 0 1 16 0zM5.354 4.646a.5.5 0 1 0-.708.708L7.293 8l-2.647 2.646a.5.5 0 0 0 .708.708L8 8.707l2.646 2.647a.5.5 0 0 0 .708-.708L8.707 8l2.647-2.646a.5.5 0 0 0-.708-.708L8 7.293 5.354 4.646z')
-                                                        | Esto es un ejemplo de respuesta correcta, debería ser capaz de contener múltiples palabra o incluso un párrafo entero. Esta es la opción que debes elegir si quieres aprobar el examen.
-                                                    li.list-group-item.list-group-item-danger.d-flex.align-items-center 
-                                                        svg.bi.bi-x-circle-fill.me-3(xmlns='http://www.w3.org/2000/svg' width='30' height='30' fill='currentColor' viewbox='0 0 16 16')
-                                                            path(d='M16 8A8 8 0 1 1 0 8a8 8 0 0 1 16 0zM5.354 4.646a.5.5 0 1 0-.708.708L7.293 8l-2.647 2.646a.5.5 0 0 0 .708.708L8 8.707l2.646 2.647a.5.5 0 0 0 .708-.708L8.707 8l2.647-2.646a.5.5 0 0 0-.708-.708L8 7.293 5.354 4.646z')
-                                                        | Esto es un ejemplo de respuesta correcta, debería ser capaz de contener múltiples palabra o incluso un párrafo entero. Esta es la opción que debes elegir si quieres aprobar el examen.
-                                    .accordion-item
-                                        h2#flush-headingOne.accordion-header
-                                            button.accordion-button.collapsed(type='button' data-bs-toggle='collapse' data-bs-target='#flush-3' aria-expanded='false' aria-controls='flush-collapseOne')
-                                                | Esto es un ejemplo de una pregunta de este test. Aquí te pregunto algo, si clickas en mí aparecerán las opciones y podrás ver la correcta!
-                                        #flush-3.accordion-collapse.collapse(aria-labelledby='flush-headingOne' data-bs-parent='#accordionFlushExample')
-                                            .accordion-body.m-0.p-0
-                                                ul.list-group.list-group-flush.m-0.p-0
-                                                    li.list-group-item.list-group-item-success.d-flex.align-items-center 
-                                                        svg.bi.bi-check-circle-fill.me-3(xmlns='http://www.w3.org/2000/svg' width='30' height='30' fill='currentColor' viewbox='0 0 16 16')
-                                                            path(d='M16 8A8 8 0 1 1 0 8a8 8 0 0 1 16 0zm-3.97-3.03a.75.75 0 0 0-1.08.022L7.477 9.417 5.384 7.323a.75.75 0 0 0-1.06 1.06L6.97 11.03a.75.75 0 0 0 1.079-.02l3.992-4.99a.75.75 0 0 0-.01-1.05z')
-                                                        | Esto es un ejemplo de respuesta correcta, debería ser capaz de contener múltiples palabra o incluso un párrafo entero. Esta es la opción que debes elegir si quieres aprobar el examen.
-                                                    li.list-group-item.list-group-item-danger.d-flex.align-items-center 
-                                                        svg.bi.bi-x-circle-fill.me-3(xmlns='http://www.w3.org/2000/svg' width='30' height='30' fill='currentColor' viewbox='0 0 16 16')
-                                                            path(d='M16 8A8 8 0 1 1 0 8a8 8 0 0 1 16 0zM5.354 4.646a.5.5 0 1 0-.708.708L7.293 8l-2.647 2.646a.5.5 0 0 0 .708.708L8 8.707l2.646 2.647a.5.5 0 0 0 .708-.708L8.707 8l2.647-2.646a.5.5 0 0 0-.708-.708L8 7.293 5.354 4.646z')
-                                                        | Esto es un ejemplo de respuesta correcta, debería ser capaz de contener múltiples palabra o incluso un párrafo entero. Esta es la opción que debes elegir si quieres aprobar el examen.
-                                                    li.list-group-item.list-group-item-danger.d-flex.align-items-center 
-                                                        svg.bi.bi-x-circle-fill.me-3(xmlns='http://www.w3.org/2000/svg' width='30' height='30' fill='currentColor' viewbox='0 0 16 16')
-                                                            path(d='M16 8A8 8 0 1 1 0 8a8 8 0 0 1 16 0zM5.354 4.646a.5.5 0 1 0-.708.708L7.293 8l-2.647 2.646a.5.5 0 0 0 .708.708L8 8.707l2.646 2.647a.5.5 0 0 0 .708-.708L8.707 8l2.647-2.646a.5.5 0 0 0-.708-.708L8 7.293 5.354 4.646z')
-                                                        | Esto es un ejemplo de respuesta correcta, debería ser capaz de contener múltiples palabra o incluso un párrafo entero. Esta es la opción que debes elegir si quieres aprobar el examen.
-                                                    li.list-group-item.list-group-item-danger.d-flex.align-items-center 
-                                                        svg.bi.bi-x-circle-fill.me-3(xmlns='http://www.w3.org/2000/svg' width='30' height='30' fill='currentColor' viewbox='0 0 16 16')
-                                                            path(d='M16 8A8 8 0 1 1 0 8a8 8 0 0 1 16 0zM5.354 4.646a.5.5 0 1 0-.708.708L7.293 8l-2.647 2.646a.5.5 0 0 0 .708.708L8 8.707l2.646 2.647a.5.5 0 0 0 .708-.708L8.707 8l2.647-2.646a.5.5 0 0 0-.708-.708L8 7.293 5.354 4.646z')
-                                                        | Esto es un ejemplo de respuesta correcta, debería ser capaz de contener múltiples palabra o incluso un párrafo entero. Esta es la opción que debes elegir si quieres aprobar el examen.
-                                                    li.list-group-item.list-group-item-danger.d-flex.align-items-center 
-                                                        svg.bi.bi-x-circle-fill.me-3(xmlns='http://www.w3.org/2000/svg' width='30' height='30' fill='currentColor' viewbox='0 0 16 16')
-                                                            path(d='M16 8A8 8 0 1 1 0 8a8 8 0 0 1 16 0zM5.354 4.646a.5.5 0 1 0-.708.708L7.293 8l-2.647 2.646a.5.5 0 0 0 .708.708L8 8.707l2.646 2.647a.5.5 0 0 0 .708-.708L8.707 8l2.647-2.646a.5.5 0 0 0-.708-.708L8 7.293 5.354 4.646z')
-                                                        | Esto es un ejemplo de respuesta correcta, debería ser capaz de contener múltiples palabra o incluso un párrafo entero. Esta es la opción que debes elegir si quieres aprobar el examen.
-                                    .accordion-item
-                                        h2#flush-headingOne.accordion-header
-                                            button.accordion-button.collapsed(type='button' data-bs-toggle='collapse' data-bs-target='#flush-4' aria-expanded='false' aria-controls='flush-collapseOne')
-                                                | Esto es un ejemplo de una pregunta de este test. Aquí te pregunto algo, si clickas en mí aparecerán las opciones y podrás ver la correcta!
-                                        #flush-4.accordion-collapse.collapse(aria-labelledby='flush-headingOne' data-bs-parent='#accordionFlushExample')
-                                            .accordion-body.m-0.p-0
-                                                ul.list-group.list-group-flush.m-0.p-0
-                                                    li.list-group-item.list-group-item-success.d-flex.align-items-center 
-                                                        svg.bi.bi-check-circle-fill.me-3(xmlns='http://www.w3.org/2000/svg' width='30' height='30' fill='currentColor' viewbox='0 0 16 16')
-                                                            path(d='M16 8A8 8 0 1 1 0 8a8 8 0 0 1 16 0zm-3.97-3.03a.75.75 0 0 0-1.08.022L7.477 9.417 5.384 7.323a.75.75 0 0 0-1.06 1.06L6.97 11.03a.75.75 0 0 0 1.079-.02l3.992-4.99a.75.75 0 0 0-.01-1.05z')
-                                                        | Esto es un ejemplo de respuesta correcta, debería ser capaz de contener múltiples palabra o incluso un párrafo entero. Esta es la opción que debes elegir si quieres aprobar el examen.
-                                                    li.list-group-item.list-group-item-danger.d-flex.align-items-center 
-                                                        svg.bi.bi-x-circle-fill.me-3(xmlns='http://www.w3.org/2000/svg' width='30' height='30' fill='currentColor' viewbox='0 0 16 16')
-                                                            path(d='M16 8A8 8 0 1 1 0 8a8 8 0 0 1 16 0zM5.354 4.646a.5.5 0 1 0-.708.708L7.293 8l-2.647 2.646a.5.5 0 0 0 .708.708L8 8.707l2.646 2.647a.5.5 0 0 0 .708-.708L8.707 8l2.647-2.646a.5.5 0 0 0-.708-.708L8 7.293 5.354 4.646z')
-                                                        | Esto es un ejemplo de respuesta correcta, debería ser capaz de contener múltiples palabra o incluso un párrafo entero. Esta es la opción que debes elegir si quieres aprobar el examen.
-                                                    li.list-group-item.list-group-item-danger.d-flex.align-items-center 
-                                                        svg.bi.bi-x-circle-fill.me-3(xmlns='http://www.w3.org/2000/svg' width='30' height='30' fill='currentColor' viewbox='0 0 16 16')
-                                                            path(d='M16 8A8 8 0 1 1 0 8a8 8 0 0 1 16 0zM5.354 4.646a.5.5 0 1 0-.708.708L7.293 8l-2.647 2.646a.5.5 0 0 0 .708.708L8 8.707l2.646 2.647a.5.5 0 0 0 .708-.708L8.707 8l2.647-2.646a.5.5 0 0 0-.708-.708L8 7.293 5.354 4.646z')
-                                                        | Esto es un ejemplo de respuesta correcta, debería ser capaz de contener múltiples palabra o incluso un párrafo entero. Esta es la opción que debes elegir si quieres aprobar el examen.
-                                                    li.list-group-item.list-group-item-danger.d-flex.align-items-center 
-                                                        svg.bi.bi-x-circle-fill.me-3(xmlns='http://www.w3.org/2000/svg' width='30' height='30' fill='currentColor' viewbox='0 0 16 16')
-                                                            path(d='M16 8A8 8 0 1 1 0 8a8 8 0 0 1 16 0zM5.354 4.646a.5.5 0 1 0-.708.708L7.293 8l-2.647 2.646a.5.5 0 0 0 .708.708L8 8.707l2.646 2.647a.5.5 0 0 0 .708-.708L8.707 8l2.647-2.646a.5.5 0 0 0-.708-.708L8 7.293 5.354 4.646z')
-                                                        | Esto es un ejemplo de respuesta correcta, debería ser capaz de contener múltiples palabra o incluso un párrafo entero. Esta es la opción que debes elegir si quieres aprobar el examen.
-                                                    li.list-group-item.list-group-item-danger.d-flex.align-items-center 
-                                                        svg.bi.bi-x-circle-fill.me-3(xmlns='http://www.w3.org/2000/svg' width='30' height='30' fill='currentColor' viewbox='0 0 16 16')
-                                                            path(d='M16 8A8 8 0 1 1 0 8a8 8 0 0 1 16 0zM5.354 4.646a.5.5 0 1 0-.708.708L7.293 8l-2.647 2.646a.5.5 0 0 0 .708.708L8 8.707l2.646 2.647a.5.5 0 0 0 .708-.708L8.707 8l2.647-2.646a.5.5 0 0 0-.708-.708L8 7.293 5.354 4.646z')
-                                                        | Esto es un ejemplo de respuesta correcta, debería ser capaz de contener múltiples palabra o incluso un párrafo entero. Esta es la opción que debes elegir si quieres aprobar el examen.
-        script(src='https://code.jquery.com/jquery-3.3.1.slim.min.js' integrity='sha384-q8i/X+965DzO0rT7abK41JStQIAqVgRVzpbzo5smXKp4YfRvH+8abtTE1Pi6jizo' crossorigin='anonymous')
+                                
+                            //.inputbox.mb-3
+                                input(required='required' type='text' value='Esto es un ejemplo de pregunta, deberías editarlo!')
+                                span Pregunta
+                                i
+                            //.inputbox.correctInput.mb-3
+                                input(required='required' type='text' value='Esto es un ejemplo de pregunta, deberías editarlo!')
+                                span Respuesta correcta
+                                i
+                            //.inputbox.incorrectInput.mb-3
+                                input(required='required' type='text' value='Esto es un ejemplo de pregunta, deberías editarlo!')
+                                span Respuesta incorrecta
+                                i
+                            //.inputbox.incorrectInput.mb-3
+                                input(required='required' type='text' value='Esto es un ejemplo de pregunta, deberías editarlo!')
+                                span Respuesta incorrecta
+                                i
+                            //span.badge.rounded-pill.text-bg-info 5
+        script(src="https://unpkg.com/axios/dist/axios.min.js")
+        include ./includes/jquery.pug
+        script(src="https://cdn.jsdelivr.net/npm/sortablejs@latest/Sortable.min.js")
         script(src="/static/js/editTest.js")
-                    
