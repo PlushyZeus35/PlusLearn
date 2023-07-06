@@ -1,14 +1,24 @@
 doctype html
-html(lang="en")
+html(lang="es")
     head
         include ./includes/head.pug
         include ./includes/bootstrap.pug
         include ./includes/fonts.pug
         link(rel="stylesheet", href="/static/css/test2.css")
+        script(src="https://cdn.jsdelivr.net/npm/chart.js")
         script(src='https://cdnjs.cloudflare.com/ajax/libs/lottie-web/5.10.2/lottie.min.js' integrity='sha512-fTTVSuY9tLP+l/6c6vWz7uAQqd1rq3Q/GyKBN2jOZvJSLC5RjggSdboIFL1ox09/Ezx/AKwcv/xnDeYN9+iDDA==' crossorigin='anonymous' referrerpolicy='no-referrer')
         script(src='https://cdn.socket.io/4.5.4/socket.io.min.js')
     body 
-        include ./includes/app_nav.pug
+        include ./includes/light_app_nav.pug
+        .toast-container.position-fixed.p-3.top-0.start-50.translate-middle-x
+            #liveToast.toast(role='alert' aria-live='assertive' aria-atomic='true')
+                .toast-header
+                    img.rounded.me-2(src='...' alt='...')
+                    strong.me-auto Bootstrap
+                    small 11 mins ago
+                    button.btn-close(type='button' data-bs-dismiss='toast' aria-label='Close')
+                .toast-body
+                    | Hello, world! This is a toast message.
         #staticBackdrop.modal.fade(data-bs-backdrop='static' data-bs-keyboard='false' tabindex='-1' aria-labelledby='staticBackdropLabel' aria-hidden='true')
             .modal-dialog.modal-dialog-centered
                 .modal-content
@@ -23,18 +33,40 @@ html(lang="en")
                         //button.btn.btn-secondary(type='button' data-bs-dismiss='modal') Close
                         button.btn.btn-primary(type='button' onclick='setGuestUser();') Acceder
         .mainContainer
-            .container.rounded.participantContainer.mt-5.p-5 
+            //.alert.alert-primary.d-flex.align-items-center(role='alert')
+                svg.bi.flex-shrink-0.me-2(role='img' aria-label='Info:')
+                    use(xlink:href='#info-fill')
+                div
+                    | An example alert with an icon
+
+            //.container.rounded.participantContainer.mt-5.p-5 
                 h3 Master
                 .ownerContainer 
                     ul#masterList.list-group
-                        //li.list-group-item Plushy
-                h3 Participantes
+                        li.list-group-item Plushy
+                h3.mt-3 Participantes
+                    span.badge.rounded-pill.text-bg-primary.ms-3 5
                 .studentContainer
                     ul#userList.list-group
-                        //li.list-group-item Plushy
+                        - for(var i = 0; i < 20; i++)
+                            li.list-group-item Plushy
+            //.container.d-flex.justify-content-center.mt-2 
+                button.btn.btn-lg.btn-primary Comenzar
             //.loaderContainer
                 #loadingAnimation
                 h2.text-center Cargando...
+            // Winners list
+            //ul.list-group
+                li.list-group-item.d-flex.justify-content-between.align-items-center
+                    | A list item
+                    span.badge.bg-primary.rounded-pill 14
+                li.list-group-item.d-flex.justify-content-between.align-items-center
+                    | A second list item
+                    span.badge.bg-primary.rounded-pill 2
+                li.list-group-item.d-flex.justify-content-between.align-items-center
+                    | A third list item
+                    span.badge.bg-primary.rounded-pill 1
+
         include ./includes/jquery.pug
         script(src="https://unpkg.com/axios/dist/axios.min.js")
         script(src="/static/js/test.js") 

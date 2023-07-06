@@ -1,7 +1,7 @@
 const passport = require('passport');
 const LocalStrategy = require('passport-local').Strategy;
 const UserSelector = require('./userSelector');
-const Crypt = require('./Crypt');
+const Crypt = require('./crypt');
 
 passport.use(new LocalStrategy({
     usernameField: 'username',

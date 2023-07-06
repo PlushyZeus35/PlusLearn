@@ -46,18 +46,19 @@ router.get('/s/:testId',isLoggedIn,async (req, res) => {
 router.get('/d/:testId', async (req, res) => {
     const testCode = req.params.testId;
     const test = await testSelector.checkInteractiveCode(testCode);
+    let isMaster = false;
     let isAuthenticated = false;
     let username = '';
-    if(req.isAuthenticated()){
-        isAuthenticated = true;
-        username = req.user.username
-    }
-    if(test.length==1){
-        res.render('test', {dataFromServer: {userId: username, roomId: testCode, isAuthenticatedUser: isAuthenticated}});
+    if(test.length == 1){
+        if(req.isAuthenticated()){
+            isAuthenticated = true;
+            username = req.user.username,
+            isMaster = req.user.id == test[0].userId;
+        }
+        res.render('test', {dataFromServer: {userId: username, roomId: testCode, isAuthenticatedUser: isAuthenticated, isMaster: isMaster}});
     }else{
         res.render('error');
     }
-    
 })
 
 // Get info of the test

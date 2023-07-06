@@ -1,7 +1,16 @@
 const sockets = {};
 const { Server } = require("socket.io");
 const testSelector = require("./testSelector");
-const userSelector = require("./userSelector")
+const userSelector = require("./userSelector");
+const testController = require("./testController");
+
+// Event types
+const END_QUESTION = 'end-question';
+const EMPTY = {};
+const SEND_ANSWER = 'send-answer';
+const NEXT_QUESTION = 'next-question';
+const END_TEST = 'end-test';
+const USER_ANSWERED = 'user-answered';
 /*
 const room = {
     roomId: 'XXXXX',
@@ -11,6 +20,8 @@ const room = {
 */
 const rooms = new Map();
 const userMap = new Map();
+const questionMap = new Map();
+const testMap = new Map();
 
 sockets.initialice = async (server) => {
     const io = new Server(server);
@@ -21,56 +32,112 @@ sockets.initialice = async (server) => {
             console.log('user disconnected');
         });
 
+        // Remove user from local database
         socket.on('disconnecting',async () => {
             if(userMap.has(socket.id)){
                 const userInfo = userMap.get(socket.id);
                 userMap.delete(socket.id);
                 if(removeUser(userInfo.username, userInfo.roomId)){
-                    io.to(userInfo.roomId).emit('userconnect',rooms.get(userInfo.roomId));
+                    io.to(userInfo.roomId).emit('userconnect',{roomInfo: rooms.get(userInfo.roomId), userTarget: {isNew: false, name: userInfo.username}});
                 }
             }
-            console.log(rooms);
-            console.log(userMap);
         })
 
         // Conect a user to a room
         socket.on('room-connection', async (connectionInfo) => {
-            console.log(socket.id)
             userMap.set(socket.id, {username: connectionInfo.username, roomId: connectionInfo.roomId})
-
+            const test = await testSelector.checkInteractiveCode(connectionInfo.roomId);
             if(connectionInfo.isGuestUser){
-                console.log('usuario no identificado y no master')
-                addUser(connectionInfo.username, connectionInfo.roomId, false)
+                addUser(test[0].id, connectionInfo.username, connectionInfo.roomId, false)
             }else{
                 const user = await userSelector.getUser(connectionInfo.username, connectionInfo.username);
-                const test = await testSelector.checkInteractiveCode(connectionInfo.roomId);
+                //const test = await testSelector.checkInteractiveCode(connectionInfo.roomId);
                 console.log(user);
                 console.log(test)
                 if(user!=null && test!=null && user.length>0 && test[0].userId==user[0].id){
                     console.log('usuario identificado y master')
-                    addUser(connectionInfo.username, connectionInfo.roomId, true);
+                    addUser(test[0].id, connectionInfo.username, connectionInfo.roomId, true);
                 }else{
                     console.log('usuario identificado y no master')
-                    addUser(connectionInfo.username, connectionInfo.roomId, false);
+                    addUser(test[0].id, connectionInfo.username, connectionInfo.roomId, false);
                 }
             }
             socket.join(connectionInfo.roomId)
-            console.log(rooms);
-            console.log(userMap);
-            io.to(connectionInfo.roomId).emit('userconnect',rooms.get(connectionInfo.roomId));
+            io.to(connectionInfo.roomId).emit('userconnect',{roomInfo: rooms.get(connectionInfo.roomId), userTarget: {isNew: true, name: connectionInfo.username}});
+        })
+
+        socket.on(USER_ANSWERED, async(roomInfo) => {
+            sendEvent(io, roomInfo.roomId, USER_ANSWERED, EMPTY);
+        })
+
+        // Evento recibido del master de cada test interactivo
+        socket.on(END_QUESTION, async(roomInfo) => {
+            console.log('Finalizar pregunta ' + roomInfo.roomId)
+            //const correctAnswer = await testController.getCorrectAnswer(roomInfo.questionId);
+            sendEvent(io, roomInfo.roomId, END_QUESTION ,EMPTY);
+        })
+
+        socket.on('start-test', async (startInfo) => {
+            if(startInfo.roomId){
+                let testInfo;
+                const test = await testSelector.checkInteractiveCode(startInfo.roomId);
+                if(test.length > 0){
+                    testInfo = await testController.getFullTestInfoAnon(test[0].id);
+                    io.to(startInfo.roomId).emit('start-test', testInfo);
+                }
+            }
+        })
+
+        socket.on(SEND_ANSWER, async (answersInfo) => {
+            console.log('HE RECIBIDO UNA RESPUESTA POR UN USUARIO ');
+            console.log(answersInfo);
+            //const key = answersInfo.question.id + '-' + answersInfo.roomId;
+            if(testMap.has(answersInfo.roomId)){
+                const questionsMap = testMap.get(answersInfo.roomId); //.push(answersInfo.selectedAnswer);
+                if(questionsMap.has(answersInfo.selectedAnswer.questionId)){
+                    questionsMap.get(answersInfo.selectedAnswer.questionId).push(answersInfo.selectedAnswer);
+                }else{
+                    questionsMap.set(answersInfo.selectedAnswer.questionId, [answersInfo.selectedAnswer]);
+                }
+            }else{
+                testMap.set(answersInfo.roomId, new Map([[answersInfo.selectedAnswer.questionId, [answersInfo.selectedAnswer]]]));
+            }
+            console.log(testMap)
+            if(testMap.get(answersInfo.roomId).get(answersInfo.selectedAnswer.questionId).length >= rooms.get(answersInfo.roomId).users.length){
+                console.log("YA HE RECIBIDO DE TODOS LOS USUARIOS OS ENVIO ESTO");
+                const correctAnswer = await testController.getCorrectAnswer(answersInfo.selectedAnswer.questionId);
+                console.log({correct: correctAnswer, userAnswers: testMap.get(answersInfo.roomId).get(answersInfo.selectedAnswer.questionId)});
+                sendEvent(io, answersInfo.roomId, SEND_ANSWER, {correct: correctAnswer, userAnswers: testMap.get(answersInfo.roomId).get(answersInfo.selectedAnswer.questionId)});
+            }
+        });
+
+        socket.on(NEXT_QUESTION, async (roomId) => {
+            sendEvent(io, roomId,NEXT_QUESTION, EMPTY);
+        })
+
+        socket.on(END_TEST, async (answers) => {
+            console.log("RECIBIDO FIN DE TEST!");
+            console.log("RESPUESTA DE USUARIOS!");
+            console.log(answers);
+            const results = await testController.getUsersResults(rooms.get(answers.roomId), answers.answers);
+            sendEvent(io, answers.roomId, END_TEST, results);
         })
     });
 }
 
-function addUser(username, roomId, isMaster){
+function addUser(testId, username, roomId, isMaster){
     if(rooms.has(roomId)){
         rooms.get(roomId).master = isMaster ? username : rooms.get(roomId).master;
         isMaster ? null : rooms.get(roomId).users.push(username);
     }else{
-        const roomInfo = {roomId: roomId, users:[]}
+        const roomInfo = {roomId: roomId, users:[], testId: testId}
         isMaster ? roomInfo.master=username : roomInfo.users.push(username);
         rooms.set(roomId, roomInfo);
     }
+}
+
+function sendEvent(io, roomId, eventName, info){
+    io.to(roomId).emit(eventName,info);
 }
 
 // return if it is needed to inform users (true or false)
