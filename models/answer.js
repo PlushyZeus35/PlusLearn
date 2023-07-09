@@ -14,7 +14,8 @@ Answer.init({
     }
 }, {
     sequelize,
-    modelName: "answer"
+    modelName: "answer",
+    timestamps: false
 });
 
 module.exports = Answer;

@@ -93,3 +93,10 @@ h3.mainTitle{
     width: 20px;
     background-color: #dc3545;
 }
+
+
+@media screen and (min-width: 480px) {
+    .questionMainContainer {
+      margin-top: 50px;
+    }
+}

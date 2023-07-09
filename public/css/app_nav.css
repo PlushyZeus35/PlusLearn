@@ -1,37 +1,36 @@
-.input-group {
-    /*display: flex;
-    align-items: center;*/
+.canvasOptionAux{
+  border-top: 1px solid wheat;
+  border-bottom: 1px solid wheat;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  cursor: pointer;
+  color: red;
+  transition: background-color 500ms ease-in-out;
+  transition: color 200ms ease-in-out;
 }
-  
-  .input {
-    min-height: 50px;
-    max-width: 150px;
-    padding: 0 1rem;
-    color: #fff;
-    font-size: 15px;
-    border: 1px solid #5e4dcd;
-    border-radius: 6px 0 0 6px;
-    background-color: transparent;
-  }
-  
-  .button--submit {
-    min-height: 50px;
-    padding: .5em 1em;
-    border: none;
-    border-radius: 0 6px 6px 0;
-    background-color: #5e4dcd;
-    color: #fff;
-    font-size: 15px;
-    cursor: pointer;
-    transition: background-color .3s ease-in-out;
-  }
-  
-  .button--submit:hover {
-    background-color: #5e5dcd;
-  }
-  
-  .input:focus, .input:focus-visible {
-    border-color: #3898EC;
-    outline: none;
-  }
-  
+
+.canvasOption{
+  border-top: 1px solid wheat;
+  border-bottom: 1px solid wheat;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  cursor: pointer;
+  transition: background-color 500ms ease-in-out;
+  transition: color 200ms ease-in-out;
+}
+
+.dangerCanvasOption{
+  color: red;
+}
+
+.canvasOption:hover{
+  background-color: wheat;
+  color: initial;
+}
+
+.canvasSpan{
+  font-size: 28px;
+  margin-left: 15px;
+}

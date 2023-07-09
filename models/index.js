@@ -15,6 +15,7 @@ const sequelize = new Sequelize(
             evict: 15000,
             acquire: 30000
         },
+        timezone: '+02:00'
     }
 );
 

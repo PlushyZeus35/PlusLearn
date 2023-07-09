@@ -1,7 +1,7 @@
 const questionSelector = {};
 const Question = require('../models/question')
 const Answer = require('../models/answer')
-const { Op } = require("sequelize");
+const { Op, where } = require("sequelize");
 
 questionSelector.getTestQuestions = async (testId) => {
     return await Question.findAll(
@@ -27,12 +27,44 @@ questionSelector.getQuestionsAnswers = async(questionId) => {
     })
 }
 
-questionSelector.deleteQuestionsAnswers = async(questionId) => {
+questionSelector.deleteQuestionsAnswers = async(questionIds) => {
     return await Answer.destroy({
         where: {
-            questionId: questionId
+            questionId: questionIds
         }
     })
+}
+
+questionSelector.deleteQuestions = async(questionIds) => {
+    return await Question.destroy({
+        where: {
+            id: questionIds
+        }
+    })
+}
+
+questionSelector.updateQuestions = async(id, title, order) => {
+    return await Question.update(
+        {
+            title: title,
+            order: order
+        },{
+            where: {
+                id: id
+            }
+        }
+    )
+}
+
+questionSelector.createBulkAnswers = async(answers) => {
+    try{
+        return await Answer.bulkCreate(answers);
+    }catch(error){
+        console.log("AQUI HAY UN ERROR")
+        console.log(error);
+        return null;
+    }
+    //return await Answer.bulkCreate(answers);
 }
 
 module.exports = questionSelector;

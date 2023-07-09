@@ -24,7 +24,7 @@ router.get('/:testId',isLoggedIn, async (req, res) => {
             isNew: false
         }
     }*/
-    console.log(targetId)
+    //console.log(targetId)
     res.render('editTest', {test: targetId, dataFromServer: targetId});
 })
 

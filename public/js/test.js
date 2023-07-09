@@ -475,6 +475,7 @@ function createButton(id, answer){
     let buttonLabel = document.createElement('label');
     buttonLabel.setAttribute('for', button.id);
     buttonLabel.innerHTML = answer;
+    buttonLabel.onclick = answerOnClick;
 
     return [button, buttonLabel];
 

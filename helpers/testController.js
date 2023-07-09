@@ -67,7 +67,8 @@ testController.getFullTestInfo = async (testId) => {
         fullTestInfo.questions.push(question);
     }
     
-    console.log(fullTestInfo);
+    //console.log(fullTestInfo);
+
     return fullTestInfo;
 }
 
@@ -144,16 +145,72 @@ function shuffleArray(array) {
 // Delete the tests with the isDeleted attribute activated
 // Update the tests with the isUpdated attribute activated
 testController.updateTestData = async (testData) => {
+    console.log("EDITAR TEST CON ESTOS DATOS:")
     console.log(testData)
-    await testSelector.updateTest(testData.testId,testData.title,testData.description,testData.active);
-    let testQuestions = testData.questions;
-    let questionsToCreate = [];
-    let newlyQuestions = testQuestions.filter((i) => i.isNew);
-    let deletedQuestions = testQuestions.filter((i) => i.isDeleted);
-    let questionsToUpdate = testQuestions.filter((i) => i.isUpdated);
+    console.log(testData.questions[0].correctAnswer);
+    console.log(testData.questions[0].incorrectAnswers)
+
+    //await testSelector.updateTest(testData.testId,testData.title,testData.description,testData.active);
+    
+    const allQuestions = testData.questions;
+    const deletedQuestions = [];
+    const newQuestions = [];
+    const updatedQuestions = [];
+
+    const questionsToDelete = [];
+    const answersToInsert = [];
+
+    for(let quest of allQuestions){
+        if(quest.isDeleted){
+            deletedQuestions.push(quest);
+        }else if(quest.isNew){
+            newQuestions.push(quest);
+        }else if(quest.isUpdated){
+            updatedQuestions.push(quest);
+        }
+    }
+
+    // Delete questions
+    for(let delQuestion of deletedQuestions){
+        questionsToDelete.push(delQuestion.id);
+    }
+    await questionSelector.deleteQuestionsAnswers(questionsToDelete);
+    await questionSelector.deleteQuestions(questionsToDelete);
+   
+    
+    // Update questions
+    for(let updQuestion of updatedQuestions){
+        console.log("acutalizar esta");
+        console.log(updQuestion)
+        await questionSelector.updateQuestions(updQuestion.id, updQuestion.title, updQuestion.order);
+        await questionSelector.deleteQuestionsAnswers(updQuestion.id);
+        const correctAnswer = {
+            title: updQuestion.correctAnswer.name,
+            isCorrect: true,
+            questionId: updQuestion.id
+        }
+        answersToInsert.push(correctAnswer);
+        for(let incAns of updQuestion.incorrectAnswers){
+            console.log("asfasdfasdf");
+            console.log(incAns)
+            const incAnswer = {
+                title: incAns.name,
+                isCorrect: false,
+                questionId: updQuestion.id
+            }
+            answersToInsert.push(incAnswer);
+        }
+        try{
+            await questionSelector.createBulkAnswers(answersToInsert);
+        }catch(e){
+            console.log("ERROR");
+            console.log(e)
+        }
+        
+    }
 
     //create questions
-    for(let i=0; i<newlyQuestions.length; i++){
+    /*for(let i=0; i<newlyQuestions.length; i++){
         let newQuestion = Question.build({
             title: newlyQuestions[i].title,
             order: newlyQuestions[i].order,
@@ -230,7 +287,7 @@ testController.updateTestData = async (testData) => {
             questionId: questionUpdatedId
         },{isNewRecord: true})
         answer.save();   
-    }
+    }*/
 }
 
 testController.createInteractiveCode = async () => {
