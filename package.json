@@ -6,7 +6,8 @@
   "jest": {
     "testPathIgnorePatterns": [
       "models",
-      "routes"
+      "routes",
+      "public"
     ]
   },
   "scripts": {
