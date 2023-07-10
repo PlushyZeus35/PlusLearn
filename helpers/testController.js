@@ -32,6 +32,7 @@ testController.getFullTestInfo = async (testId) => {
         active: test.active,
         title: test.title,
         description: test.description,
+        interactiveCode: test.interactiveCode,
         owner: test.userId,
         questions: []
     }
@@ -145,7 +146,7 @@ function shuffleArray(array) {
 // Delete the tests with the isDeleted attribute activated
 // Update the tests with the isUpdated attribute activated
 testController.updateTestData = async (testData) => {
-    //await testSelector.updateTest(testData.testId,testData.title,testData.description,testData.active);
+    await testSelector.updateTest(testData.testId,testData.title,testData.description,testData.active);
     
     const allQuestions = testData.questions;
 
@@ -186,7 +187,6 @@ testController.updateTestData = async (testData) => {
     console.log("ANSWERS BORRADAS");
     console.log(deletedAnswersAux);
    
-    
     // Update questions
     for(let updQuestion of updatedQuestions){
         answersToInsert.length = 0;
@@ -217,6 +217,15 @@ testController.updateTestData = async (testData) => {
     }
 
     //create questions
+    for(let newQuest of newQuestions){
+        const qId = await questionSelector.setQuestion(testData.testId, newQuest.order, newQuest.title);
+        const answersToInsert = [];
+        answersToInsert.push({title: newQuest.correctAnswer.name, isCorrect: true, questionId: qId.id});
+        answersToInsert.push({title: newQuest.incorrectAnswers[0].name, isCorrect: false, questionId: qId.id})
+        answersToInsert.push({title: newQuest.incorrectAnswers[1].name, isCorrect: false, questionId: qId.id})
+        answersToInsert.push({title: newQuest.incorrectAnswers[2].name, isCorrect: false, questionId: qId.id})
+        const insertedAnswers = await questionSelector.createBulkAnswers(answersToInsert);
+    }
     /*for(let i=0; i<newlyQuestions.length; i++){
         let newQuestion = Question.build({
             title: newlyQuestions[i].title,

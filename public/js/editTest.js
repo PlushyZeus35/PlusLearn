@@ -1,5 +1,6 @@
 const DEBUG = false;
 const testId = dataFromServer;
+let isSaveAlertOn = false;
 debug();
 
 const question = {
@@ -67,7 +68,8 @@ function init(){
                 console.log(response.data);
                 testData = response.data;
                 questions = response.data.questions;
-                console.log(questions)
+                console.log(questions);
+                setModalData(testData);
                 if(questions.length==0){
                     showNoQuestionsScreen()
                 }else{
@@ -79,6 +81,29 @@ function init(){
         .catch(function (error) {
             console.log(error);
         });
+}
+
+function setModalData(testData){
+    const titleInput = $("#testTitleInput")[0];
+    const descriptionInput = $("#testDescriptionInput")[0];
+    $("#isActiveTestCheckbox")[0].checked = testData.active;
+    const interactiveCodeInput = $("#interactiveCodeInput")[0];
+    titleInput.value = testData.title;
+    descriptionInput.value = testData.description;
+    interactiveCodeInput.value = testData.interactiveCode;
+}
+
+function testTitleOnChange(){
+    testData.title = $("#testTitleInput")[0].value;
+}
+
+function testDescriptionOnChange(){
+    testData.description = $("#testDescriptionInput")[0].value;
+}
+
+function testActiveOnChange(){
+    console.log("active edited! " + $("#isActiveTestCheckbox")[0].checked)
+    testData.active = $("#isActiveTestCheckbox")[0].checked;
 }
 
 function newQuestion(){
@@ -107,7 +132,7 @@ function newQuestion(){
     targetQuestion = provisionalId;
     displayQuestion(provisionalId);
     console.log("preguntas: " + JSON.stringify(questions))
-
+    showUpdateNotification();
 }
 
 function cleanMainScreen(){
@@ -158,7 +183,8 @@ function orderUpdated(evt){
     updateUpdatedItem(item, to);
     console.log(questions)
     updateScreenOrder();
-    displayQuestion(item.id)
+    displayQuestion(item.id);
+    showUpdateNotification();
 }
 
 function getLastQuestion(){
@@ -326,6 +352,7 @@ function onClickDeleteQuestion(){
         }
     }
     displayInitiateQuestions();
+    showUpdateNotification();
 }
 
 function getInput(id, title, value){
@@ -359,11 +386,19 @@ function questionUpdated(){
     for(let i=0; i<questions.length; i++){
         if(questions[i].id == questionTargeted){
             questions[i].title = questionInputValue;
-            questions[i].correctAnswer = correctInputValue;
-            questions[i].incorrectAnswers = [incorrect1InputValue,incorrect2InputValue,incorrect3InputValue];
+            // objeto {id, name}
+            questions[i].correctAnswer = {name: correctInputValue};
+            // array de objetos {id, name}
+            questions[i].incorrectAnswers = [];
+            questions[i].incorrectAnswers.push({name: incorrect1InputValue});
+            questions[i].incorrectAnswers.push({name: incorrect2InputValue});
+            questions[i].incorrectAnswers.push({name: incorrect3InputValue});
+            //questions[i].incorrectAnswers = [questions[i].incorrectAnswers[0],incorrect2InputValue,incorrect3InputValue];
+            //questions[i].incorrectAnswers = [incorrect1InputValue,incorrect2InputValue,incorrect3InputValue];
             questions[i].isUpdated = questions[i].isNew ?  false : true;
             console.log("EDITADO QUESTION");
             console.log(questions[i])
+            showUpdateNotification();
         }
     }
 }
@@ -431,4 +466,43 @@ function saveDataServer(){
         console.log(error);
       });
       //console.log("GUARDAR CASO DESACTIVADO")
+}
+
+function showUpdateNotification(){
+    if(!isSaveAlertOn){
+        const mainScreen = $('#alertContainer')[0];
+        let alertDiv = document.createElement('div');
+        alertDiv.classList.add('alert');
+        alertDiv.classList.add('alert-warning');
+        alertDiv.classList.add('d-flex');
+        alertDiv.classList.add('align-items-center');
+        hasAnswered = false;
+        let alertImg = document.createElement('img');
+        alertImg.src = '/static/icons/exclamation-circle-fill.svg';
+        alertImg.classList.add('me-3');
+        alertDiv.appendChild(alertImg);
+
+        let alertContent = document.createElement('div');
+        let span1 = document.createElement('span');
+        span1.innerHTML = '¡No olvides ';// guardar el test cuando hayas terminado!';
+
+        let saveLink = document.createElement('a');
+        saveLink.classList.add('link-info');
+        saveLink.href = '#';
+        saveLink.onclick = saveDataServer;
+        saveLink.innerHTML = 'guardar el test ';
+
+        let span2 = document.createElement('span');
+        span2.innerHTML = ' cuando hayas terminado!';
+
+        alertContent.appendChild(span1);
+        alertContent.appendChild(saveLink);
+        alertContent.appendChild(span2);
+
+        alertDiv.appendChild(alertContent);
+        
+        mainScreen.appendChild(alertDiv);
+        isSaveAlertOn = true;
+    }
+    
 }
