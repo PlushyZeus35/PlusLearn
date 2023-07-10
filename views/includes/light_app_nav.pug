@@ -1,11 +1,11 @@
 header.sticky-top
     .px-3.py-2.text-bg-dark
         .container
-            .d-flex.flex-wrap.align-items-center.justify-content-center.justify-content-lg-start
-                a.d-flex.align-items-center.justify-content-center.my-2.my-lg-0.me-lg-auto.text-white.text-decoration-none(href='/')
+            .d-flex.flex-wrap.align-items-center.justify-content-start
+                a.d-flex.align-items-center.justify-content-center.my-0.me-auto.text-white.text-decoration-none(href='/')
                     img(src="/static/img/logo.png" width='32px' alt="")
                     span.ms-2.fw-bold(style="font-family: 'Nunito', sans-serif; font-size:28px;") PlusLearn
-                ul.nav.col-12.col-lg-auto.my-2.justify-content-center.my-md-0.text-small
+                ul.nav.col-auto.justify-content-center.my-0.text-small
                     //li
                         a.nav-link.text-white(href='#')
                             svg.bi.bi-house-fill.d-block.mx-auto.mb-1(xmlns='http://www.w3.org/2000/svg' width='24' height='24' fill='currentColor' viewbox='0 0 16 16')
@@ -27,8 +27,11 @@ header.sticky-top
                             svg.bi.bi-bar-chart-fill.d-block.mx-auto.mb-1(xmlns='http://www.w3.org/2000/svg' width='24' height='24' fill='currentColor' viewbox='0 0 16 16')
                                 path(d='M1 11a1 1 0 0 1 1-1h2a1 1 0 0 1 1 1v3a1 1 0 0 1-1 1H2a1 1 0 0 1-1-1v-3zm5-4a1 1 0 0 1 1-1h2a1 1 0 0 1 1 1v7a1 1 0 0 1-1 1H7a1 1 0 0 1-1-1V7zm5-5a1 1 0 0 1 1-1h2a1 1 0 0 1 1 1v12a1 1 0 0 1-1 1h-2a1 1 0 0 1-1-1V2z')
                             |                 Estadisticas
-                    //li
-                        a.nav-link.text-white(href='#')
+                    li
+                        button.btn.btn-outline-light(type='button' data-bs-toggle='offcanvas' data-bs-target='#offcanvasExample' aria-controls='offcanvasExample')
+                            svg.bi.bi-list(xmlns='http://www.w3.org/2000/svg' width='30' height='30' fill='currentColor' viewbox='0 0 16 16')
+                                path(fill-rule='evenodd' d='M2.5 12a.5.5 0 0 1 .5-.5h10a.5.5 0 0 1 0 1H3a.5.5 0 0 1-.5-.5zm0-4a.5.5 0 0 1 .5-.5h10a.5.5 0 0 1 0 1H3a.5.5 0 0 1-.5-.5zm0-4a.5.5 0 0 1 .5-.5h10a.5.5 0 0 1 0 1H3a.5.5 0 0 1-.5-.5z')
+                        //a.nav-link.text-white(href='#')
                             svg.bi.bi-person-fill.d-block.mx-auto.mb-1(xmlns='http://www.w3.org/2000/svg' width='24' height='24' fill='currentColor' viewbox='0 0 16 16')
                                 path(d='M3 14s-1 0-1-1 1-4 6-4 6 3 6 4-1 1-1 1H3Zm5-6a3 3 0 1 0 0-6 3 3 0 0 0 0 6Z')
                             |                 Perfil
@@ -43,3 +46,18 @@ header.sticky-top
                             input.form-control(type='text' placeholder="Código de test" aria-label="Código de test" aria-describedby='button-addon2')
                             button#button-addon2.btn.btn-outline-secondary(type='button') Entrar
 
+#offcanvasExample.offcanvas.offcanvas-start.text-bg-dark(tabindex='-1' aria-labelledby='offcanvasExampleLabel')
+    .offcanvas-header
+        h5#offcanvasExampleLabel.offcanvas-title Menú
+        button.btn-close.btn-close-white(type='button' data-bs-dismiss='offcanvas' aria-label='Close')
+    .offcanvas-body
+        div.canvasOption
+            svg.bi.bi-house-fill(xmlns='http://www.w3.org/2000/svg' width='30' height='30' fill='currentColor' viewbox='0 0 16 16')
+                path(d='M8.707 1.5a1 1 0 0 0-1.414 0L.646 8.146a.5.5 0 0 0 .708.708L8 2.207l6.646 6.647a.5.5 0 0 0 .708-.708L13 5.793V2.5a.5.5 0 0 0-.5-.5h-1a.5.5 0 0 0-.5.5v1.293L8.707 1.5Z')
+                path(d='m8 3.293 6 6V13.5a1.5 1.5 0 0 1-1.5 1.5h-9A1.5 1.5 0 0 1 2 13.5V9.293l6-6Z')
+            span.canvasSpan Inicio
+        div.canvasOptionAux
+            svg.bi.bi-box-arrow-left(xmlns='http://www.w3.org/2000/svg' width='30' height='30' fill='currentColor' viewbox='0 0 16 16')
+                path(fill-rule='evenodd' d='M6 12.5a.5.5 0 0 0 .5.5h8a.5.5 0 0 0 .5-.5v-9a.5.5 0 0 0-.5-.5h-8a.5.5 0 0 0-.5.5v2a.5.5 0 0 1-1 0v-2A1.5 1.5 0 0 1 6.5 2h8A1.5 1.5 0 0 1 16 3.5v9a1.5 1.5 0 0 1-1.5 1.5h-8A1.5 1.5 0 0 1 5 12.5v-2a.5.5 0 0 1 1 0v2z')
+                path(fill-rule='evenodd' d='M.146 8.354a.5.5 0 0 1 0-.708l3-3a.5.5 0 1 1 .708.708L1.707 7.5H10.5a.5.5 0 0 1 0 1H1.707l2.147 2.146a.5.5 0 0 1-.708.708l-3-3z')
+            span.canvasSpan Salir

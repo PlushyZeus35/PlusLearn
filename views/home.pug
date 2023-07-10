@@ -9,7 +9,7 @@ html(lang="es")
         script(src='https://cdnjs.cloudflare.com/ajax/libs/lottie-web/5.10.2/lottie.min.js' integrity='sha512-fTTVSuY9tLP+l/6c6vWz7uAQqd1rq3Q/GyKBN2jOZvJSLC5RjggSdboIFL1ox09/Ezx/AKwcv/xnDeYN9+iDDA==' crossorigin='anonymous' referrerpolicy='no-referrer')
         
     body 
-        include ./includes/app_nav.pug
+        include ./includes/light_app_nav.pug
         #addTestModal.modal.fade(tabindex='-1' aria-labelledby='addTestLabel' aria-hidden='true')
             .modal-dialog.modal-dialog-centered
                 form.modal-content(action='/test' method='POST')
@@ -48,7 +48,7 @@ html(lang="es")
                             else
                                 .dataList 
                                     each test in userTests
-                                        .test.py-3(onclick="handleOnClickTest()")
+                                        .test.py-3(id=test.id onclick="handleOnClickTest(this.id)")
                                             .testIcon 
                                                 .testIconOverflow 
                                                     .testIconUnderflow

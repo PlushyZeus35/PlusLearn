@@ -1,0 +1,36 @@
+.canvasOptionAux{
+  border-top: 1px solid wheat;
+  border-bottom: 1px solid wheat;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  cursor: pointer;
+  color: red;
+  transition: background-color 500ms ease-in-out;
+  transition: color 200ms ease-in-out;
+}
+
+.canvasOption{
+  border-top: 1px solid wheat;
+  border-bottom: 1px solid wheat;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  cursor: pointer;
+  transition: background-color 500ms ease-in-out;
+  transition: color 200ms ease-in-out;
+}
+
+.dangerCanvasOption{
+  color: red;
+}
+
+.canvasOption:hover{
+  background-color: wheat;
+  color: initial;
+}
+
+.canvasSpan{
+  font-size: 28px;
+  margin-left: 15px;
+}

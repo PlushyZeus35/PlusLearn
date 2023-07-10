@@ -1,0 +1,102 @@
+body{
+    background-color: #CDF0EA;
+    overflow: hidden;
+}
+
+h3.mainTitle{
+    color: white;
+    font-family: 'Ubuntu', sans-serif;
+}
+
+.mainContainer{
+    width: 100vw;
+    height: 100vh;
+    display: flex;
+    flex-direction: column;
+    /*justify-content: center;*/
+    align-items: center;
+    z-index: 0;
+    background-image: url("data:image/svg+xml,%3csvg xmlns='http://www.w3.org/2000/svg' version='1.1' xmlns:xlink='http://www.w3.org/1999/xlink' xmlns:svgjs='http://svgjs.dev/svgjs' width='1440' height='250' preserveAspectRatio='none' viewBox='0 0 1440 250'%3e%3cg mask='url(%26quot%3b%23SvgjsMask1011%26quot%3b)' fill='none'%3e%3crect width='1440' height='250' x='0' y='0' fill='%230e2a47'%3e%3c/rect%3e%3cpath d='M20 250L270 0L375 0L125 250z' fill='url(%26quot%3b%23SvgjsLinearGradient1012%26quot%3b)'%3e%3c/path%3e%3cpath d='M285.6 250L535.6 0L715.6 0L465.6 250z' fill='url(%26quot%3b%23SvgjsLinearGradient1012%26quot%3b)'%3e%3c/path%3e%3cpath d='M502.20000000000005 250L752.2 0L963.7 0L713.7 250z' fill='url(%26quot%3b%23SvgjsLinearGradient1012%26quot%3b)'%3e%3c/path%3e%3cpath d='M755.8000000000001 250L1005.8000000000001 0L1359.8000000000002 0L1109.8000000000002 250z' fill='url(%26quot%3b%23SvgjsLinearGradient1012%26quot%3b)'%3e%3c/path%3e%3cpath d='M1407 250L1157 0L1082 0L1332 250z' fill='url(%26quot%3b%23SvgjsLinearGradient1013%26quot%3b)'%3e%3c/path%3e%3cpath d='M1188.4 250L938.4000000000001 0L851.4000000000001 0L1101.4 250z' fill='url(%26quot%3b%23SvgjsLinearGradient1013%26quot%3b)'%3e%3c/path%3e%3cpath d='M928.8 250L678.8 0L558.8 0L808.8 250z' fill='url(%26quot%3b%23SvgjsLinearGradient1013%26quot%3b)'%3e%3c/path%3e%3cpath d='M688.1999999999999 250L438.19999999999993 0L208.69999999999993 0L458.69999999999993 250z' fill='url(%26quot%3b%23SvgjsLinearGradient1013%26quot%3b)'%3e%3c/path%3e%3cpath d='M1244.7491929864993 250L1440 54.74919298649937L1440 250z' fill='url(%26quot%3b%23SvgjsLinearGradient1012%26quot%3b)'%3e%3c/path%3e%3cpath d='M0 250L195.25080701350063 250L 0 54.74919298649937z' fill='url(%26quot%3b%23SvgjsLinearGradient1013%26quot%3b)'%3e%3c/path%3e%3c/g%3e%3cdefs%3e%3cmask id='SvgjsMask1011'%3e%3crect width='1440' height='250' fill='white'%3e%3c/rect%3e%3c/mask%3e%3clinearGradient x1='0%25' y1='100%25' x2='100%25' y2='0%25' id='SvgjsLinearGradient1012'%3e%3cstop stop-color='rgba(15%2c 70%2c 185%2c 0.2)' offset='0'%3e%3c/stop%3e%3cstop stop-opacity='0' stop-color='rgba(15%2c 70%2c 185%2c 0.2)' offset='0.66'%3e%3c/stop%3e%3c/linearGradient%3e%3clinearGradient x1='100%25' y1='100%25' x2='0%25' y2='0%25' id='SvgjsLinearGradient1013'%3e%3cstop stop-color='rgba(15%2c 70%2c 185%2c 0.2)' offset='0'%3e%3c/stop%3e%3cstop stop-opacity='0' stop-color='rgba(15%2c 70%2c 185%2c 0.2)' offset='0.66'%3e%3c/stop%3e%3c/linearGradient%3e%3c/defs%3e%3c/svg%3e");
+}
+
+.loaderContainer{
+    width: 50vw;
+    height: 50vh;
+}
+
+.loaderContainer h2{
+    position: relative;
+    top: -100px;
+    font-family: 'Ubuntu', sans-serif;
+    font-weight: bolder;
+}
+
+.secondaryContainer{
+    /*margin-top: 200px;
+    width: 100vw;
+    height: 100vh;
+    position: absolute;*/
+    left: 0; 
+    right: 0; 
+    margin-left: auto; 
+    margin-right: auto; 
+    width: 100vw;
+    height: 100vh;
+    display: flex;
+    flex-direction: column;
+    /*justify-content: center;*/
+    align-items: center;
+}
+
+.buttonsContainer{
+    display: flex;
+    flex-direction: column;
+}
+
+.participantContainer{
+    border: 1px solid black;
+    box-shadow: 0 4px 8px 0 rgba(0, 0, 0, 0.2), 0 6px 20px 0 rgba(0, 0, 0, 0.19);
+    background-color: #6c757d;/*#f9a909;*/
+    max-height: 70vh;
+    overflow-y: auto;
+}
+
+.correctSVG{
+    color: aqua;
+}
+
+.questionMainContainer{
+    border: 2px solid black;
+    padding: 25px;
+    max-height: 85vh;
+    overflow-y: auto;
+    padding-bottom: 50px;
+}
+
+.selectionButton{
+    margin-bottom: 10px;
+}
+
+.chartContainer{
+    max-width: 85vw;
+    margin-top: 50px;
+}
+
+.toast-success-img{
+    height: 20px;
+    width: 20px;
+    background-color: #198754;
+}
+
+.toast-fail-img{
+    height: 20px;
+    width: 20px;
+    background-color: #dc3545;
+}
+
+
+@media screen and (min-width: 480px) {
+    .questionMainContainer {
+      margin-top: 50px;
+    }
+}

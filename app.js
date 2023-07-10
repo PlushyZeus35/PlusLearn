@@ -34,7 +34,10 @@ app.set('views', './views');
 app.set('view engine', 'pug');
 
 // MIDDLEWARES
-app.use(session({ cookie: { maxAge: 600000 }, 
+app.use(session({ 
+    cookie: { 
+        maxAge: 6000000 
+    }, 
     secret: process.env.SESSION_SECRET,
     resave: false, 
     saveUninitialized: false,

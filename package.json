@@ -6,13 +6,14 @@
   "jest": {
     "testPathIgnorePatterns": [
       "models",
-      "routes"
+      "routes",
+      "public"
     ]
   },
   "scripts": {
     "start": "node ./bin/www",
     "test": "jest",
-    "nodemon": "nodemon ./bin/www"
+    "nodemon": "nodemon ./bin/www --config nodemon.json"
   },
   "author": "",
   "license": "ISC",
@@ -26,7 +27,9 @@
     "passport": "^0.6.0",
     "passport-local": "^1.0.0",
     "pug": "^3.0.2",
-    "sequelize": "^6.28.0"
+    "sequelize": "^6.28.0",
+    "socket.io": "^4.6.2",
+    "sortablejs": "^1.15.0"
   },
   "devDependencies": {
     "jest": "^29.5.0",

@@ -45,5 +45,13 @@ module.exports = {
         }else{
             return next();
         }
+    },
+
+    apiIsLoggedIn(req, res, next) {
+        if(req.isAuthenticated()){
+            return next();
+        }else{
+            res.json({error: 302, errorMsg: 'User not authenticated'});
+        }
     }
 }
