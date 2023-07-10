@@ -145,14 +145,10 @@ function shuffleArray(array) {
 // Delete the tests with the isDeleted attribute activated
 // Update the tests with the isUpdated attribute activated
 testController.updateTestData = async (testData) => {
-    console.log("EDITAR TEST CON ESTOS DATOS:")
-    console.log(testData)
-    console.log(testData.questions[0].correctAnswer);
-    console.log(testData.questions[0].incorrectAnswers)
-
     //await testSelector.updateTest(testData.testId,testData.title,testData.description,testData.active);
     
     const allQuestions = testData.questions;
+
     const deletedQuestions = [];
     const newQuestions = [];
     const updatedQuestions = [];
@@ -170,20 +166,36 @@ testController.updateTestData = async (testData) => {
         }
     }
 
+    console.log("TODAS");
+    console.log(allQuestions);
+    console.log("A BORRAR");
+    console.log(deletedQuestions);
+    console.log("A CREAR");
+    console.log(newQuestions);
+    console.log("A MODIFICAR");
+    console.log(updatedQuestions);
+
     // Delete questions
     for(let delQuestion of deletedQuestions){
         questionsToDelete.push(delQuestion.id);
     }
-    await questionSelector.deleteQuestionsAnswers(questionsToDelete);
-    await questionSelector.deleteQuestions(questionsToDelete);
+    const deletedQuestionsAux = await questionSelector.deleteQuestionsAnswers(questionsToDelete);
+    const deletedAnswersAux = await questionSelector.deleteQuestions(questionsToDelete);
+    console.log("QUESTIONS BORRADAS");
+    console.log(deletedQuestionsAux);
+    console.log("ANSWERS BORRADAS");
+    console.log(deletedAnswersAux);
    
     
     // Update questions
     for(let updQuestion of updatedQuestions){
-        console.log("acutalizar esta");
+        answersToInsert.length = 0;
+        console.log("ACTUALIZAR ESTO");
         console.log(updQuestion)
         await questionSelector.updateQuestions(updQuestion.id, updQuestion.title, updQuestion.order);
-        await questionSelector.deleteQuestionsAnswers(updQuestion.id);
+        const answersDeletedd = await questionSelector.deleteQuestionsAnswers(updQuestion.id);
+        console.log("BORRADAS LAS ANSWERS DE ESTA QUESTION");
+        console.log(answersDeletedd);
         const correctAnswer = {
             title: updQuestion.correctAnswer.name,
             isCorrect: true,
@@ -200,13 +212,8 @@ testController.updateTestData = async (testData) => {
             }
             answersToInsert.push(incAnswer);
         }
-        try{
-            await questionSelector.createBulkAnswers(answersToInsert);
-        }catch(e){
-            console.log("ERROR");
-            console.log(e)
-        }
-        
+        const insertedAnswers = await questionSelector.createBulkAnswers(answersToInsert);
+        console.log(insertedAnswers);
     }
 
     //create questions
