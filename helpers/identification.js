@@ -1,7 +1,7 @@
 const passport = require('passport');
 const LocalStrategy = require('passport-local').Strategy;
 const UserSelector = require('./userSelector');
-const Crypt = require('./Crypt');
+const Crypt = require('./crypt');
 
 passport.use(new LocalStrategy({
     usernameField: 'username',
@@ -44,6 +44,14 @@ module.exports = {
             res.redirect('/home');
         }else{
             return next();
+        }
+    },
+
+    apiIsLoggedIn(req, res, next) {
+        if(req.isAuthenticated()){
+            return next();
+        }else{
+            res.json({error: 302, errorMsg: 'User not authenticated'});
         }
     }
 }

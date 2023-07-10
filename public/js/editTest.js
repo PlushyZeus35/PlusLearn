@@ -1,157 +1,508 @@
+const DEBUG = false;
+const testId = dataFromServer;
+let isSaveAlertOn = false;
+debug();
+
+const question = {
+    id: 12,
+    title: 'Example of question title',
+    answers: {
+        correct: 'Respuesta correcta',
+        incorrect1: 'Respuesta incorrecta',
+        incorrect2: 'Respuesta incorrecta2',
+        incorrect3: 'Respuesta incorrecta3'
+    },
+    order: 1,
+    isNew: false
+}
+
+const fquestion = {
+    id: 12,
+    title: 'Example of question title',
+    correctAnswer: 'Respuesta correcta',
+    incorrectAnswers: ['Respuesta incorrecta','Respuesta incorrecta 2','Respuesta incorrecta 3'],
+    order: 1,
+    isNew: false,
+    isDeleted: false,
+    isUpdated: false
+}
+
+init();
+
+let questions = [];
+let questionTargeted;
+
+try{
+    var el = document.getElementById('questionOrder');
+    var sortable = new Sortable(el, {
+        animation: 800,
+        onUpdate: orderUpdated
+    });
+}catch(error){
+    console.error(error)
+}
+
 let animation = bodymovin.loadAnimation({
-    container: document.getElementById('noDataAnimation'),
-    path: '/static/lottie/noData.json',
+    container: document.getElementById('noQuestionAnimation'),
+    path: '/static/lottie/noDataGhost.json',
     render: 'svg',
     loop: true,
     autoplay: true,
     name: 'animation name'
 })
 
-
-init();
+let loadinganimation = bodymovin.loadAnimation({
+    container: document.getElementById('loadingAnimation'),
+    path: '/static/lottie/loading.json',
+    render: 'svg',
+    loop: true,
+    autoplay: true,
+    name: 'animation name'
+})
 
 function init(){
-    enableTooltips();
-    $('#allQuestionsInput')[0].checked = true;
-    $('#codeInput')[0].checked = false;
-    $('#copiedSVG')[0].classList.add('hide');
-    showQuestionsRangeInput(false);
-    showInteractiveCodeInput(false);
-
-    //$('#stadisticContainer2')[0].classList.add('d-none');
-
+    axios.get('/test/getdata/' + testId)
+        .then(function (response) {
+            if(!response.data.error){
+                console.log("info recibida!");
+                console.log(response.data);
+                testData = response.data;
+                questions = response.data.questions;
+                console.log(questions);
+                setModalData(testData);
+                if(questions.length==0){
+                    showNoQuestionsScreen()
+                }else{
+                    console.log(testData);
+                    displayInitiateQuestions();
+                }
+            }
+        })
+        .catch(function (error) {
+            console.log(error);
+        });
 }
 
-// On change event on allQuestionsInput checkbox
-function onChangeAllQuestionsCheckbox(){
-    const isAllQuestionCheckboxChecked = $('#allQuestionsInput')[0].checked;
-    if(isAllQuestionCheckboxChecked){
-        // Hide range input
-        showQuestionsRangeInput(false);
+function setModalData(testData){
+    const titleInput = $("#testTitleInput")[0];
+    const descriptionInput = $("#testDescriptionInput")[0];
+    $("#isActiveTestCheckbox")[0].checked = testData.active;
+    const interactiveCodeInput = $("#interactiveCodeInput")[0];
+    titleInput.value = testData.title;
+    descriptionInput.value = testData.description;
+    interactiveCodeInput.value = testData.interactiveCode;
+}
 
-    }else{
-        // Show range input
-        showQuestionsRangeInput(true);
+function testTitleOnChange(){
+    testData.title = $("#testTitleInput")[0].value;
+}
+
+function testDescriptionOnChange(){
+    testData.description = $("#testDescriptionInput")[0].value;
+}
+
+function testActiveOnChange(){
+    console.log("active edited! " + $("#isActiveTestCheckbox")[0].checked)
+    testData.active = $("#isActiveTestCheckbox")[0].checked;
+}
+
+function newQuestion(){
+    let order = getLastQuestion()+1;
+    let provisionalId = getLastId()+1;
+    questions.push({
+        id: provisionalId,
+        title: '',
+        correctAnswer: '',
+        incorrectAnswers: [],
+        order: order,
+        isNew: true,
+        isDeleted: false
+    })
+    // Nuevo cubo
+    let cube = document.createElement('div');
+    cube.classList.add('cube');
+
+    let cubeId = provisionalId;
+    cube.id = cubeId;
+    cube.innerHTML = questions.length;
+    cube.onclick = cubeSelection;
+
+    let questOrder = $('#questionOrder')[0];
+    questOrder.appendChild(cube)
+    targetQuestion = provisionalId;
+    displayQuestion(provisionalId);
+    console.log("preguntas: " + JSON.stringify(questions))
+    showUpdateNotification();
+}
+
+function cleanMainScreen(){
+    const mainScreen = $('#questionInfoContainer')[0];
+    mainScreen.innerHTML = '';
+}
+
+function cleanQuestionOrder(){
+    const questionOrderContainer = $('#questionOrder')[0];
+    questionOrderContainer.innerHTML = '';
+}
+
+function showNoQuestionsScreen(){
+    cleanMainScreen();
+    const mainScreen = $('#questionInfoContainer')[0];
+    let animContainer = document.createElement('div');
+    animContainer.id = 'animationContainer';
+    let animation = document.createElement('div');
+    animation.id='noQuestionAnimation'
+    animContainer.appendChild(animation);
+    let noQuestionTitle = document.createElement('h3');
+    noQuestionTitle.classList.add('text-white','mb-3');
+    noQuestionTitle.innerHTML = '¡No hay ninguna pregunta!';
+    let noQuestionButton = document.createElement('button');
+    noQuestionButton.classList.add('btn','btn-primary');
+    noQuestionButton.onclick=newQuestion;
+    noQuestionButton.innerHTML+='Nueva pregunta';
+    animContainer.appendChild(noQuestionTitle)
+    animContainer.appendChild(noQuestionButton)
+    mainScreen.appendChild(animContainer);
+
+    let animationLottie = bodymovin.loadAnimation({
+        container: document.getElementById('noQuestionAnimation'),
+        path: '/static/lottie/noDataGhost.json',
+        render: 'svg',
+        loop: true,
+        autoplay: true,
+        name: 'animation name'
+    })
+}
+
+function orderUpdated(evt){
+    let item = evt.item;
+    let from = evt.oldIndex +1;
+    let to = evt.newIndex +1;
+    console.log({item: item.id, from: from, to: to});
+    updateArrayOrder(from, to);
+    updateUpdatedItem(item, to);
+    console.log(questions)
+    updateScreenOrder();
+    displayQuestion(item.id);
+    showUpdateNotification();
+}
+
+function getLastQuestion(){
+    let higher = 0;
+    for(let i=0;i<questions.length;i++){
+        if(questions[i].order>higher){
+            higher=questions[i].order;
+        }
     }
+    return higher;
 }
 
-function onChangeInteractiveSwitch(){
-    const isInteractiveSwitchChecked = $('#interactiveInput')[0].checked;
-    if(isInteractiveSwitchChecked){
-        showInteractiveCodeInput(true);
-    }else{
-        showInteractiveCodeInput(false);
+function getLastId(){
+    let higher = 0;
+    for(let i=0;i<questions.length;i++){
+        if(questions[i].id>higher){
+            higher=questions[i].id;
+        }
     }
+    return higher;
 }
 
-function showQuestionsRangeInput(show){
-    if(show){
-        const questionsRangeInput = $('#questionsInput')[0];
-        if(questionsRangeInput.classList.contains('hide')){
-            questionsRangeInput.classList.remove('hide');
+function updateArrayOrder(from, to){
+    if(from<to){
+        for(let i=0; i<questions.length; i++){
+            if(questions[i].order<=to && questions[i].order>from){
+                questions[i].order--;
+                questions[i].isUpdated = true;
+            }
         }
     }else{
-        const questionsRangeInput = $('#questionsInput')[0];
-        if(!questionsRangeInput.classList.contains('hide')){
-            questionsRangeInput.classList.add('hide');
+        for(let i=0; i<questions.length; i++){
+            if(questions[i].order>=to && questions[i].order<from){
+                questions[i].order++;
+                questions[i].isUpdated = true;
+            }
         }
     }
 }
 
-function showInteractiveCodeInput(show){
-    if(show){
-        const interactiveCodeInput = $('#interactiveCodeInput')[0];
-        if(interactiveCodeInput.classList.contains('hide')){
-            interactiveCodeInput.classList.remove('hide');
-        }
-    }else{
-        const interactiveCodeInput = $('#interactiveCodeInput')[0];
-        if(!interactiveCodeInput.classList.contains('hide')){
-            interactiveCodeInput.classList.add('hide');
-        }
-    }
-}
-
-function onClickCopyCode(){
-    var copyText = $('#codeInput')[0];
-    navigator.clipboard.writeText(copyText.value);
-    showCopiedSVG(3);
-}
-
-function enableTooltips(){
-    const tooltipTriggerList = document.querySelectorAll('[data-bs-toggle="tooltip"]');
-    const tooltipList = [...tooltipTriggerList].map(tooltipTriggerEl => new bootstrap.Tooltip(tooltipTriggerEl));
-}
-
-function showCopiedSVG(seconds){
-    const copiedSvg = $('#copiedSVG')[0];
-    const noCopiedSVG = $('#noCopiedSVG')[0];
-    if(copiedSvg.classList.contains('hide')){
-        noCopiedSVG.classList.add('hide');
-        copiedSvg.classList.remove('hide');
-        setTimeout(function() {
-            copiedSvg.classList.add('hide');
-            noCopiedSVG.classList.remove('hide');
-        }, 1000*seconds);
-    }
-}
-
-function onClickStadisticsButton(){
-    const stadisticContainer2 = $('#stadisticContainer2')[0];
-    const stadisticContainer1 = $('#stadisticContainer1')[0];
-
-    stadisticContainer1.classList.toggle('d-none');
-    stadisticContainer2.classList.toggle('d-none');
-}
-
-function onClickDeleteAnswerButton(id){
-    const searchId = '#aditionalIncorrectAnswer' + id;
-    console.log(searchId);
-    $(searchId)[0].remove();
-}
-
-function onClickAddNewAnswer(){
-    const existingIncorrectAnswers = $('.incorrectAnswer');
-    const nextId = existingIncorrectAnswers.length + 1;
-    createNewIncorrectAnswer(nextId);
-}
-
-function createNewIncorrectAnswer(id){
-    const inputGroup = document.createElement('div');
-    inputGroup.classList.add('input-group');
-    inputGroup.classList.add('mb-3');
-    inputGroup.classList.add( 'incorrectAnswer')
-    inputGroup.id = "aditionalIncorrectAnswer" + id;
-
-    const removeButton = document.createElement('button');
-    removeButton.classList.add('btn');
-    removeButton.classList.add('btn-outline-danger');
-    removeButton.id = id;
-    removeButton.type = 'button';
-    removeButton.onclick = function(){
-        onClickDeleteAnswerButton(id);
-    }
-    removeButton.innerHTML =    `<svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" fill="currentColor" class="bi bi-trash-fill" viewBox="0 0 16 16">
-                                    <path d="M2.5 1a1 1 0 0 0-1 1v1a1 1 0 0 0 1 1H3v9a2 2 0 0 0 2 2h6a2 2 0 0 0 2-2V4h.5a1 1 0 0 0 1-1V2a1 1 0 0 0-1-1H10a1 1 0 0 0-1-1H7a1 1 0 0 0-1 1H2.5zm3 4a.5.5 0 0 1 .5.5v7a.5.5 0 0 1-1 0v-7a.5.5 0 0 1 .5-.5zM8 5a.5.5 0 0 1 .5.5v7a.5.5 0 0 1-1 0v-7A.5.5 0 0 1 8 5zm3 .5v7a.5.5 0 0 1-1 0v-7a.5.5 0 0 1 1 0z"/>
-                                </svg>`;
+function updateScreenOrder(){
+    let cubes = $('.cube');
     
-    const formFloating = document.createElement('div');
-    formFloating.classList = ['form-floating'];
+    for(let i=0; i<cubes.length; i++){
+        //let testId = parseInt(cubes[i].id.split('o')[0]);
+        let testId = parseInt(cubes[i].id);
+        console.log("testiD " + testId)
+        let targetTest = questions.filter((i) => i.id == testId);
+        console.log("targetTest " + targetTest);
+        if(targetTest.length == 1){
+            console.log("order screen " + targetTest.order)
+            cubes[i].innerHTML = targetTest[0].order;
+        }
+    }
+}
 
-    const inputAnswer = document.createElement('input');
-    inputAnswer.classList = ['form-control'];
-    inputAnswer.placeholder = 'Respuesta incorrecta';
-    inputAnswer.id = 'incorrectAnswerInput' + id;
+function displayInitiateQuestions(){
+    cleanMainScreen();
+    cleanQuestionOrder();
+    questions.sort((a, b) => {
+        return a.order - b.order;
+    });
+    console.log("ORDENADO POR ORDEN");
+    console.log(questions);
+    if(questions.length==0 || questions.filter((i) => !i.isDeleted).length==0){
+        showNoQuestionsScreen();
+    }
+    
+    //if(questions.length>0){
+    for(let quest of questions){
+        if(!quest.isDeleted){
+            displayQuestion(quest.id)
+            break;
+        }
+    }
+    //}
+    
+    for(let i=0; i<questions.length; i++){
+        if(!questions[i].isDeleted){
+            // Nuevo cubo
+            let cube = document.createElement('div');
+            cube.classList.add('cube');
 
-    const inputLabel = document.createElement('label');
-    inputLabel.for = inputAnswer.id;
-    inputLabel.innerHTML = "Respuesta incorrecta";
+            let cubeId = questions[i].id;
+            cube.id = cubeId;
+            cube.innerHTML = questions[i].order;
+            cube.onclick = cubeSelection;
 
-    formFloating.appendChild(inputAnswer);
-    formFloating.appendChild(inputLabel);
+            let questOrder = $('#questionOrder')[0];
+            questOrder.appendChild(cube)
+        }
+    }
+}
 
-    inputGroup.appendChild(removeButton);
-    inputGroup.appendChild(formFloating);
-    console.log("a")
-    $('#additionalIncorrectAnswers')[0].appendChild(inputGroup);
+function updateUpdatedItem(item, to){
+    let itemId = item.id;
+    itemId = parseInt(itemId.split('o')[0]);
+    for(let i=0;i<questions.length; i++){
+        if(questions[i].id == itemId){
+            questions[i].order = to;
+            questions[i].isUpdated = true;
+        }
+    }
+}
+
+function displayQuestion(questionId){
+    const mainScreen = $('#questionInfoContainer')[0];
+    cleanMainScreen();
+    let targetQuestion = questions.filter((i) => i.id==questionId);
+    if(targetQuestion.length==1){
+        console.log("QUESTION");
+        console.log(targetQuestion[0])
+        questionTargeted = targetQuestion[0].id;
+        let questionInput = getInput('questionInput','Pregunta', targetQuestion[0].title);
+        mainScreen.appendChild(questionInput);
+
+        let correctInput = getInput('correctInput','Respuesta correcta', targetQuestion[0].correctAnswer ? targetQuestion[0].correctAnswer.name : '');
+        correctInput.classList.add('correctInput');
+        mainScreen.appendChild(correctInput);
+        //let inc = getIncorrectQuestions(targetQuestion[0].incorrectAnswers);
+        let incorrectInput = getInput('incorrect1Input','Respuesta incorrecta 1', targetQuestion[0].incorrectAnswers.length==3 ? targetQuestion[0].incorrectAnswers[0].name : '');
+        incorrectInput.classList.add('incorrectInput');
+        mainScreen.appendChild(incorrectInput);
+
+        let incorrectInput2 = getInput('incorrect2Input','Respuesta incorrecta 2', targetQuestion[0].incorrectAnswers.length==3 ? targetQuestion[0].incorrectAnswers[1].name : '');
+        incorrectInput2.classList.add('incorrectInput');
+        mainScreen.appendChild(incorrectInput2);
+
+        let incorrectInput3 = getInput('incorrect3Input','Respuesta incorrecta 3', targetQuestion[0].incorrectAnswers.length==3 ? targetQuestion[0].incorrectAnswers[2].name : '');
+        incorrectInput3.classList.add('incorrectInput');
+        mainScreen.appendChild(incorrectInput3);
+
+        let span = document.createElement('span');
+        span.classList.add('badge');
+        span.classList.add('rounded-pill');
+        span.classList.add('text-bg-info');
+        span.innerHTML = targetQuestion[0].order;
+        mainScreen.appendChild(span);
+
+        let deleteButton = document.createElement('button');
+        deleteButton.classList.add('btn');
+        deleteButton.classList.add('btn-outline-danger');
+        deleteButton.id = targetQuestion[0].id +'d';
+        deleteButton.innerHTML = 'Eliminar';
+        deleteButton.onclick = onClickDeleteQuestion;
+        mainScreen.appendChild(deleteButton);
+    }
+}
+
+function onClickDeleteQuestion(){
+    let qToOrder;
+    const questionToDelete = this.id.split('d')[0];
+    console.log("A BORRAR " + questionToDelete);
+    for(let i=0; i<questions.length; i++){
+        if(questions[i].id == questionToDelete){
+            questions[i].isDeleted = true;
+            qToOrder = questions[i].order;
+        }
+    }
+    // UPdated order of questions
+    for(let quest of questions){
+        if(quest.order > qToOrder){
+            quest.order = quest.order - 1;
+            quest.isUpdated = true;
+        }
+    }
+    displayInitiateQuestions();
+    showUpdateNotification();
+}
+
+function getInput(id, title, value){
+    let questionContainer = document.createElement('div');
+    questionContainer.classList.add('inputbox');
+    questionContainer.classList.add('mb-3');
+    // Question input
+    let questionInput = document.createElement('input');
+    questionInput.type = 'text';
+    questionInput.value = value;
+    questionInput.id = id;
+    //questionInput.onchange = questionUpdated;
+    questionInput.oninput = questionUpdated;
+    let questionSpan = document.createElement('span');
+    questionSpan.innerHTML = title;
+    let questionI = document.createElement('i');
+    questionContainer.appendChild(questionInput);
+    questionContainer.appendChild(questionSpan);
+    questionContainer.appendChild(questionI);
+
+    return questionContainer;
+}
+
+function questionUpdated(){
+    const questionInputValue = $("#questionInput")[0].value;
+    const correctInputValue = $("#correctInput")[0].value;
+    const incorrect1InputValue = $("#incorrect1Input")[0].value;
+    const incorrect2InputValue = $("#incorrect2Input")[0].value;
+    const incorrect3InputValue = $("#incorrect3Input")[0].value;
+    //console.log({questionInputValue,correctInputValue,incorrect1InputValue,incorrect2InputValue,incorrect3InputValue})
+    for(let i=0; i<questions.length; i++){
+        if(questions[i].id == questionTargeted){
+            questions[i].title = questionInputValue;
+            // objeto {id, name}
+            questions[i].correctAnswer = {name: correctInputValue};
+            // array de objetos {id, name}
+            questions[i].incorrectAnswers = [];
+            questions[i].incorrectAnswers.push({name: incorrect1InputValue});
+            questions[i].incorrectAnswers.push({name: incorrect2InputValue});
+            questions[i].incorrectAnswers.push({name: incorrect3InputValue});
+            //questions[i].incorrectAnswers = [questions[i].incorrectAnswers[0],incorrect2InputValue,incorrect3InputValue];
+            //questions[i].incorrectAnswers = [incorrect1InputValue,incorrect2InputValue,incorrect3InputValue];
+            questions[i].isUpdated = questions[i].isNew ?  false : true;
+            console.log("EDITADO QUESTION");
+            console.log(questions[i])
+            showUpdateNotification();
+        }
+    }
+}
+
+
+
+function debugInfo(){
+    console.log(questions)
+}
+
+function getIncorrectQuestions(incorrect){
+    const resp = ['','','']
+    for(let i=0; i<incorrect.length; i++){
+        resp[i] = incorrect[i];
+    }
+    return resp;
+}
+
+function cubeSelection(){
+    console.log(this.id);
+    displayQuestion(this.id);
+}
+
+function handleUpdate(){
+    axios.post('/test/edit/', {
+        testConfig: {},
+        questions: questions
+      })
+      .then(function (response) {
+        console.log(response);
+      })
+      .catch(function (error) {
+        console.log(error);
+      });
+    console.log("asf")
+}
+
+function getServerData(){
+    axios.get('/test/getdata/' + testId)
+      .then(function (response) {
+        console.log(response);
+      })
+      .catch(function (error) {
+        console.log(error);
+      });
+}
+
+function debug(){
+    if(DEBUG){
+        setInterval(getServerData, 7000)
+        setInterval(debugInfo,5000);
+    }
+}
+
+function saveDataServer(){
+    testData.questions = questions;
+    axios.post('/test/savedata/' + testId, {
+        data: testData
+      })
+      .then(function (response) {
+        console.log(response);
+        location.reload();
+      })
+      .catch(function (error) {
+        console.log(error);
+      });
+      //console.log("GUARDAR CASO DESACTIVADO")
+}
+
+function showUpdateNotification(){
+    if(!isSaveAlertOn){
+        const mainScreen = $('#alertContainer')[0];
+        let alertDiv = document.createElement('div');
+        alertDiv.classList.add('alert');
+        alertDiv.classList.add('alert-warning');
+        alertDiv.classList.add('d-flex');
+        alertDiv.classList.add('align-items-center');
+        hasAnswered = false;
+        let alertImg = document.createElement('img');
+        alertImg.src = '/static/icons/exclamation-circle-fill.svg';
+        alertImg.classList.add('me-3');
+        alertDiv.appendChild(alertImg);
+
+        let alertContent = document.createElement('div');
+        let span1 = document.createElement('span');
+        span1.innerHTML = '¡No olvides ';// guardar el test cuando hayas terminado!';
+
+        let saveLink = document.createElement('a');
+        saveLink.classList.add('link-info');
+        saveLink.href = '#';
+        saveLink.onclick = saveDataServer;
+        saveLink.innerHTML = 'guardar el test ';
+
+        let span2 = document.createElement('span');
+        span2.innerHTML = ' cuando hayas terminado!';
+
+        alertContent.appendChild(span1);
+        alertContent.appendChild(saveLink);
+        alertContent.appendChild(span2);
+
+        alertDiv.appendChild(alertContent);
+        
+        mainScreen.appendChild(alertDiv);
+        isSaveAlertOn = true;
+    }
+    
 }

@@ -61,6 +61,6 @@ new Chart(ctx, {
     }
   });
 
-function handleOnClickTest(){
-	console.log("asf")
+function handleOnClickTest(id){
+	window.location.href = '/test/s/' + id; //relative to domain
 }

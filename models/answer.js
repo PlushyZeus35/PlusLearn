@@ -1,20 +1,21 @@
 const {Model, DataTypes} = require('sequelize');
 const sequelize = require('./index');
 
-class Question extends Model {}
+class Answer extends Model {}
 
-Question.init({
+Answer.init({
     title: {
         type: DataTypes.STRING,
         defaultValue: ''
     },
-    order: {
-        type: DataTypes.INTEGER,
-        defaultValue: 0
+    isCorrect: {
+        type: DataTypes.BOOLEAN,
+        defaultValue: false
     }
 }, {
     sequelize,
-    modelName: "question"
+    modelName: "answer",
+    timestamps: true
 });
 
-module.exports = Question;
+module.exports = Answer;

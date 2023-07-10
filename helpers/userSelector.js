@@ -29,6 +29,14 @@ userSelector.getUserById = async (userId) => {
 	return await User.findByPk(userId);
 }
 
+userSelector.getUsers = async (usersIds) => {
+  return await User.findAll({
+    where: {
+      id: usersIds
+    }
+  })
+}
+
 userSelector.updateLastLogin = async (userId) => {
 	return await User.update(
 		{
