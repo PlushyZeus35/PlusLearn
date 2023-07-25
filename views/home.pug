@@ -27,105 +27,28 @@ html(lang="es")
                         button.btn.btn-secondary(type='button' data-bs-dismiss='modal') Cancelar
                         button.btn.btn-primary(type='submit') Crear test
 
-        #main
-            .container.pt-4.pb-4
-                #mainContainer.row
-                    //col-md-8
-                    #listContainer
-                        .listContainer.p-5 
-                            div.d-flex.justify-content-between 
-                                h3 Mis tests
-                                button.btn.btn-primary(data-bs-toggle="modal" data-bs-target="#addTestModal") Nuevo test
-                            hr
-                            if userTests.length == 0
-                                .noData
-                                    h3 ¡Aún no hay nada!
-                                    #noDataAnimation
-                                    button.btn.btn-outline-primary.d-flex.justify-content-center.align-items-center(type='button') 
-                                        svg.bi.bi-plus-circle-fill.me-2(xmlns='http://www.w3.org/2000/svg' width='16' height='16' fill='currentColor' viewbox='0 0 16 16')
-                                            path(d='M16 8A8 8 0 1 1 0 8a8 8 0 0 1 16 0zM8.5 4.5a.5.5 0 0 0-1 0v3h-3a.5.5 0 0 0 0 1h3v3a.5.5 0 0 0 1 0v-3h3a.5.5 0 0 0 0-1h-3v-3z')
-                                        |Crear test
-                            else
-                                .dataList 
-                                    each test in userTests
-                                        .test.py-3(id=test.id onclick="handleOnClickTest(this.id)")
-                                            .testIcon 
-                                                .testIconOverflow 
-                                                    .testIconUnderflow
-                                                        img(src="/static/img/test.png", alt="Test icon")
-                                            .testInfo
-                                                h5.d-inline-block.text-truncate
-                                                    | #{test.title}
-                                                .secondaryInfo 
-                                                    span.me-3.d-none 
-                                                        svg.bi.bi-hash(xmlns='http://www.w3.org/2000/svg' width='16' height='16' fill='currentColor' viewbox='0 0 16 16')
-                                                            path(d='M8.39 12.648a1.32 1.32 0 0 0-.015.18c0 .305.21.508.5.508.266 0 .492-.172.555-.477l.554-2.703h1.204c.421 0 .617-.234.617-.547 0-.312-.188-.53-.617-.53h-.985l.516-2.524h1.265c.43 0 .618-.227.618-.547 0-.313-.188-.524-.618-.524h-1.046l.476-2.304a1.06 1.06 0 0 0 .016-.164.51.51 0 0 0-.516-.516.54.54 0 0 0-.539.43l-.523 2.554H7.617l.477-2.304c.008-.04.015-.118.015-.164a.512.512 0 0 0-.523-.516.539.539 0 0 0-.531.43L6.53 5.484H5.414c-.43 0-.617.22-.617.532 0 .312.187.539.617.539h.906l-.515 2.523H4.609c-.421 0-.609.219-.609.531 0 .313.188.547.61.547h.976l-.516 2.492c-.008.04-.015.125-.015.18 0 .305.21.508.5.508.265 0 .492-.172.554-.477l.555-2.703h2.242l-.515 2.492zm-1-6.109h2.266l-.515 2.563H6.859l.532-2.563z')
-                                                        | 23
-                                                    span.me-3.d-none
-                                                        svg.bi.bi-reception-3(xmlns='http://www.w3.org/2000/svg' width='16' height='16' fill='currentColor' viewbox='0 0 16 16')
-                                                            path(d='M0 11.5a.5.5 0 0 1 .5-.5h2a.5.5 0 0 1 .5.5v2a.5.5 0 0 1-.5.5h-2a.5.5 0 0 1-.5-.5v-2zm4-3a.5.5 0 0 1 .5-.5h2a.5.5 0 0 1 .5.5v5a.5.5 0 0 1-.5.5h-2a.5.5 0 0 1-.5-.5v-5zm4-3a.5.5 0 0 1 .5-.5h2a.5.5 0 0 1 .5.5v8a.5.5 0 0 1-.5.5h-2a.5.5 0 0 1-.5-.5v-8zm4 8a.5.5 0 0 1 .5-.5h2a.5.5 0 0 1 0 1h-2a.5.5 0 0 1-.5-.5z')
-                                                        | 6.5
-                                                .testCaption 
-                                                    span ~hace un año
-                                    .showMoreLink.mt-3.d-none
-                                        span.text-primary Mostrar más 
-                            .tableContainer.pt-4 
-                                h3 Mis intentos 
-                                hr
-                                .noData.d-none
-                                    h3 ¡Aún no hay nada!
-                                    #ghostAnimation
-                                    button.btn.btn-outline-primary.d-flex.justify-content-center.align-items-center(type='button') 
-                                        svg.bi.bi-plus-circle-fill.me-2(xmlns='http://www.w3.org/2000/svg' width='16' height='16' fill='currentColor' viewbox='0 0 16 16')
-                                            path(d='M16 8A8 8 0 1 1 0 8a8 8 0 0 1 16 0zM8.5 4.5a.5.5 0 0 0-1 0v3h-3a.5.5 0 0 0 0 1h3v3a.5.5 0 0 0 1 0v-3h3a.5.5 0 0 0 0-1h-3v-3z')
-                                        |Haz tu primer test
-                                .dataList 
-                                    ol.list-group
-                                        li.list-group-item
-                                            .priInfo
-                                                h5.fw-bold.d-inline-block.text-truncate  Lorem ipsum dolor sit, amet consectetur adipisicing elit. Architecto earum tenetur rem consectetur consequatur sequi.
-                                                .span.ms-3
-                                                    span.badge.bg-danger.rounded-pill.mb-2 5.5
-                                            .secInfo 
-                                                span ~hace unos minutos
-                                                a.btn.btn-primary.btn-sm(href="#")
-                                                    svg.bi.bi-arrow-right-circle-fill(xmlns='http://www.w3.org/2000/svg' width='16' height='16' fill='currentColor' viewbox='0 0 16 16')
-                                                        path(d='M8 0a8 8 0 1 1 0 16A8 8 0 0 1 8 0zM4.5 7.5a.5.5 0 0 0 0 1h5.793l-2.147 2.146a.5.5 0 0 0 .708.708l3-3a.5.5 0 0 0 0-.708l-3-3a.5.5 0 1 0-.708.708L10.293 7.5H4.5z')
+        #mainContainer.container.p-5 
+            #hello.container
+                h2.ubuntuFont
+                    span &#128400;
+                    span Hola Plushy!
+            .separator
+            #testContainer.container.mt-4
+                h2.ubuntuFont Tus cuestionarios
+                #loadingContainer.d-flex.flex-column.justify-content-center.align-items-center 
+                    #loadingAnimation 
+                    h2.ubuntuFont Cargando datos...
+                // Test card list
+                #cardListContainer.row
+                    //.col-12.col-md-6.pb-3
+                        .card.h-100
+                            .card-body
+                                .test-info
+                                    h5.card-title Lorem ipsum, dolor sit amet consectetur adipisicing elit. Atque, eum repellendus sed quam ipsam corporis!
+                                    p.card-text With supporting text below as a natural lead-in to additional content.
+                                a.btn.btn-primary(href='#') Configurar
+                            .card-footer.text-body-secondary.text-center 2 days ago
                     
-
-                                        li.list-group-item
-                                            .priInfo
-                                                h5.fw-bold.d-inline-block.text-truncate  Lorem ipsum dolor sit, amet consectetur adipisicing elit. Architecto earum tenetur rem consectetur consequatur sequi.
-                                                .span.ms-3
-                                                    span.badge.bg-success.rounded-pill.mb-2 5.5
-                                            .secInfo 
-                                                span ~hace unos minutos
-                                                a.btn.btn-primary.btn-sm(href="#")
-                                                    svg.bi.bi-arrow-right-circle-fill(xmlns='http://www.w3.org/2000/svg' width='16' height='16' fill='currentColor' viewbox='0 0 16 16')
-                                                        path(d='M8 0a8 8 0 1 1 0 16A8 8 0 0 1 8 0zM4.5 7.5a.5.5 0 0 0 0 1h5.793l-2.147 2.146a.5.5 0 0 0 .708.708l3-3a.5.5 0 0 0 0-.708l-3-3a.5.5 0 1 0-.708.708L10.293 7.5H4.5z')
-                                        li.list-group-item
-                                            .priInfo
-                                                h5.fw-bold.d-inline-block.text-truncate  Lorem ipsum dolor sit, amet consectetur adipisicing elit. Architecto earum tenetur rem consectetur consequatur sequi.
-                                                .span.ms-3
-                                                    span.badge.bg-success.rounded-pill.mb-2 5.5
-                                            .secInfo 
-                                                span ~hace unos minutos
-                                                a.btn.btn-primary.btn-sm(href="#")
-                                                    svg.bi.bi-arrow-right-circle-fill(xmlns='http://www.w3.org/2000/svg' width='16' height='16' fill='currentColor' viewbox='0 0 16 16')
-                                                        path(d='M8 0a8 8 0 1 1 0 16A8 8 0 0 1 8 0zM4.5 7.5a.5.5 0 0 0 0 1h5.793l-2.147 2.146a.5.5 0 0 0 .708.708l3-3a.5.5 0 0 0 0-.708l-3-3a.5.5 0 1 0-.708.708L10.293 7.5H4.5z')
-
-                                    .showMoreLink.mt-3
-                                        span.text-primary Mostrar más
-
-                    //#notiContainer.col-md-4  
-                        .notiContainer.p-5
-                            .generalChart 
-                                canvas#genChart
-                            .generalStats 
-                                .stat
-                                    .statTitle 
-                                        h5 Tests
-                                    .statInfo 
-                                        span 5
+        script(src="https://unpkg.com/axios/dist/axios.min.js")
         include ./includes/jquery.pug
         script(src="/static/js/home.js") 

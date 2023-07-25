@@ -18,7 +18,8 @@ testSelector.getUserTests = async (userId) => {
         {
             where:{
                 userId: userId
-            }
+            },
+            order:[['updatedAt', 'DESC']]
         }
     )
 }

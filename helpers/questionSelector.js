@@ -3,11 +3,28 @@ const Question = require('../models/question')
 const Answer = require('../models/answer')
 const { Op, where } = require("sequelize");
 
+questionSelector.getAnswers = async (answersIds) => {
+    return await Answer.findAll({
+        where: {
+            id: answersIds
+        }
+    })
+}
+
+questionSelector.getQuestions = async (questionsIds) => {
+    return await Question.findAll({
+        where:{
+            id: questionsIds
+        }
+    })
+}
+
 questionSelector.getTestQuestions = async (testId) => {
     return await Question.findAll(
         {where:{
             testId: testId
-        }}
+        },
+        order:[['order', 'DESC']]}
     )
 }
 
@@ -65,6 +82,15 @@ questionSelector.createBulkAnswers = async(answers) => {
         return null;
     }
     //return await Answer.bulkCreate(answers);
+}
+
+questionSelector.getCorrectAnswers = async(questionIds) => {
+    return await Answer.findAll({
+        where:{
+            questionId: questionIds,
+            isCorrect: true
+        }
+    })
 }
 
 module.exports = questionSelector;

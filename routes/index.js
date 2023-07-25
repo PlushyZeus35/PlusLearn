@@ -22,12 +22,7 @@ router.get('/register', (req, res) => {
 /* GET Home page. */
 router.get('/home', isLoggedIn, async (req, res) => {
     //await setTriviaQuestions(5);
-    let tests = [];
-    if(req.user){
-        console.log(await testController.getFullTestInfo(2));
-        tests = await testSelector.getUserTests(req.user.id);
-    }
-    res.render('home',{userTests: tests});
+    res.render('home');
 })
 
 router.post('/test', isLoggedIn, async (req, res) => {
