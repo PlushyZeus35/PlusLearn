@@ -25,6 +25,7 @@ let myAnswers = new Map();
 let hasAnswered = false;
 // User answered
 let userAnswered = 0;
+let qrCodeIsRendered = false;
 
 // SOCKET EVENTS
 const CONNECT_EVENT = 'room-connection';
@@ -38,6 +39,7 @@ const USER_ANSWERED = 'user-answered';
 const myModal = new bootstrap.Modal('#staticBackdrop', {
     keyboard: false
 })
+const qrModal = new bootstrap.Modal('#qrCodeModal')
 
 
 //loadQuestions();
@@ -101,9 +103,11 @@ socket.on(END_TEST, (results) => {
     title.classList.add('mainTitle')
 
     const saveButton = document.createElement('button');
+    saveButton.id = 'saveDataButton';
     saveButton.classList.add('btn');
     saveButton.classList.add('btn-primary');
     saveButton.classList.add('mt-3');
+    saveButton.onclick = saveResults;
     saveButton.innerHTML = 'Guardar resultados';
 
     partContainer.appendChild(title);
@@ -137,17 +141,30 @@ socket.on(END_QUESTION, (info) => {
         for(let input of inputs){
             if(input.checked){
                 selectedAnswer.selectedAnswer = {
+                    isNull: false,
                     id: parseInt(input.id.split('-')[1]),
                     name: input.value,
                     questionId: targetQuestionId,
-                    user: connectionInfo.userId
+                    user: connectionInfo.username,
+                    userId: dataFromServer.userId,
+                    isGuestUser: !dataFromServer.isAuthenticatedUser,
+                    testId: dataFromServer.testId
                 }
                 selectedAnswerId = parseInt(input.id.split('-')[1]);
             }
             console.log({name: input.name, checked: input.checked, id: input.id});
         }
+        if(selectedAnswer.selectedAnswer==null){
+            selectedAnswer.selectedAnswer = {
+                isNull: true,
+                questionId: targetQuestionId,
+                user: connectionInfo.username,
+                userId: dataFromServer.userId,
+                isGuestUser: !dataFromServer.isAuthenticatedUser
+            }
+        }
         myAnswers.set(targetQuestionId, selectedAnswerId);
-        selectedAnswer.userId = connectionInfo.userId;
+        selectedAnswer.userId = connectionInfo.username;
         selectedAnswer.roomId = connectionInfo.roomId;
         sendEvent(SEND_ANSWER, selectedAnswer);
     }
@@ -193,7 +210,7 @@ function sortByOrder(a, b) {
 
 const connectionInfo = {
     roomId: dataFromServer.roomId,
-    userId: dataFromServer.userId
+    username: dataFromServer.username
 }
 init();
 
@@ -201,7 +218,7 @@ init();
 function init(){
     hideAll();
     console.log(dataFromServer)
-    let username = dataFromServer.userId;
+    let username = dataFromServer.username;
     let roomId = dataFromServer.roomId;
     isMasterUser = dataFromServer.isMaster;
     if(username==null || username == ''){
@@ -209,7 +226,7 @@ function init(){
         myModal.show();
     }else{
         showLoader();
-        connectToRoom(connectionInfo.roomId, connectionInfo.userId, false)
+        connectToRoom(connectionInfo.roomId, connectionInfo.username, false)
     }
 }
 
@@ -230,10 +247,10 @@ function hideAll(){
 function setGuestUser(){
     const nameInput = $('#guestNameInput')[0];
     if(nameInput.value!=''){
-        connectionInfo.userId = nameInput.value;
+        connectionInfo.username = nameInput.value;
         myModal.hide();
         showLoader();
-        connectToRoom(connectionInfo.roomId, connectionInfo.userId, true)
+        connectToRoom(connectionInfo.roomId, connectionInfo.username, true)
     }
 }
 
@@ -345,13 +362,22 @@ function showUsersTable(){
         button.classList.add('btn');
         button.classList.add('btn-lg');
         button.classList.add('btn-primary');
+        button.classList.add('me-3');
         button.innerHTML = 'Comenzar';
         if(roomInfo==undefined || roomInfo.users.length==0){
             button.disabled = true;
         }
         button.onclick = startTest;
 
+        const buttonQR = document.createElement('button');
+        buttonQR.classList.add('btn');
+        buttonQR.classList.add('btn-lg');
+        buttonQR.classList.add('btn-outline-primary');
+        buttonQR.innerHTML = 'QR';
+        buttonQR.onclick = showQRModal;
+
         buttonContainer.appendChild(button);
+        buttonContainer.appendChild(buttonQR);
 
         mainContainer.appendChild(buttonContainer);
     }
@@ -483,7 +509,7 @@ function createButton(id, answer){
 }
 
 function answerOnClick(){
-    if(!hasAnswered){
+    if(!hasAnswered && !isMasterUser){
         console.log("He respondido!")
         sendEvent(USER_ANSWERED, {roomId: connectionInfo.roomId});
     }
@@ -710,16 +736,6 @@ function getResultTable(results){
 }
 
 function showNotification(toastType, title, text){
-    /*
-    #liveToast.toast(role='alert' aria-live='assertive' aria-atomic='true')
-                .toast-header
-                    img.rounded.me-2(src='...' alt='...')
-                    strong.me-auto Bootstrap
-                    small 11 mins ago
-                    button.btn-close(type='button' data-bs-dismiss='toast' aria-label='Close')
-                .toast-body
-                    | Hello, world! This is a toast message.
-    */
    const toastContainer = $(".toast-container")[0];
    console.log('asdfasdf');
    console.log(toastContainer)
@@ -778,3 +794,45 @@ function showNotification(toastType, title, text){
 /*setInterval(() => {
     showNotification('asdf', 'asdf','fdsa');
 }, 3000);*/
+
+function showQRModal(){
+    qrModal.show();
+    showQRcode(connectionInfo.roomId);
+}
+
+function showQRcode(roomId){
+    if(!qrCodeIsRendered){
+        const qrcode = new QRCode(document.getElementById('qrcode'), {
+            text: window.location.hostname + '/test/d/'+roomId,
+            width: 128,
+            height: 128,
+            colorDark : '#000',
+            colorLight : '#fff',
+            correctLevel : QRCode.CorrectLevel.H
+        });
+        //$("#urlRoomId")[0].innerHTML = window.location.hostname + '/test/d/'+roomId;
+        qrCodeIsRendered=true;
+    }
+    
+}
+
+function saveResults(){
+    console.log("GUARDAR RESULTADOS");
+    console.log(answersReceived);
+    const resultsInObjectNotation = convertMapToObjectArray(answersReceived);
+    axios.post('/test/saveResults', {
+        responses: resultsInObjectNotation
+      })
+      .then(function (response) {
+        if(response.data.status){
+            showNotification(TOAST_SUCCESS, 'Datos guardados', 'Las respuestas han sido guardadas correctamente.');
+            $("#saveDataButton")[0].disabled = true;
+        }
+        console.log(response);
+      })
+      .catch(function (error) {
+        showNotification(TOAST_FAIL, 'Algo ha ocurrido mal', 'No se han podido guardar las respuestas.');
+        console.log(error);
+      });
+}
+

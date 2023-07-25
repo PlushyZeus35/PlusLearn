@@ -1,195 +1,46 @@
+html{
+    height: 100%;
+}
+
 body{
-    width: 100vw;
+    width: 100%;
+    height: 100%;
     overflow-x: hidden;
+    background:
+    radial-gradient(black 3px, transparent 4px),
+    radial-gradient(black 3px, transparent 4px),
+    linear-gradient(#fff 4px, transparent 0),
+    linear-gradient(45deg, transparent 74px, transparent 75px, #a4a4a4 75px, #a4a4a4 76px, transparent 77px, transparent 109px),
+    linear-gradient(-45deg, transparent 75px, transparent 76px, #a4a4a4 76px, #a4a4a4 77px, transparent 78px, transparent 109px),
+    #fff;
+    background-size: 109px 109px, 109px 109px,100% 6px, 109px 109px, 109px 109px;
+    background-position: 54px 55px, 0px 0px, 0px 0px, 0px 0px, 0px 0px;
 }
 
-#main{
-    width: 100vw;
-    min-height: 100vh;
-    background: url('/static/img/raining_background.svg');
-    background-repeat: no-repeat;
-    background-size: cover;
+#mainContainer{
+    background-color: #2b2b2b;
 }
 
-.listContainer{
-    background-color: whitesmoke;
-    border-radius: 12px;
+.separator{
+    border-bottom: 2px solid #ededed;
 }
 
-.notiContainer{
-    height: 300px;
-    background-color: whitesmoke;
-    border-radius: 12px;
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-}
-
-#listContainer, #notiContainer{
-    padding-top: 10px;
-    overflow: hidden;
-}
-
-h3{
+.ubuntuFont{
+    color: #ededed;
     font-family: 'Ubuntu', sans-serif;
 }
 
-h5, span, p, button, a{
-    font-family: 'Nunito', sans-serif;
+
+
+/* Lottie animations */
+#loadingContainer #loadingAnimation{
+    width: 220px;
 }
 
-.showMoreLink{
-    display: flex;
-    justify-content: center;
-    align-items: center;
+#loadingContainer h2{
+    margin-top: -30px;
 }
 
-.showMoreLink span{
+.pointer{
     cursor: pointer;
-}
-
-.noData{
-    display: flex;
-    flex-direction: column;
-    justify-content: center;
-    align-items: center;
-}
-
-.noData h3{
-    padding: 0;
-    margin: 0;
-}
-
-#noDataAnimation, #ghostAnimation{
-    width: 250px;
-}
-
-
-.test{
-    display: flex;
-    border-top: 1px solid #ced4da;
-    border-bottom: 1px solid #ced4da;
-    cursor: pointer;
-    transition: 1s ease;
-}
-
-.test:hover{
-    transform: scale(1.05);
-}
-
-.chart{
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    height: 80px;
-}
-
-.testInfo{
-    display: flex;
-    flex-direction: column;
-    overflow: hidden;
-    flex-grow: 10;
-}
-
-.testInfo h5{
-    margin-bottom: 0;
-}
-
-.secondaryInfo{
-    display: flex;
-}
-
-.testCaption{
-    align-self: flex-end;
-}
-
-.info{
-    display: flex;
-    flex-direction: column;
-    justify-content: center;
-    align-items: center;
-}
-
-.testIcon{
-    padding-right: 25px;
-}
-
-.testIcon img{
-    width: 40px;
-}
-
-.testIconOverflow{
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    width: 55px;
-    height: 55px;
-    background-color: rebeccapurple;
-    overflow: hidden;
-    border-radius: 50%;
-}
-
-.testIconUnderflow{
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    width: 50px;
-    height: 50px;
-    background-color: white;
-    border-radius: 50%;
-}
-
-.response{
-    display: flex;
-    align-items: center;
-}
-
-h5.date{
-    font-size: 14px;
-    margin-bottom: 0;
-}
-
-li{
-    overflow: hidden;
-}
-
-.priInfo{
-    display: flex;
-}
-
-.secInfo{
-    display: flex;
-    flex-direction: row;
-    justify-content: space-between;
-    align-items: flex-end;
-}
-
-.testAccess{
-    min-width: 80px;
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-}
-
-.generalChart{
-    width: 50%;
-}
-
-@media screen and (max-width: 575px) {
-    .test{
-        flex-direction: column;
-    }
-    .testIcon{
-        display: flex;
-        justify-content: center;
-        padding-bottom: 10px;
-    }
-
-    .hide-sm{
-        display: none;
-    }
-
-    .testAccess{
-        min-width: 50px;
-    }
 }

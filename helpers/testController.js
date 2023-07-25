@@ -1,7 +1,9 @@
 const questionSelector = require("./questionSelector");
 const testSelector = require("./testSelector");
 const Question = require('../models/question')
-const Answer = require('../models/answer')
+const Answer = require('../models/answer');
+const {DateTime} = require('luxon');
+const responseSelector = require("./responsesSelector");
 const testController = {};
 
 testController.getFullTestInfo = async (testId) => {
@@ -226,84 +228,6 @@ testController.updateTestData = async (testData) => {
         answersToInsert.push({title: newQuest.incorrectAnswers[2].name, isCorrect: false, questionId: qId.id})
         const insertedAnswers = await questionSelector.createBulkAnswers(answersToInsert);
     }
-    /*for(let i=0; i<newlyQuestions.length; i++){
-        let newQuestion = Question.build({
-            title: newlyQuestions[i].title,
-            order: newlyQuestions[i].order,
-            testId: testData.testId
-        },{isNewRecord: true})
-        let questionInserted = await newQuestion.save();
-        let questionInsertedId = questionInserted.id;
-
-        let answer = Answer.build({
-            title: newlyQuestions[i].correctAnswer,
-            isCorrect: true,
-            questionId: questionInsertedId
-        },{isNewRecord: true});
-        answer.save();
-
-        answer = Answer.build({
-            title: newlyQuestions[i].incorrectAnswers[0],
-            isCorrect: false,
-            questionId: questionInsertedId
-        },{isNewRecord: true})
-        answer.save();
-
-        answer = Answer.build({
-            title: newlyQuestions[i].incorrectAnswers[1],
-            isCorrect: false,
-            questionId: questionInsertedId
-        },{isNewRecord: true})
-        answer.save();
-
-        answer = Answer.build({
-            title: newlyQuestions[i].incorrectAnswers[2],
-            isCorrect: false,
-            questionId: questionInsertedId
-        },{isNewRecord: true})
-        answer.save();   
-    }
-
-    //update questions
-    // Actualizamos la pregunta, eliminamos las respuestas y las volvemos a crear
-    for(let i=0; i<questionsToUpdate.length; i++){
-        let questionUpdatedId = questionsToUpdate[i].id;
-        let question = Question.build({
-            id: questionsToUpdate[i].id,
-            title: questionsToUpdate[i].title,
-            order: questionsToUpdate[i].order
-        },{isNewRecord: false});
-        question.save({fields: ['title','order']});
-        await questionSelector.deleteQuestionsAnswers(questionUpdatedId);
-        
-        let answer = Answer.build({
-            title: questionsToUpdate[i].correctAnswer,
-            isCorrect: true,
-            questionId: questionUpdatedId
-        },{isNewRecord: true});
-        answer.save();
-
-        answer = Answer.build({
-            title: questionsToUpdate[i].incorrectAnswers[0],
-            isCorrect: false,
-            questionId: questionUpdatedId
-        },{isNewRecord: true})
-        answer.save();
-
-        answer = Answer.build({
-            title: questionsToUpdate[i].incorrectAnswers[1],
-            isCorrect: false,
-            questionId: questionUpdatedId
-        },{isNewRecord: true})
-        answer.save();
-
-        answer = Answer.build({
-            title: questionsToUpdate[i].incorrectAnswers[2],
-            isCorrect: false,
-            questionId: questionUpdatedId
-        },{isNewRecord: true})
-        answer.save();   
-    }*/
 }
 
 testController.createInteractiveCode = async () => {
@@ -325,6 +249,182 @@ testController.getCorrectAnswer = async (questionId) => {
     const answers = await questionSelector.getQuestionsAnswers(questionId);
     const correctAnswer = answers.filter((i) => i.isCorrect);
     return correctAnswer;
+}
+
+testController.parseTestData = async(test) => {
+    const updatedDate = new Date(test.updatedAt);
+    const createdDate = new Date(test.createdAt);
+    const updatedtimeStamp = DateTime.fromISO(updatedDate.toISOString()).toRelativeCalendar();
+    const createdtimeStamp = DateTime.fromISO(createdDate.toISOString()).toRelativeCalendar();
+    const testInfo = {
+        id: test.id,
+        title: test.title,
+        description: test.description,
+        active: test.active,
+        updatedTimestamp: updatedtimeStamp,
+        createdTimestamp: createdtimeStamp,
+        interactiveCode: test.interactiveCode
+    }
+
+    return testInfo;
+}
+
+testController.getQuestionsStadistics = async(testId) => {
+    const questionMap = new Map();
+    const answersCounterMap = new Map();
+    const testQuestions = await questionSelector.getTestQuestions(testId);
+    const questionIds = [];
+    const testResponsesIds = [];
+    const correctAnswersIds = [];
+    for(let testQuestion of testQuestions){
+        questionMap.set(testQuestion.id, {correct: 0, incorrect: 0, empty: 0, order: testQuestion.order});
+        questionIds.push(testQuestion.id);
+    }
+    const questionCounter = questionIds.length;
+    const correctAnswers = await questionSelector.getCorrectAnswers(questionIds);
+    console.log("RESPUESTAS CORRECTAS");
+    for(let correctAnswer of correctAnswers){
+        correctAnswersIds.push(correctAnswer.id);
+    }
+    console.log(correctAnswersIds);
+    const testResponses = await responseSelector.getTestResponses(testId);
+    for(let testResponse of testResponses){
+        testResponsesIds.push(testResponse.id);
+    }
+    console.log("MAPA")
+    console.log(questionMap)
+    const userResponses = await responseSelector.getUserResponses(testResponsesIds);
+    for(let userResponse of userResponses){
+        console.log("ANALISIS " + userResponse.questionId)
+        if(userResponse.answerId==null){
+            console.log("EMPTY")
+            questionMap.get(userResponse.questionId).empty++;
+        }else if(correctAnswersIds.includes(userResponse.answerId)){
+            console.log("CORRECTA " + userResponse.answerId);
+            console.log(correctAnswersIds.indexOf(userResponse.answerId));
+            questionMap.get(userResponse.questionId).correct++;
+        }else{
+            console.log("INCORRECTA " + userResponse.answerId)
+            questionMap.get(userResponse.questionId).incorrect++;
+        }
+        if(answersCounterMap.has(userResponse.answerId)){
+            answersCounterMap.get(userResponse.answerId).counter++;
+        }else{
+            answersCounterMap.set(userResponse.answerId, {counter: 1});
+        }
+    }
+    console.log(questionMap);
+    const questionStats = {
+        questionCounter: questionCounter,
+        validationCounter: [],
+        answersCounter: []
+    };
+    for (const [key, value] of questionMap.entries()) {
+        const stat = {
+            questionId: key,
+            correct: value.correct,
+            incorrect: value.incorrect,
+            empty: value.empty,
+            order: value.order
+        }
+        questionStats.validationCounter.push(stat);
+    }
+    for (const [key, value] of answersCounterMap.entries()) {
+        const astat = {
+            answerId: key,
+            counter: value.counter
+        }
+        questionStats.answersCounter.push(astat);
+    }
+    return questionStats;
+}
+
+testController.getUserResponses = async(testId) => {
+    const testResponsesIds = [];
+    const answersIds = [];
+    const questionsIds = [];
+    const testResponses = await responseSelector.getTestResponses(testId);
+    for(let testResp of testResponses){
+        testResponsesIds.push(testResp.id);
+    }
+    const userResponses = await responseSelector.getUserResponses(testResponsesIds);
+    const responses = [];
+    for(let testResp of testResponses){
+        const resp = {
+            id: testResp.id,
+            user: testResp.username,
+            isGuest: testResp.isGuest,
+            responses: []
+        }
+        const targetResponses = userResponses.filter((i) => i.testresponseId == testResp.id);
+        for(let ttResponse of targetResponses){
+            questionsIds.push(ttResponse.questionId);
+            if(ttResponse.answerId!=null)
+                answersIds.push(ttResponse.answerId);
+            const usResp = {
+                id: ttResponse.answerId,
+                questionId: ttResponse.questionId
+            }
+            resp.responses.push(usResp);
+        }
+        responses.push(resp);
+    }
+    const answersInfo = await questionSelector.getAnswers(answersIds);
+    const questionsInfo = await questionSelector.getQuestions(questionsIds);
+    for(let finalResponse of responses){
+        for(let finalUserResp of finalResponse.responses){
+            if(finalUserResp.id != null){
+                const ansInf = answersInfo.filter((i) => i.id == finalUserResp.id)[0];
+                const queInf = questionsInfo.filter((i) => i.id == finalUserResp.questionId)[0];
+                finalUserResp.title = ansInf.title;
+                finalUserResp.isCorrect = ansInf.isCorrect;
+                finalUserResp.questionTitle = queInf.title;
+            }
+        }
+    }
+    return {responses:responses}
+}
+
+testController.getGeneralStadistics = async(testId) => {
+    let responsesCounter = 0;
+    let typeUserCounter = {
+        register: 0,
+        guest: 0
+    }
+    // Numero de respuestas recibidas
+    // Tipos de usuarios 
+    const testResponses = await responseSelector.getTestResponses(testId);
+    for(let testResponse of testResponses){
+        responsesCounter++;
+        if(testResponse.isGuest){
+            typeUserCounter.guest++;
+        }else{
+            typeUserCounter.register++;
+        }
+    }
+    return {responsesCounter, typeUserCounter};
+}
+
+testController.getUserTests = async(userId, counter) => {
+    // DateTime.now().plus({ months: 1 }).toRelativeCalendar()
+    //console.log(DateTime.now().plus({ months: 1 }).toRelativeCalendar());
+    const userTests = await testSelector.getUserTests(userId);
+    const testList = [];
+    for(let test of userTests){
+        if(testList.length < counter){
+            const eDate = new Date(test.updatedAt);
+            const timeStamp = DateTime.fromISO(eDate.toISOString()).toRelativeCalendar();
+            const eTest = {
+                id: test.id,
+                title: test.title,
+                description: test.description,
+                timeStamp: timeStamp,
+                interactiveCode: test.interactiveCode
+            }
+            testList.push(eTest);
+        }
+    }
+    return testList;
 }
 
 testController.getUsersResults = async (roomInfo, userAnswers) => {
