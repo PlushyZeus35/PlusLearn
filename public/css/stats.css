@@ -70,9 +70,23 @@ body{
 .questTable{
     width: 100%;
 }
+.buttons a{
+    margin: 0;
+    margin-right: 8px;
+}
 
 @media screen and (max-width: 520px) {
     #questionCorrectAnswerChartContainer{
         height: 150px;
+    }
+
+    #completeStatsButton{
+        margin: 0;
+        margin-bottom: 8px;
+    }
+
+    .buttons a{
+        margin: 0;
+        margin-bottom: 8px;
     }
 }

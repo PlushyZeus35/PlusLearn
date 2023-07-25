@@ -30,6 +30,8 @@ function initData(){
 	$("#createdTimestamp")[0].innerHTML = test.createdTimestamp;
 	$("#updatedTimestamp")[0].innerHTML = test.updatedTimestamp;
 	$("#interactiveCode")[0].innerHTML = test.interactiveCode;
+    $("#showResponsesButton")[0].href = '/test/responses/' + test.id;
+    $("#modifyTestButton")[0].href = '/test/' + test.id;
 }
 
 function getStatsData(){
