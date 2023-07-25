@@ -157,7 +157,7 @@ testController.updateTestData = async (testData) => {
     const updatedQuestions = [];
 
     const questionsToDelete = [];
-    const answersToInsert = [];
+    const answersToUpdate = [];
 
     for(let quest of allQuestions){
         if(quest.isDeleted){
@@ -169,54 +169,30 @@ testController.updateTestData = async (testData) => {
         }
     }
 
-    console.log("TODAS");
-    console.log(allQuestions);
-    console.log("A BORRAR");
-    console.log(deletedQuestions);
-    console.log("A CREAR");
-    console.log(newQuestions);
-    console.log("A MODIFICAR");
-    console.log(updatedQuestions);
-
     // Delete questions
     for(let delQuestion of deletedQuestions){
         questionsToDelete.push(delQuestion.id);
     }
     const deletedQuestionsAux = await questionSelector.deleteQuestionsAnswers(questionsToDelete);
     const deletedAnswersAux = await questionSelector.deleteQuestions(questionsToDelete);
-    console.log("QUESTIONS BORRADAS");
-    console.log(deletedQuestionsAux);
-    console.log("ANSWERS BORRADAS");
-    console.log(deletedAnswersAux);
    
     // Update questions
     for(let updQuestion of updatedQuestions){
-        answersToInsert.length = 0;
-        console.log("ACTUALIZAR ESTO");
-        console.log(updQuestion)
         await questionSelector.updateQuestions(updQuestion.id, updQuestion.title, updQuestion.order);
-        const answersDeletedd = await questionSelector.deleteQuestionsAnswers(updQuestion.id);
-        console.log("BORRADAS LAS ANSWERS DE ESTA QUESTION");
-        console.log(answersDeletedd);
         const correctAnswer = {
-            title: updQuestion.correctAnswer.name,
-            isCorrect: true,
-            questionId: updQuestion.id
+            id: updQuestion.correctAnswer.id,
+            title: updQuestion.correctAnswer.name
         }
-        answersToInsert.push(correctAnswer);
+        answersToUpdate.push(correctAnswer);
         for(let incAns of updQuestion.incorrectAnswers){
-            console.log("asfasdfasdf");
-            console.log(incAns)
             const incAnswer = {
-                title: incAns.name,
-                isCorrect: false,
-                questionId: updQuestion.id
+                id: incAns.id,
+                title: incAns.name
             }
-            answersToInsert.push(incAnswer);
+            answersToUpdate.push(incAnswer);
         }
-        const insertedAnswers = await questionSelector.createBulkAnswers(answersToInsert);
-        console.log(insertedAnswers);
     }
+    await questionSelector.bulkUpdateAnswers(answersToUpdate);
 
     //create questions
     for(let newQuest of newQuestions){
@@ -373,13 +349,12 @@ testController.getUserResponses = async(testId) => {
     const questionsInfo = await questionSelector.getQuestions(questionsIds);
     for(let finalResponse of responses){
         for(let finalUserResp of finalResponse.responses){
-            if(finalUserResp.id != null){
-                const ansInf = answersInfo.filter((i) => i.id == finalUserResp.id)[0];
-                const queInf = questionsInfo.filter((i) => i.id == finalUserResp.questionId)[0];
-                finalUserResp.title = ansInf.title;
-                finalUserResp.isCorrect = ansInf.isCorrect;
-                finalUserResp.questionTitle = queInf.title;
-            }
+            const ansInf = finalUserResp.id != null ? answersInfo.filter((i) => i.id == finalUserResp.id)[0] : null;
+            const queInf = questionsInfo.filter((i) => i.id == finalUserResp.questionId)[0];
+            finalUserResp.title = ansInf != null ? ansInf.title : null;
+            finalUserResp.isCorrect = ansInf != null ? ansInf.isCorrect : false;
+            finalUserResp.questionTitle = queInf.title;
+            finalUserResp.isEmpty = finalUserResp.id == null;
         }
     }
     return {responses:responses}
@@ -406,8 +381,6 @@ testController.getGeneralStadistics = async(testId) => {
 }
 
 testController.getUserTests = async(userId, counter) => {
-    // DateTime.now().plus({ months: 1 }).toRelativeCalendar()
-    //console.log(DateTime.now().plus({ months: 1 }).toRelativeCalendar());
     const userTests = await testSelector.getUserTests(userId);
     const testList = [];
     for(let test of userTests){

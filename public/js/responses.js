@@ -62,9 +62,6 @@ function constructAccordion(responses){
                 code .accordion-body
                 | , though the transition does limit overflow.
     */
-    console.log("asdf");
-    console.log(responses);
-    console.log(responses.length)
     const collapsedList = $("#accordionResponses")[0];
     for(let testResponse of responses){
         let accordionItem = document.createElement('div');
@@ -92,6 +89,12 @@ function constructAccordion(responses){
         let accordionBody = document.createElement('div');
         accordionBody.classList.add('accordion-body');
 
+        const progressBar = constructProgressBar(testResponse.responses);
+        accordionBody.appendChild(progressBar);
+
+        const table = constructResponseTable(testResponse.responses);
+        accordionBody.appendChild(table);
+
         accordionCollapse.appendChild(accordionBody);
         accordionHeader.appendChild(accordionHeaderButton);
         accordionItem.appendChild(accordionHeader);
@@ -99,4 +102,104 @@ function constructAccordion(responses){
         collapsedList.appendChild(accordionItem);
     }
     hideLoader();
+}
+
+function constructProgressBar(responses){
+    const correct = responses.filter((i) => i.isCorrect).length;
+    const incorrect = responses.filter((i) => !i.isCorrect && !i.isEmpty).length;
+    const empty = responses.filter((i) => i.isEmpty).length;
+    const all = responses.length;
+    const correctProp = ((correct * 100) / all).toFixed(2);
+    const incorrectProp = ((incorrect * 100) / all).toFixed(2);
+    const emptyProp = ((empty * 100) / all).toFixed(2);
+    
+    const progressBarContainer = document.createElement('div');
+    progressBarContainer.classList.add('progress-stacked');
+
+    const correctProgress = document.createElement('div');
+    correctProgress.classList.add('progress');
+    correctProgress.role = 'progressbar';
+    correctProgress.ariaLabel = 'Correct Prop';
+    correctProgress.ariaValueNow = correctProp;
+    correctProgress.ariaValueMin = '0';
+    correctProgress.ariaValueMax = '100';
+    correctProgress.style = "width: " + parseFloat(correctProp) + "%";
+    const correctProgressBar = document.createElement('div');
+    correctProgressBar.classList.add('progress-bar');
+    correctProgressBar.classList.add('bg-success');
+    correctProgressBar.innerHTML = correctProp + '%';
+    correctProgress.appendChild(correctProgressBar);
+    progressBarContainer.appendChild(correctProgress);
+
+    const incorrectProgress = document.createElement('div');
+    incorrectProgress.classList.add('progress');
+    incorrectProgress.role = 'progressbar';
+    incorrectProgress.ariaLabel = 'Incorrect Prop';
+    incorrectProgress.ariaValueNow = incorrectProp;
+    incorrectProgress.ariaValueMin = '0';
+    incorrectProgress.ariaValueMax = '100';
+    incorrectProgress.style = "width: " + parseFloat(incorrectProp) + "%";
+    const incorrectProgressBar = document.createElement('div');
+    incorrectProgressBar.classList.add('progress-bar');
+    incorrectProgressBar.innerHTML = incorrectProp + '%';
+    incorrectProgressBar.classList.add('bg-danger');
+    incorrectProgress.appendChild(incorrectProgressBar);
+    progressBarContainer.appendChild(incorrectProgress);
+
+    const emptyProgress = document.createElement('div');
+    emptyProgress.classList.add('progress');
+    emptyProgress.role = 'progressbar';
+    emptyProgress.ariaLabel = 'Empty Prop';
+    emptyProgress.ariaValueNow = emptyProp;
+    emptyProgress.ariaValueMin = '0';
+    emptyProgress.ariaValueMax = '100';
+    emptyProgress.style = "width: " + parseFloat(emptyProp) + "%";
+    const emptyProgressBar = document.createElement('div');
+    emptyProgressBar.classList.add('progress-bar');
+    emptyProgressBar.innerHTML = emptyProp + '%';
+    emptyProgressBar.classList.add('bg-secondary');
+    emptyProgress.appendChild(emptyProgressBar);
+    progressBarContainer.appendChild(emptyProgress);
+
+    return progressBarContainer;
+}
+
+function constructResponseTable(responses){
+    const table = document.createElement('table');
+    table.classList.add('table');
+    table.classList.add('table-borderless');
+    table.classList.add('table-hover');
+
+    const tableHead = document.createElement('thead');
+    const trHead = document.createElement('tr');
+    const nameHead = document.createElement('th');
+    nameHead.innerHTML = 'Pregunta';
+    const counterHead = document.createElement('th');
+    counterHead.innerHTML = 'Respuesta';
+    trHead.appendChild(nameHead);
+    trHead.appendChild(counterHead);
+    tableHead.appendChild(trHead);
+    table.appendChild(tableHead)
+
+    const tableBody = document.createElement('tbody');
+
+    for(let eachResponse of responses){
+        console.log(eachResponse);
+        const response = document.createElement('tr');
+        const responseQuestion = document.createElement('td');
+        if(eachResponse.isCorrect){
+            responseQuestion.classList.add('table-success');
+        }else{
+            responseQuestion.classList.add('table-danger');
+        }
+        responseQuestion.innerHTML = eachResponse.questionTitle;
+        const responseSelected = document.createElement('td');
+        responseSelected.innerHTML = eachResponse.title;
+
+        response.appendChild(responseQuestion);
+        response.appendChild(responseSelected);
+        tableBody.appendChild(response);
+    }
+    table.appendChild(tableBody);
+    return table;
 }

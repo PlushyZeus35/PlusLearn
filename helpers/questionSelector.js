@@ -93,4 +93,8 @@ questionSelector.getCorrectAnswers = async(questionIds) => {
     })
 }
 
+questionSelector.bulkUpdateAnswers = async(answers) => {
+    return await Answer.bulkCreate(answers,{updateOnDuplicate: ["title"]})
+}
+
 module.exports = questionSelector;
