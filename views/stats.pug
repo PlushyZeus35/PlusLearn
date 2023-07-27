@@ -30,7 +30,7 @@ html(lang="es")
             .rounded.bg-primary-subtle.pt-3.px-5.pb-5.mb-2
                 .d-flex.justify-content-between
                     h4.ubuntuFont Estadisticas generales
-                    a.btn.btn-warning(href='#') Modificar test
+                    a#editTestButton.btn.btn-warning(href='#') Modificar test
                 #generalStadistics.row 
                     #loading1.loadingContainer.col-12.d-flex.justify-content-center.align-items-center
                         #loadingAnimation
@@ -41,9 +41,9 @@ html(lang="es")
                         #mainStat2Container
                             canvas#mainStat2
             .rounded.bg-primary-subtle.pt-3.px-5.pb-5.mb-4
-                .d-flex.justify-content-between
+                .d-flex.justify-content-between.flex-column.flex-md-row
                     h4.ubuntuFont Estadisticas de preguntas
-                    .buttons
+                    .buttons.d-flex.justify-content-center.flex-column.flex-md-row.align-items-center
                         a#completeStatsButton.btn.btn-outline-primary.me-2(href='#') Estadísticas completas
                         a#responsesButton.btn.btn-primary(href='#') Ver respuestas
                 #questionsStadistics.row.mt-2 

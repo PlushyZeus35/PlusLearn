@@ -11,6 +11,7 @@ const SEND_ANSWER = 'send-answer';
 const NEXT_QUESTION = 'next-question';
 const END_TEST = 'end-test';
 const USER_ANSWERED = 'user-answered';
+const USER_ALREADY_EXISTS = 'user-exists';
 /*
 const room = {
     roomId: 'XXXXX',
@@ -45,25 +46,30 @@ sockets.initialice = async (server) => {
 
         // Conect a user to a room
         socket.on('room-connection', async (connectionInfo) => {
-            userMap.set(socket.id, {username: connectionInfo.username, roomId: connectionInfo.roomId})
-            const test = await testSelector.checkInteractiveCode(connectionInfo.roomId);
-            if(connectionInfo.isGuestUser){
-                addUser(test[0].id, connectionInfo.username, connectionInfo.roomId, false)
+            // Validate connectionInfo.username not exists in roomInfo map
+            if(userAlreadyExists(connectionInfo.roomId, connectionInfo.username)){
+                socket.emit(USER_ALREADY_EXISTS,EMPTY);
             }else{
-                const user = await userSelector.getUser(connectionInfo.username, connectionInfo.username);
-                //const test = await testSelector.checkInteractiveCode(connectionInfo.roomId);
-                console.log(user);
-                console.log(test)
-                if(user!=null && test!=null && user.length>0 && test[0].userId==user[0].id){
-                    console.log('usuario identificado y master')
-                    addUser(test[0].id, connectionInfo.username, connectionInfo.roomId, true);
+                userMap.set(socket.id, {username: connectionInfo.username, roomId: connectionInfo.roomId})
+                const test = await testSelector.checkInteractiveCode(connectionInfo.roomId);
+                if(connectionInfo.isGuestUser){
+                    addUser(test[0].id, connectionInfo.username, connectionInfo.roomId, false)
                 }else{
-                    console.log('usuario identificado y no master')
-                    addUser(test[0].id, connectionInfo.username, connectionInfo.roomId, false);
+                    const user = await userSelector.getUser(connectionInfo.username, connectionInfo.username);
+                    //const test = await testSelector.checkInteractiveCode(connectionInfo.roomId);
+                    console.log(user);
+                    console.log(test)
+                    if(user!=null && test!=null && user.length>0 && test[0].userId==user[0].id){
+                        console.log('usuario identificado y master')
+                        addUser(test[0].id, connectionInfo.username, connectionInfo.roomId, true);
+                    }else{
+                        console.log('usuario identificado y no master')
+                        addUser(test[0].id, connectionInfo.username, connectionInfo.roomId, false);
+                    }
                 }
+                socket.join(connectionInfo.roomId)
+                io.to(connectionInfo.roomId).emit('userconnect',{roomInfo: rooms.get(connectionInfo.roomId), userTarget: {isNew: true, name: connectionInfo.username}});
             }
-            socket.join(connectionInfo.roomId)
-            io.to(connectionInfo.roomId).emit('userconnect',{roomInfo: rooms.get(connectionInfo.roomId), userTarget: {isNew: true, name: connectionInfo.username}});
         })
 
         socket.on(USER_ANSWERED, async(roomInfo) => {
@@ -134,6 +140,24 @@ function addUser(testId, username, roomId, isMaster){
         isMaster ? roomInfo.master=username : roomInfo.users.push(username);
         rooms.set(roomId, roomInfo);
     }
+}
+
+function userAlreadyExists(roomCode, username){
+    // Search username in room map
+    console.log("SEARCHINGG" + roomCode)
+    if(rooms.has(roomCode)){
+        console.log("SEARCHING")
+        console.log(rooms.get(roomCode))
+        if(rooms.get(roomCode).master == username){
+            return true;
+        }
+        for(let user of rooms.get(roomCode).users){
+            if(user==username){
+                return true;
+            }
+        }
+    }
+    return false;
 }
 
 function sendEvent(io, roomId, eventName, info){

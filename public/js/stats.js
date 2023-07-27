@@ -10,6 +10,8 @@ function initialization(){
 
 function initData(){
 	$("#completeStatsButton")[0].href = '/test/qstats/' + test.id;
+	$("#editTestButton")[0].href = '/test/' + test.id;
+	$("#responsesButton")[0].href = '/test/responses/' + test.id;
 	$("#testTitle")[0].innerHTML = test.title;
 	$("#testDescription")[0].innerHTML = test.description;
 	$("#createdTimestamp")[0].innerHTML = test.createdTimestamp;

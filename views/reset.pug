@@ -1,0 +1,31 @@
+doctype html
+html(lang="en")
+    head
+        include ./includes/head.pug
+        include ./includes/bootstrap.pug
+        link(rel="stylesheet", href="/static/css/login.css")
+        link(rel='preconnect' href='https://fonts.googleapis.com')
+        link(rel='preconnect' href='https://fonts.gstatic.com' crossorigin='')
+        link(href='https://fonts.googleapis.com/css2?family=Ubuntu:wght@500&display=swap' rel='stylesheet')
+        link(href='https://fonts.googleapis.com/css2?family=Nunito&display=swap' rel='stylesheet')
+    body 
+        include ./includes/flashMessages.pug
+        #test4
+            .test4card
+                .cardHeader
+                    img(src='/static/img/logo.png' width='70px' alt='')
+                    h5.text-white.pt-3 Reset
+                #cardBody.cardBody.mt-4
+                    p.mb-3.text-white Introduce tu nombre de usuario o tu correo electrónico para cambiar tu contraseña.
+                    .form-floating.mb-3
+                        input#username.form-control(type='text' placeholder='nombre')
+                        label(for='username') Usuario/email
+                .cardFooter.mt-3
+                    .d-grid.gap-2
+                        button.btn.btn-primary(type='button' onclick="resetPasswordOnClick();") Cambiar contraseña
+                        a.btn.btn-outline-secondary(href='/register') Registro
+                        a.link-info.text-center(href='/login') Ya tengo una cuenta
+        include ./includes/jquery.pug
+        script(src="https://unpkg.com/axios/dist/axios.min.js")
+        script(src="/static/js/reset.js") 
+                        
