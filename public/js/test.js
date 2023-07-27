@@ -36,6 +36,7 @@ const NEXT_QUESTION = 'next-question';
 const SEND_ANSWER = 'send-answer';
 const END_TEST = 'end-test';
 const USER_ANSWERED = 'user-answered';
+const USER_ALREADY_EXISTS = 'user-exists';
 const myModal = new bootstrap.Modal('#staticBackdrop', {
     keyboard: false
 })
@@ -49,6 +50,8 @@ const qrModal = new bootstrap.Modal('#qrCodeModal')
 var socket = io();
 socket.on(RECEIVECONNECTION_EVENT, (roomInfoS) => {
     if(sessionPhase){
+        myModal.hide();
+        showLoader();
         roomInfo = roomInfoS.roomInfo;
         const targetUser = roomInfoS.userTarget;
         if(targetUser.isNew){
@@ -58,6 +61,17 @@ socket.on(RECEIVECONNECTION_EVENT, (roomInfoS) => {
         }
         showUsersTable();
     }
+})
+
+socket.on(USER_ALREADY_EXISTS, (empty) => {
+    const alertContainer = $("#alertContainer")[0];
+    const alert = document.createElement('div');
+    alert.classList.add('alert');
+    alert.classList.add('alert-danger');
+    alert.role = 'alert';
+    alert.innerHTML = 'Ese nombre de usuario ya existe en la sala, especifica otro por favor.';
+    alertContainer.appendChild(alert);
+    console.log("YA EXISTE")
 })
 
 socket.on(USER_ANSWERED, ()=>{
@@ -248,8 +262,7 @@ function setGuestUser(){
     const nameInput = $('#guestNameInput')[0];
     if(nameInput.value!=''){
         connectionInfo.username = nameInput.value;
-        myModal.hide();
-        showLoader();
+        
         connectToRoom(connectionInfo.roomId, connectionInfo.username, true)
     }
 }
@@ -445,7 +458,17 @@ function showNextQuestion(){
     if(isMasterUser){
         questionMainContainer.appendChild(alertDiv);
     }
-   
+
+    const questionCounter = document.createElement('div');
+    questionCounter.id = 'questionCounter';
+    questionMainContainer.appendChild(questionCounter);
+
+    const counterBadge = document.createElement('span');
+    counterBadge.classList.add('badge');
+    counterBadge.classList.add('rounded-pill');
+    counterBadge.classList.add('text-bg-primary');
+    counterBadge.innerHTML = (index+1) + ' / ' + testQuestions.length;
+    questionCounter.appendChild(counterBadge);
 
     // <h3 class="mb-5">Lorem ipsum dolor sit amet consectetur adipisicing elit. Dolores, voluptatem!</h3>
     let title = document.createElement('h3');
@@ -552,14 +575,18 @@ function showResults(){
         correctAnswersIds.push(cor.id);
     }
     let targetQuestion = testQuestions[index];
-    if(correctAnswersIds.indexOf(myAnswers.get(targetQuestionId))>=0){
-        let correctTitle = document.createElement('h2');
-        correctTitle.innerHTML = 'CORRECTO';
-        questionMainContainer.insertBefore(correctTitle, questionMainContainer.firstChild);
-    }else{
-        let incorrectTitle = document.createElement('h2');
-        incorrectTitle.innerHTML = 'INCORRECTO';
-        questionMainContainer.insertBefore(incorrectTitle, questionMainContainer.firstChild);
+    if(!isMasterUser){
+        if(correctAnswersIds.indexOf(myAnswers.get(targetQuestionId))>=0){
+            let correctTitle = document.createElement('h2');
+            correctTitle.innerHTML = '¡CORRECTO!';
+            correctTitle.classList.add('correctTitle');
+            questionMainContainer.insertBefore(correctTitle, questionMainContainer.firstChild);
+        }else{
+            let incorrectTitle = document.createElement('h2');
+            incorrectTitle.classList.add('incorrectTitle');
+            incorrectTitle.innerHTML = '¡INCORRECTO!';
+            questionMainContainer.insertBefore(incorrectTitle, questionMainContainer.firstChild);
+        }
     }
     let auxIndex=0;
     for(let targetAnswer of targetQuestion.answers){ //id name

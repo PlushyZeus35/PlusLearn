@@ -4,6 +4,7 @@ const Question = require('./question');
 const Answer = require('./answer');
 const TestResponse = require('./testresponse');
 const Response = require('./response');
+const PasswordReset = require('./passwordreset');
 
 User.hasMany(Test);
 Test.belongsTo(User);
@@ -45,3 +46,6 @@ Response.belongsTo(TestResponse, {
       allowNull: false
     }
 });
+
+User.hasMany(PasswordReset);
+PasswordReset.belongsTo(User);

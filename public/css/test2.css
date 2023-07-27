@@ -101,6 +101,20 @@ h3.mainTitle{
     align-items: center;
 }
 
+label{
+    margin-left: 10px;
+}
+
+.incorrectTitle{
+    text-align: center;
+    color: #dc3545;
+}
+
+.correctTitle{
+    text-align: center;
+    color: #198754;
+}
+
 @media screen and (min-width: 480px) {
     .questionMainContainer {
       margin-top: 50px;
