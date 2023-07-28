@@ -33,7 +33,7 @@ body{
 
 
 /* Lottie animations */
-#loadingContainer #loadingAnimation{
+#loadingContainer #loadingAnimation, #noDataAnimation{
     width: 220px;
 }
 

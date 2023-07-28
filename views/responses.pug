@@ -33,6 +33,9 @@ html(lang="es")
                     .buttons
                         a#statsButtonLink.btn.btn-warning(href='#') Mostrar estadísticas
                 #generalStadistics.row 
+                    #noDataContainer.d-none.d-flex.flex-column.justify-content-center.align-items-center
+                        #noDataAnimation
+                        h5.ubuntuFont Aún no hay respuestas
                     #loading1.loadingContainer.col-12.d-flex.justify-content-center.align-items-center
                         #loadingAnimation
                     #questionsList.mt-3 

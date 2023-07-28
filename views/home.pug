@@ -31,13 +31,19 @@ html(lang="es")
             #hello.container
                 h2.ubuntuFont
                     span &#128400;
-                    span Hola Plushy!
+                    span Hola #{user.username}!
             .separator
             #testContainer.container.mt-4
-                h2.ubuntuFont Tus cuestionarios
+                .testsContainerTitle.d-flex.flex-column.flex-md-row.justify-content-between.mb-2
+                    h2.ubuntuFont Tus cuestionarios
+                    button.btn.btn-primary(data-bs-toggle="modal" data-bs-target="#addTestModal") Crear cuestionario
                 #loadingContainer.d-flex.flex-column.justify-content-center.align-items-center 
                     #loadingAnimation 
                     h2.ubuntuFont Cargando datos...
+                #noDataContainer.d-flex.flex-column.justify-content-center.align-items-center.d-none 
+                    #noDataAnimation 
+                    h2.ubuntuFont.text-center No tienes cuestionarios
+                    button.btn.btn-primary(data-bs-toggle="modal" data-bs-target="#addTestModal") Crear cuestionario
                 // Test card list
                 #cardListContainer.row
                     //.col-12.col-md-6.pb-3

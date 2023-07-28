@@ -37,7 +37,11 @@ function getServerData(testId){
     axios.get('/test/useresponses/' + test.id)
     .then(function (response) {
         console.log(response.data);
-        constructAccordion(response.data.responses);
+        if(response.data.responses.length>0){
+            constructAccordion(response.data.responses);
+        }else{
+            noDataAnimation();
+        }
        
     })
     .catch(function (error) {
@@ -49,19 +53,20 @@ function getServerData(testId){
     });
 }
 
+function noDataAnimation(){
+    $("#noDataContainer")[0].classList.remove('d-none');
+    hideLoader();
+    let animation = bodymovin.loadAnimation({
+		container: document.getElementById('noDataAnimation'),
+		path: '/static/lottie/noData.json',
+		render: 'svg',
+		loop: true,
+		autoplay: true,
+		name: 'animation name'
+	})
+}
+
 function constructAccordion(responses){
-    /*
-    .accordion-item
-        h2.accordion-header
-            button.accordion-button.collapsed(type='button' data-bs-toggle='collapse' data-bs-target='#collapseOne' aria-expanded='false' aria-controls='collapseOne')
-                | Accordion Item #1
-        #collapseOne.accordion-collapse.collapse(data-bs-parent='#accordionResponses')
-            .accordion-body
-                strong This is the first item&apos;s accordion body.
-                |  It is shown by default, until the collapse plugin adds the appropriate classes that we use to style each element. These classes control the overall appearance, as well as the showing and hiding via CSS transitions. You can modify any of this with custom CSS or overriding our default variables. It&apos;s also worth noting that just about any HTML can go within the 
-                code .accordion-body
-                | , though the transition does limit overflow.
-    */
     const collapsedList = $("#accordionResponses")[0];
     for(let testResponse of responses){
         let accordionItem = document.createElement('div');

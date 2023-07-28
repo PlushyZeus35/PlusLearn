@@ -1,0 +1,21 @@
+doctype html
+html(lang="es")
+    head
+        include ./includes/head.pug
+        include ./includes/bootstrap.pug
+        include ./includes/fonts.pug
+        link(rel="stylesheet", href="/static/css/error.css")
+        script(src='https://cdn.jsdelivr.net/gh/davidshimjs/qrcodejs/qrcode.min.js')
+        script(src="https://cdn.jsdelivr.net/npm/chart.js")
+        script(src='https://cdnjs.cloudflare.com/ajax/libs/lottie-web/5.10.2/lottie.min.js' integrity='sha512-fTTVSuY9tLP+l/6c6vWz7uAQqd1rq3Q/GyKBN2jOZvJSLC5RjggSdboIFL1ox09/Ezx/AKwcv/xnDeYN9+iDDA==' crossorigin='anonymous' referrerpolicy='no-referrer')
+        //script(src='https://cdn.socket.io/4.5.4/socket.io.min.js')
+    body 
+        include ./includes/light_app_nav.pug
+        #mainCont
+            #glitchAnimation
+            .glitch-wrapper 
+                .glitch(data-text="No autorizado") No autorizado 
+        include ./includes/jquery.pug
+        script(src="https://unpkg.com/axios/dist/axios.min.js")
+        script(src="/static/js/error.js") 
+        //CDF0EA F9F9F9 F6C6EA FAF4B7

@@ -77,4 +77,8 @@ router.post('/changePassword', async(req, res) => {
     }
 })
 
+router.get('/error', async(req, res) => {
+    res.render('error');
+})
+
 module.exports = router;
