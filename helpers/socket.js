@@ -12,6 +12,7 @@ const NEXT_QUESTION = 'next-question';
 const END_TEST = 'end-test';
 const USER_ANSWERED = 'user-answered';
 const USER_ALREADY_EXISTS = 'user-exists';
+const TEST_HAS_STARTED = 'test-started';
 /*
 const room = {
     roomId: 'XXXXX',
@@ -49,7 +50,10 @@ sockets.initialice = async (server) => {
             // Validate connectionInfo.username not exists in roomInfo map
             if(userAlreadyExists(connectionInfo.roomId, connectionInfo.username)){
                 socket.emit(USER_ALREADY_EXISTS,EMPTY);
-            }else{
+            }else if(hasTestStarted(connectionInfo.roomId)){
+                socket.emit(TEST_HAS_STARTED,EMPTY);
+            }
+            else{
                 userMap.set(socket.id, {username: connectionInfo.username, roomId: connectionInfo.roomId})
                 const test = await testSelector.checkInteractiveCode(connectionInfo.roomId);
                 if(connectionInfo.isGuestUser){
@@ -89,6 +93,7 @@ sockets.initialice = async (server) => {
                 const test = await testSelector.checkInteractiveCode(startInfo.roomId);
                 if(test.length > 0){
                     testInfo = await testController.getFullTestInfoAnon(test[0].id);
+                    rooms.get(startInfo.roomId).started = true;
                     io.to(startInfo.roomId).emit('start-test', testInfo);
                 }
             }
@@ -136,10 +141,19 @@ function addUser(testId, username, roomId, isMaster){
         rooms.get(roomId).master = isMaster ? username : rooms.get(roomId).master;
         isMaster ? null : rooms.get(roomId).users.push(username);
     }else{
-        const roomInfo = {roomId: roomId, users:[], testId: testId}
+        const roomInfo = {roomId: roomId, users:[], testId: testId, started: false}
         isMaster ? roomInfo.master=username : roomInfo.users.push(username);
         rooms.set(roomId, roomInfo);
     }
+}
+
+function hasTestStarted(roomCode){
+    if(rooms.has(roomCode)){
+        if(rooms.get(roomCode).started){
+            return true;
+        }
+    }
+    return false;
 }
 
 function userAlreadyExists(roomCode, username){
