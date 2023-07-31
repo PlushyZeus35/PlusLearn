@@ -388,13 +388,13 @@ testController.getUserTests = async(userId, counter) => {
     }catch(e){
         console.log(e);
         emailController.sendEmail('plushyzeus35@gmail.com', 'error', e.message);
-    }
-    
+    }  
+
     const testList = [];
     for(let test of userTests){
         if(testList.length < counter){
             const eDate = new Date(test.updatedAt);
-            const timeStamp = DateTime.fromISO(eDate.toISOString()).toRelativeCalendar();
+            const timeStamp = DateTime.fromISO(eDate.toISOString()).setLocale('es').toRelativeCalendar();
             const eTest = {
                 id: test.id,
                 title: test.title,
