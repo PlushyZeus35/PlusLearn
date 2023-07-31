@@ -4,6 +4,7 @@ const Question = require('../models/question')
 const Answer = require('../models/answer');
 const {DateTime} = require('luxon');
 const responseSelector = require("./responsesSelector");
+const emailController = require('./emailController');
 const testController = {};
 
 testController.getFullTestInfo = async (testId) => {
@@ -230,8 +231,8 @@ testController.getCorrectAnswer = async (questionId) => {
 testController.parseTestData = async(test) => {
     const updatedDate = new Date(test.updatedAt);
     const createdDate = new Date(test.createdAt);
-    const updatedtimeStamp = DateTime.fromISO(updatedDate.toISOString()).toRelativeCalendar();
-    const createdtimeStamp = DateTime.fromISO(createdDate.toISOString()).toRelativeCalendar();
+    const updatedtimeStamp = DateTime.fromISO(updatedDate.toISOString()).setLocale('es').toRelativeCalendar();
+    const createdtimeStamp = DateTime.fromISO(createdDate.toISOString()).setLocale('es').toRelativeCalendar();
     const testInfo = {
         id: test.id,
         title: test.title,
@@ -381,12 +382,19 @@ testController.getGeneralStadistics = async(testId) => {
 }
 
 testController.getUserTests = async(userId, counter) => {
-    const userTests = await testSelector.getUserTests(userId);
+    let userTests = [];
+    try{
+        userTests = await testSelector.getUserTests(userId);
+    }catch(e){
+        console.log(e);
+        emailController.sendEmail('plushyzeus35@gmail.com', 'error', e.message);
+    }  
+
     const testList = [];
     for(let test of userTests){
         if(testList.length < counter){
             const eDate = new Date(test.updatedAt);
-            const timeStamp = DateTime.fromISO(eDate.toISOString()).toRelativeCalendar();
+            const timeStamp = DateTime.fromISO(eDate.toISOString()).setLocale('es').toRelativeCalendar();
             const eTest = {
                 id: test.id,
                 title: test.title,
