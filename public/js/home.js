@@ -1,14 +1,5 @@
 init();
 
-let animation = bodymovin.loadAnimation({
-    container: document.getElementById('noDataAnimation'),
-    path: '/static/lottie/noData.json',
-    render: 'svg',
-    loop: true,
-    autoplay: true,
-    name: 'animation name'
-})
-
 let animation2 = bodymovin.loadAnimation({
     container: document.getElementById('ghostAnimation'),
     path: '/static/lottie/noDataGhost.json',
@@ -38,12 +29,30 @@ function init(){
 function getLimitTestsData(){
 	axios.get('/test/g/getUserTests')
         .then(function (response) {
-			console.log(response.data);
-			displayTests(response.data);
+			if(response.data.tests.length>0){
+				displayTests(response.data);
+			}else{
+				showEmptyTestContainer();
+			}
+			
         })
         .catch(function (error) {
             console.log(error);
         });
+}
+
+function showEmptyTestContainer(){
+	hideLoader();
+	const noDataContainer = $("#noDataContainer")[0];
+	noDataContainer.classList.remove('d-none');
+	let animation = bodymovin.loadAnimation({
+		container: document.getElementById('noDataAnimation'),
+		path: '/static/lottie/noData.json',
+		render: 'svg',
+		loop: true,
+		autoplay: true,
+		name: 'animation name'
+	})
 }
 
 function displayTests(serverData){

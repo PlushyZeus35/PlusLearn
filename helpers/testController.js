@@ -118,7 +118,7 @@ testController.getFullTestInfoAnon = async (testId) => {
         let questionAnswers = answers.filter((i) => i.questionId == questId);
 
         let t_answers = [];
-        for(equestion of questionAnswers){
+        for(let equestion of questionAnswers){
             let answer = {
                 id: equestion.id,
                 name: equestion.title

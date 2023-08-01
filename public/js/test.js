@@ -37,6 +37,7 @@ const SEND_ANSWER = 'send-answer';
 const END_TEST = 'end-test';
 const USER_ANSWERED = 'user-answered';
 const USER_ALREADY_EXISTS = 'user-exists';
+const TEST_HAS_STARTED = 'test-started';
 const myModal = new bootstrap.Modal('#staticBackdrop', {
     keyboard: false
 })
@@ -61,6 +62,47 @@ socket.on(RECEIVECONNECTION_EVENT, (roomInfoS) => {
         }
         showUsersTable();
     }
+})
+
+socket.on(TEST_HAS_STARTED, (empty) => {
+    // This test has started 
+    myModal.hide();
+    hideAll();
+    const mainContainer = $('.mainContainer')[0];
+    /*<div class="card text-bg-warning mb-3" style="max-width: 18rem;">
+        <div class="card-header">Header</div>
+        <div class="card-body">
+            <h5 class="card-title">Warning card title</h5>
+            <p class="card-text">Some quick example text to build on the card title and make up the bulk of the card's content.</p>
+        </div>
+    </div>*/
+    const alertCard = document.createElement('div');
+    alertCard.classList.add('card');
+    alertCard.classList.add('text-bg-warning');
+    alertCard.classList.add('mt-5');
+
+    const alertCardHeader = document.createElement('div');
+    alertCardHeader.classList.add('card-header');
+    alertCardHeader.innerHTML = 'Atención';
+
+    const alertCardBody = document.createElement('div');
+    alertCardBody.classList.add('card-body');
+
+    const alertCardTitle = document.createElement('h5');
+    alertCardTitle.classList.add('card-title');
+    alertCardTitle.innerHTML = 'Cuestionario comenzado';
+
+    const alertCardText = document.createElement('p');
+    alertCardText.classList.add('card-text');
+    alertCardText.innerHTML = 'Este cuestionario ya ha comenzado. No está permitido unirse a un cuestionario ya comenzado';
+
+    alertCardBody.appendChild(alertCardTitle);
+    alertCardBody.appendChild(alertCardText);
+    alertCard.appendChild(alertCardHeader);
+    alertCard.appendChild(alertCardBody);
+    
+    mainContainer.appendChild(alertCard)
+
 })
 
 socket.on(USER_ALREADY_EXISTS, (empty) => {

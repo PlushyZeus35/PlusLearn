@@ -21,9 +21,6 @@
 
 #actionButtons{
     padding:7px;
-    display: flex;
-    justify-content: space-around;
-    align-items: center;
     border-bottom: 2px solid wheat;
 }
 
@@ -186,6 +183,10 @@ background: #555;
     top: 20px;
     right: 20px;
     font-size: 23px;
+}
+
+#actionButtons button{
+    width: 100%;
 }
 
 @media screen and (max-width: 630px) {
