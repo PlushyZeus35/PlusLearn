@@ -1,41 +1,55 @@
 const responseSelector = {};
 const TestResponse = require('../models/testresponse');
 const Response = require('../models/response');
+const emailController = require('./emailController');
 const { Op, where } = require("sequelize");
 
 responseSelector.createBulkTestResponses = async (responses) => {
+    let testResponses = [];
     try{
-        return await TestResponse.bulkCreate(responses);
+        testResponses = await TestResponse.bulkCreate(responses);
     }catch(error){
-        console.log("AQUI HAY UN ERROR")
-        console.log(error);
-        return null;
+        emailController.sendErrorEmail(error);
     }
+    return testResponses;
 }
 
 responseSelector.createBulkResponses = async (responses) => {
+    let newResponses = [];
     try{
-        return await Response.bulkCreate(responses);
+        newResponses = await Response.bulkCreate(responses);
     }catch(error){
-        console.log("ERROR");
-        console.log(error);
+        emailController.sendErrorEmail(error);
     }
+    return newResponses;
 }
 
 responseSelector.getTestResponses = async (testId) => {
-    return await TestResponse.findAll(
-        {where: {
-            testId: testId
-        }}
-    )
+    let testResponses = [];
+    try{
+        testResponses = await TestResponse.findAll(
+            {where: {
+                testId: testId
+            }}
+        )
+    }catch(error){
+        emailController.sendErrorEmail(error);
+    }
+    return testResponses;
 }
 
 responseSelector.getUserResponses = async (testResponses) => {
-    return await Response.findAll(
-        {where: {
-            testresponseId: testResponses
-        }}
-    )
+    let responses = [];
+    try{
+        responses = await Response.findAll(
+            {where: {
+                testresponseId: testResponses
+            }}
+        )
+    }catch(error){
+        emailController.sendErrorEmail(error);
+    }
+    return responses;
 }
 
 module.exports = responseSelector;

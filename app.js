@@ -8,6 +8,7 @@ require('./models/associations');
 const passport = require('passport');
 const flash = require('connect-flash');
 var session = require('express-session');
+const emailController = require('./helpers/emailController');
 
 // INITIALIZATIONS
 const app = express();
@@ -15,6 +16,7 @@ sequelize.sync( {force: false }).then(async () => {
     console.log("Conectado a la base de datos!");
 }).catch(error => {
     console.log("Se ha producido un error!", error);
+    emailController.sendErrorEmail(error);
 }); 
 require('./helpers/identification');
 
