@@ -382,13 +382,7 @@ testController.getGeneralStadistics = async(testId) => {
 }
 
 testController.getUserTests = async(userId, counter) => {
-    let userTests = [];
-    try{
-        userTests = await testSelector.getUserTests(userId);
-    }catch(e){
-        console.log(e);
-        emailController.sendEmail('plushyzeus35@gmail.com', 'error', e.message);
-    }  
+    let userTests = await testSelector.getUserTests(userId); 
 
     const testList = [];
     for(let test of userTests){
