@@ -5,6 +5,7 @@ html(lang="es")
         include ./includes/bootstrap.pug
         include ./includes/fonts.pug
         link(rel="stylesheet", href="/static/css/test2.css")
+        script(src='https://cdn.jsdelivr.net/gh/davidshimjs/qrcodejs/qrcode.min.js')
         script(src="https://cdn.jsdelivr.net/npm/chart.js")
         script(src='https://cdnjs.cloudflare.com/ajax/libs/lottie-web/5.10.2/lottie.min.js' integrity='sha512-fTTVSuY9tLP+l/6c6vWz7uAQqd1rq3Q/GyKBN2jOZvJSLC5RjggSdboIFL1ox09/Ezx/AKwcv/xnDeYN9+iDDA==' crossorigin='anonymous' referrerpolicy='no-referrer')
         script(src='https://cdn.socket.io/4.5.4/socket.io.min.js')
@@ -23,15 +24,28 @@ html(lang="es")
             .modal-dialog.modal-dialog-centered
                 .modal-content
                     .modal-header
-                        h1#staticBackdropLabel.modal-title.fs-5 Modal title
-                        //button.btn-close(type='button' data-bs-dismiss='modal' aria-label='Close')
+                        h1#staticBackdropLabel.modal-title.fs-5 Introduce tu nombre
                     .modal-body
+                        #alertContainer
+                        .p Introduce tu nombre para ser reconocido en la sala. Tu nombre deber ser único en la sala.
                         .form-floating.mb-3
                             input#guestNameInput.form-control(type='text' placeholder='Nombre')
                             label(for='guestNameInput') Nombre
                     .modal-footer
-                        //button.btn.btn-secondary(type='button' data-bs-dismiss='modal') Close
                         button.btn.btn-primary(type='button' onclick='setGuestUser();') Acceder
+        #qrCodeModal.modal.fade(data-bs-backdrop='static' data-bs-keyboard='false' tabindex='-1' aria-labelledby='staticBackdropLabel' aria-hidden='true')
+            .modal-dialog.modal-dialog-centered
+                .modal-content
+                    .modal-header
+                        h1#staticBackdropLabel.modal-title.fs-5 Código QR
+                        button.btn-close(type='button' data-bs-dismiss='modal' aria-label='Close')
+                    .modal-body
+                        p Comparte este código QR para que puedan acceder al cuestionario.
+                        #qrcode
+                    .modal-footer
+                        button.btn.btn-secondary(type='button' data-bs-dismiss='modal') Close
+                        //button.btn.btn-primary(type='button' onclick='setGuestUser();') Acceder
+        
         .mainContainer
             //.alert.alert-primary.d-flex.align-items-center(role='alert')
                 svg.bi.flex-shrink-0.me-2(role='img' aria-label='Info:')

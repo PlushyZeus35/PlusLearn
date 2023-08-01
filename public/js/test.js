@@ -25,6 +25,7 @@ let myAnswers = new Map();
 let hasAnswered = false;
 // User answered
 let userAnswered = 0;
+let qrCodeIsRendered = false;
 
 // SOCKET EVENTS
 const CONNECT_EVENT = 'room-connection';
@@ -35,9 +36,12 @@ const NEXT_QUESTION = 'next-question';
 const SEND_ANSWER = 'send-answer';
 const END_TEST = 'end-test';
 const USER_ANSWERED = 'user-answered';
+const USER_ALREADY_EXISTS = 'user-exists';
+const TEST_HAS_STARTED = 'test-started';
 const myModal = new bootstrap.Modal('#staticBackdrop', {
     keyboard: false
 })
+const qrModal = new bootstrap.Modal('#qrCodeModal')
 
 
 //loadQuestions();
@@ -47,6 +51,8 @@ const myModal = new bootstrap.Modal('#staticBackdrop', {
 var socket = io();
 socket.on(RECEIVECONNECTION_EVENT, (roomInfoS) => {
     if(sessionPhase){
+        myModal.hide();
+        showLoader();
         roomInfo = roomInfoS.roomInfo;
         const targetUser = roomInfoS.userTarget;
         if(targetUser.isNew){
@@ -56,6 +62,58 @@ socket.on(RECEIVECONNECTION_EVENT, (roomInfoS) => {
         }
         showUsersTable();
     }
+})
+
+socket.on(TEST_HAS_STARTED, (empty) => {
+    // This test has started 
+    myModal.hide();
+    hideAll();
+    const mainContainer = $('.mainContainer')[0];
+    /*<div class="card text-bg-warning mb-3" style="max-width: 18rem;">
+        <div class="card-header">Header</div>
+        <div class="card-body">
+            <h5 class="card-title">Warning card title</h5>
+            <p class="card-text">Some quick example text to build on the card title and make up the bulk of the card's content.</p>
+        </div>
+    </div>*/
+    const alertCard = document.createElement('div');
+    alertCard.classList.add('card');
+    alertCard.classList.add('text-bg-warning');
+    alertCard.classList.add('mt-5');
+
+    const alertCardHeader = document.createElement('div');
+    alertCardHeader.classList.add('card-header');
+    alertCardHeader.innerHTML = 'Atención';
+
+    const alertCardBody = document.createElement('div');
+    alertCardBody.classList.add('card-body');
+
+    const alertCardTitle = document.createElement('h5');
+    alertCardTitle.classList.add('card-title');
+    alertCardTitle.innerHTML = 'Cuestionario comenzado';
+
+    const alertCardText = document.createElement('p');
+    alertCardText.classList.add('card-text');
+    alertCardText.innerHTML = 'Este cuestionario ya ha comenzado. No está permitido unirse a un cuestionario ya comenzado';
+
+    alertCardBody.appendChild(alertCardTitle);
+    alertCardBody.appendChild(alertCardText);
+    alertCard.appendChild(alertCardHeader);
+    alertCard.appendChild(alertCardBody);
+    
+    mainContainer.appendChild(alertCard)
+
+})
+
+socket.on(USER_ALREADY_EXISTS, (empty) => {
+    const alertContainer = $("#alertContainer")[0];
+    const alert = document.createElement('div');
+    alert.classList.add('alert');
+    alert.classList.add('alert-danger');
+    alert.role = 'alert';
+    alert.innerHTML = 'Ese nombre de usuario ya existe en la sala, especifica otro por favor.';
+    alertContainer.appendChild(alert);
+    console.log("YA EXISTE")
 })
 
 socket.on(USER_ANSWERED, ()=>{
@@ -101,9 +159,11 @@ socket.on(END_TEST, (results) => {
     title.classList.add('mainTitle')
 
     const saveButton = document.createElement('button');
+    saveButton.id = 'saveDataButton';
     saveButton.classList.add('btn');
     saveButton.classList.add('btn-primary');
     saveButton.classList.add('mt-3');
+    saveButton.onclick = saveResults;
     saveButton.innerHTML = 'Guardar resultados';
 
     partContainer.appendChild(title);
@@ -137,17 +197,30 @@ socket.on(END_QUESTION, (info) => {
         for(let input of inputs){
             if(input.checked){
                 selectedAnswer.selectedAnswer = {
+                    isNull: false,
                     id: parseInt(input.id.split('-')[1]),
                     name: input.value,
                     questionId: targetQuestionId,
-                    user: connectionInfo.userId
+                    user: connectionInfo.username,
+                    userId: dataFromServer.userId,
+                    isGuestUser: !dataFromServer.isAuthenticatedUser,
+                    testId: dataFromServer.testId
                 }
                 selectedAnswerId = parseInt(input.id.split('-')[1]);
             }
             console.log({name: input.name, checked: input.checked, id: input.id});
         }
+        if(selectedAnswer.selectedAnswer==null){
+            selectedAnswer.selectedAnswer = {
+                isNull: true,
+                questionId: targetQuestionId,
+                user: connectionInfo.username,
+                userId: dataFromServer.userId,
+                isGuestUser: !dataFromServer.isAuthenticatedUser
+            }
+        }
         myAnswers.set(targetQuestionId, selectedAnswerId);
-        selectedAnswer.userId = connectionInfo.userId;
+        selectedAnswer.userId = connectionInfo.username;
         selectedAnswer.roomId = connectionInfo.roomId;
         sendEvent(SEND_ANSWER, selectedAnswer);
     }
@@ -193,7 +266,7 @@ function sortByOrder(a, b) {
 
 const connectionInfo = {
     roomId: dataFromServer.roomId,
-    userId: dataFromServer.userId
+    username: dataFromServer.username
 }
 init();
 
@@ -201,7 +274,7 @@ init();
 function init(){
     hideAll();
     console.log(dataFromServer)
-    let username = dataFromServer.userId;
+    let username = dataFromServer.username;
     let roomId = dataFromServer.roomId;
     isMasterUser = dataFromServer.isMaster;
     if(username==null || username == ''){
@@ -209,7 +282,7 @@ function init(){
         myModal.show();
     }else{
         showLoader();
-        connectToRoom(connectionInfo.roomId, connectionInfo.userId, false)
+        connectToRoom(connectionInfo.roomId, connectionInfo.username, false)
     }
 }
 
@@ -230,10 +303,9 @@ function hideAll(){
 function setGuestUser(){
     const nameInput = $('#guestNameInput')[0];
     if(nameInput.value!=''){
-        connectionInfo.userId = nameInput.value;
-        myModal.hide();
-        showLoader();
-        connectToRoom(connectionInfo.roomId, connectionInfo.userId, true)
+        connectionInfo.username = nameInput.value;
+        
+        connectToRoom(connectionInfo.roomId, connectionInfo.username, true)
     }
 }
 
@@ -345,13 +417,22 @@ function showUsersTable(){
         button.classList.add('btn');
         button.classList.add('btn-lg');
         button.classList.add('btn-primary');
+        button.classList.add('me-3');
         button.innerHTML = 'Comenzar';
         if(roomInfo==undefined || roomInfo.users.length==0){
             button.disabled = true;
         }
         button.onclick = startTest;
 
+        const buttonQR = document.createElement('button');
+        buttonQR.classList.add('btn');
+        buttonQR.classList.add('btn-lg');
+        buttonQR.classList.add('btn-outline-primary');
+        buttonQR.innerHTML = 'QR';
+        buttonQR.onclick = showQRModal;
+
         buttonContainer.appendChild(button);
+        buttonContainer.appendChild(buttonQR);
 
         mainContainer.appendChild(buttonContainer);
     }
@@ -419,7 +500,17 @@ function showNextQuestion(){
     if(isMasterUser){
         questionMainContainer.appendChild(alertDiv);
     }
-   
+
+    const questionCounter = document.createElement('div');
+    questionCounter.id = 'questionCounter';
+    questionMainContainer.appendChild(questionCounter);
+
+    const counterBadge = document.createElement('span');
+    counterBadge.classList.add('badge');
+    counterBadge.classList.add('rounded-pill');
+    counterBadge.classList.add('text-bg-primary');
+    counterBadge.innerHTML = (index+1) + ' / ' + testQuestions.length;
+    questionCounter.appendChild(counterBadge);
 
     // <h3 class="mb-5">Lorem ipsum dolor sit amet consectetur adipisicing elit. Dolores, voluptatem!</h3>
     let title = document.createElement('h3');
@@ -483,7 +574,7 @@ function createButton(id, answer){
 }
 
 function answerOnClick(){
-    if(!hasAnswered){
+    if(!hasAnswered && !isMasterUser){
         console.log("He respondido!")
         sendEvent(USER_ANSWERED, {roomId: connectionInfo.roomId});
     }
@@ -526,14 +617,18 @@ function showResults(){
         correctAnswersIds.push(cor.id);
     }
     let targetQuestion = testQuestions[index];
-    if(correctAnswersIds.indexOf(myAnswers.get(targetQuestionId))>=0){
-        let correctTitle = document.createElement('h2');
-        correctTitle.innerHTML = 'CORRECTO';
-        questionMainContainer.insertBefore(correctTitle, questionMainContainer.firstChild);
-    }else{
-        let incorrectTitle = document.createElement('h2');
-        incorrectTitle.innerHTML = 'INCORRECTO';
-        questionMainContainer.insertBefore(incorrectTitle, questionMainContainer.firstChild);
+    if(!isMasterUser){
+        if(correctAnswersIds.indexOf(myAnswers.get(targetQuestionId))>=0){
+            let correctTitle = document.createElement('h2');
+            correctTitle.innerHTML = '¡CORRECTO!';
+            correctTitle.classList.add('correctTitle');
+            questionMainContainer.insertBefore(correctTitle, questionMainContainer.firstChild);
+        }else{
+            let incorrectTitle = document.createElement('h2');
+            incorrectTitle.classList.add('incorrectTitle');
+            incorrectTitle.innerHTML = '¡INCORRECTO!';
+            questionMainContainer.insertBefore(incorrectTitle, questionMainContainer.firstChild);
+        }
     }
     let auxIndex=0;
     for(let targetAnswer of targetQuestion.answers){ //id name
@@ -710,16 +805,6 @@ function getResultTable(results){
 }
 
 function showNotification(toastType, title, text){
-    /*
-    #liveToast.toast(role='alert' aria-live='assertive' aria-atomic='true')
-                .toast-header
-                    img.rounded.me-2(src='...' alt='...')
-                    strong.me-auto Bootstrap
-                    small 11 mins ago
-                    button.btn-close(type='button' data-bs-dismiss='toast' aria-label='Close')
-                .toast-body
-                    | Hello, world! This is a toast message.
-    */
    const toastContainer = $(".toast-container")[0];
    console.log('asdfasdf');
    console.log(toastContainer)
@@ -778,3 +863,45 @@ function showNotification(toastType, title, text){
 /*setInterval(() => {
     showNotification('asdf', 'asdf','fdsa');
 }, 3000);*/
+
+function showQRModal(){
+    qrModal.show();
+    showQRcode(connectionInfo.roomId);
+}
+
+function showQRcode(roomId){
+    if(!qrCodeIsRendered){
+        const qrcode = new QRCode(document.getElementById('qrcode'), {
+            text: window.location.hostname + '/test/d/'+roomId,
+            width: 128,
+            height: 128,
+            colorDark : '#000',
+            colorLight : '#fff',
+            correctLevel : QRCode.CorrectLevel.H
+        });
+        //$("#urlRoomId")[0].innerHTML = window.location.hostname + '/test/d/'+roomId;
+        qrCodeIsRendered=true;
+    }
+    
+}
+
+function saveResults(){
+    console.log("GUARDAR RESULTADOS");
+    console.log(answersReceived);
+    const resultsInObjectNotation = convertMapToObjectArray(answersReceived);
+    axios.post('/test/saveResults', {
+        responses: resultsInObjectNotation
+      })
+      .then(function (response) {
+        if(response.data.status){
+            showNotification(TOAST_SUCCESS, 'Datos guardados', 'Las respuestas han sido guardadas correctamente.');
+            $("#saveDataButton")[0].disabled = true;
+        }
+        console.log(response);
+      })
+      .catch(function (error) {
+        showNotification(TOAST_FAIL, 'Algo ha ocurrido mal', 'No se han podido guardar las respuestas.');
+        console.log(error);
+      });
+}
+

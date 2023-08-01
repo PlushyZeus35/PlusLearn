@@ -1,0 +1,63 @@
+doctype html
+html(lang="es")
+    head
+        include ./includes/head.pug
+        include ./includes/bootstrap.pug
+        include ./includes/fonts.pug
+        link(rel="stylesheet", href="/static/css/stats.css")
+        script(src="https://cdn.jsdelivr.net/npm/chart.js")
+        script(src='https://cdnjs.cloudflare.com/ajax/libs/lottie-web/5.10.2/lottie.min.js' integrity='sha512-fTTVSuY9tLP+l/6c6vWz7uAQqd1rq3Q/GyKBN2jOZvJSLC5RjggSdboIFL1ox09/Ezx/AKwcv/xnDeYN9+iDDA==' crossorigin='anonymous' referrerpolicy='no-referrer')
+        
+    body 
+        include ./includes/light_app_nav.pug
+
+        //#mainContainer.container.p-5
+        .container.mt-4
+            .rounded.bg-secondary.pt-5.px-5.pb-2.mb-2.text-white
+                h2#testTitle 
+                p#testDescription 
+                span 
+                    strong Creado: 
+                    span#createdTimestamp 
+                br
+                span 
+                    strong Última edición: 
+                    span#updatedTimestamp 
+                br
+                span 
+                    strong Código: 
+                    span#interactiveCode 
+            .rounded.bg-primary-subtle.pt-3.px-5.pb-5.mb-2
+                .d-flex.justify-content-between
+                    h4.ubuntuFont Estadisticas generales
+                    a#editTestButton.btn.btn-warning(href='#') Modificar test
+                #generalStadistics.row 
+                    #loading1.loadingContainer.col-12.d-flex.justify-content-center.align-items-center
+                        #loadingAnimation
+                    //#mainStat1.d-flex.justify-content-center.align-items-center.flex-column.col-12.col-md-6 
+                        span.statTitle Respuestas obtenidas 
+                        span#responsesCounter.statResult 5
+                    //.col-12.col-md-6.d-flex.justify-content-center.align-items-center.flex-column
+                        #mainStat2Container
+                            canvas#mainStat2
+            .rounded.bg-primary-subtle.pt-3.px-5.pb-5.mb-4
+                .d-flex.justify-content-between.flex-column.flex-md-row
+                    h4.ubuntuFont Estadisticas de preguntas
+                    .buttons.d-flex.justify-content-center.flex-column.flex-md-row.align-items-center
+                        a#completeStatsButton.btn.btn-outline-primary.me-2(href='#') Estadísticas completas
+                        a#responsesButton.btn.btn-primary(href='#') Ver respuestas
+                #questionsStadistics.row.mt-2 
+                    #loading2.loadingContainer.col-12.d-flex.justify-content-center.align-items-center
+                        #loadingAnimation2
+                    //#mainStat1.d-flex.justify-content-center.align-items-center.flex-column.col-12.col-md-6 
+                        span.statTitle Número de preguntas 
+                        span.statResult 10
+                    //.col-12.col-md-6.d-flex.justify-content-center.align-items-center.flex-column
+                        #questionStatContainer
+                            canvas#questionStat
+                    //#questionCorrectAnswerChartContainer.mb-3.col-12
+                        canvas#questionMainStat
+                    
+        script(src="https://unpkg.com/axios/dist/axios.min.js")
+        include ./includes/jquery.pug
+        script(src="/static/js/stats.js") 

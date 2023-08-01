@@ -112,8 +112,8 @@ function newQuestion(){
     questions.push({
         id: provisionalId,
         title: '',
-        correctAnswer: '',
-        incorrectAnswers: [],
+        correctAnswer: {name:''},
+        incorrectAnswers: [{name: ''},{name: ''},{name: ''},{name: ''}],
         order: order,
         isNew: true,
         isDeleted: false
@@ -387,12 +387,11 @@ function questionUpdated(){
         if(questions[i].id == questionTargeted){
             questions[i].title = questionInputValue;
             // objeto {id, name}
-            questions[i].correctAnswer = {name: correctInputValue};
+            questions[i].correctAnswer.name = correctInputValue;
             // array de objetos {id, name}
-            questions[i].incorrectAnswers = [];
-            questions[i].incorrectAnswers.push({name: incorrect1InputValue});
-            questions[i].incorrectAnswers.push({name: incorrect2InputValue});
-            questions[i].incorrectAnswers.push({name: incorrect3InputValue});
+            questions[i].incorrectAnswers[0].name = incorrect1InputValue;
+            questions[i].incorrectAnswers[1].name = incorrect2InputValue;
+            questions[i].incorrectAnswers[2].name = incorrect3InputValue;
             //questions[i].incorrectAnswers = [questions[i].incorrectAnswers[0],incorrect2InputValue,incorrect3InputValue];
             //questions[i].incorrectAnswers = [incorrect1InputValue,incorrect2InputValue,incorrect3InputValue];
             questions[i].isUpdated = questions[i].isNew ?  false : true;

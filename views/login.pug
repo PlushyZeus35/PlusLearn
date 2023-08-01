@@ -15,7 +15,7 @@ html(lang="en")
                 form(method='POST' action='/auth/login')
                     .cardHeader
                         img(src='/static/img/logo.png' width='70px' alt='')
-                        h5.text-white.pt-3 Login
+                        h5.text-white.pt-3 Acceso
                     .cardBody.mt-4
                         .form-floating.mb-3
                             input#floatingInput.form-control(name='username' type='text' placeholder='nombre')
@@ -27,7 +27,7 @@ html(lang="en")
                         .d-grid.gap-2
                             button.btn.btn-primary(type='submit') Acceder
                             a.btn.btn-outline-secondary(href='/register') Registro
-                            a.link-info.text-center(href='#') Recuperar la contraseña
+                            a.link-info.text-center(href='/reset') Recuperar la contraseña
 
 
                         

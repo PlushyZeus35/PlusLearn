@@ -15,16 +15,20 @@ html(lang="es")
                 h5#offcanvasLabel.offcanvas-title Listado
                 button.btn-close.btn-close-white(type='button' data-bs-dismiss='offcanvas' aria-label='Close')
             .offcanvas-body
-                #actionButtons 
-                    button.btn.btn-primary(onclick='newQuestion();')
-                        svg.bi.bi-plus-circle-fill(xmlns='http://www.w3.org/2000/svg' width='16' height='16' fill='currentColor' viewbox='0 0 16 16')
-                            path(d='M16 8A8 8 0 1 1 0 8a8 8 0 0 1 16 0zM8.5 4.5a.5.5 0 0 0-1 0v3h-3a.5.5 0 0 0 0 1h3v3a.5.5 0 0 0 1 0v-3h3a.5.5 0 0 0 0-1h-3v-3z')
+                #actionButtons.d-grid.gap-2 
                     button.btn.btn-warning(data-bs-toggle="modal" data-bs-target="#confTestModal")
-                        svg.bi.bi-gear-fill(xmlns='http://www.w3.org/2000/svg' width='16' height='16' fill='currentColor' viewbox='0 0 16 16')
+                        svg.bi.bi-gear-fill.me-2(xmlns='http://www.w3.org/2000/svg' width='16' height='16' fill='currentColor' viewbox='0 0 16 16')
                             path(d='M9.405 1.05c-.413-1.4-2.397-1.4-2.81 0l-.1.34a1.464 1.464 0 0 1-2.105.872l-.31-.17c-1.283-.698-2.686.705-1.987 1.987l.169.311c.446.82.023 1.841-.872 2.105l-.34.1c-1.4.413-1.4 2.397 0 2.81l.34.1a1.464 1.464 0 0 1 .872 2.105l-.17.31c-.698 1.283.705 2.686 1.987 1.987l.311-.169a1.464 1.464 0 0 1 2.105.872l.1.34c.413 1.4 2.397 1.4 2.81 0l.1-.34a1.464 1.464 0 0 1 2.105-.872l.31.17c1.283.698 2.686-.705 1.987-1.987l-.169-.311a1.464 1.464 0 0 1 .872-2.105l.34-.1c1.4-.413 1.4-2.397 0-2.81l-.34-.1a1.464 1.464 0 0 1-.872-2.105l.17-.31c.698-1.283-.705-2.686-1.987-1.987l-.311.169a1.464 1.464 0 0 1-2.105-.872l-.1-.34zM8 10.93a2.929 2.929 0 1 1 0-5.86 2.929 2.929 0 0 1 0 5.858z')
-                    button.btn.btn-success(onclick="saveDataServer();")
-                        svg.bi.bi-save-fill(xmlns='http://www.w3.org/2000/svg' width='16' height='16' fill='currentColor' viewbox='0 0 16 16')
-                            path(d='M8.5 1.5A1.5 1.5 0 0 1 10 0h4a2 2 0 0 1 2 2v12a2 2 0 0 1-2 2H2a2 2 0 0 1-2-2V2a2 2 0 0 1 2-2h6c-.314.418-.5.937-.5 1.5v7.793L4.854 6.646a.5.5 0 1 0-.708.708l3.5 3.5a.5.5 0 0 0 .708 0l3.5-3.5a.5.5 0 0 0-.708-.708L8.5 9.293V1.5z')
+                        | Configuración
+                    #actionSecondaryButtons.d-flex.gap-2
+                        button.btn.btn-primary(onclick='newQuestion();')
+                            svg.bi.bi-plus-circle-fill.me-2(xmlns='http://www.w3.org/2000/svg' width='16' height='16' fill='currentColor' viewbox='0 0 16 16')
+                                path(d='M16 8A8 8 0 1 1 0 8a8 8 0 0 1 16 0zM8.5 4.5a.5.5 0 0 0-1 0v3h-3a.5.5 0 0 0 0 1h3v3a.5.5 0 0 0 1 0v-3h3a.5.5 0 0 0 0-1h-3v-3z')
+                            | Nueva pregunta
+                        button.btn.btn-success(onclick="saveDataServer();")
+                            svg.bi.bi-save-fill.me-2(xmlns='http://www.w3.org/2000/svg' width='16' height='16' fill='currentColor' viewbox='0 0 16 16')
+                                path(d='M8.5 1.5A1.5 1.5 0 0 1 10 0h4a2 2 0 0 1 2 2v12a2 2 0 0 1-2 2H2a2 2 0 0 1-2-2V2a2 2 0 0 1 2-2h6c-.314.418-.5.937-.5 1.5v7.793L4.854 6.646a.5.5 0 1 0-.708.708l3.5 3.5a.5.5 0 0 0 .708 0l3.5-3.5a.5.5 0 0 0-.708-.708L8.5 9.293V1.5z')
+                            | Guardar
                 #questionOrder
         #confTestModal.modal.fade(tabindex='-1' aria-labelledby='addTestLabel' aria-hidden='true')
             .modal-dialog.modal-dialog-centered
@@ -50,7 +54,7 @@ html(lang="es")
                         button.btn.btn-primary(type='button' onclick='saveDataServer();') Guardar
         div#main.container-fluid.m-0.p-0
             .container
-                #questionContainer
+                #questionContainer.pt-4
                     #alertContainer
                     button.btn.btn-primary.mb-3.ms-auto(data-bs-toggle="offcanvas" href="#offcanvas" role="button" aria-controls="offcanvas") Lista de preguntas
                     #questionInfoContainer
