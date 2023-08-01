@@ -1,0 +1,111 @@
+#mainContainer{
+    min-height: 100vh;
+    margin-top: -60px;
+    padding-top: 60px;
+    background: no-repeat center center fixed;
+    background-size: cover;
+    background-image: url("data:image/svg+xml,%3csvg xmlns='http://www.w3.org/2000/svg' version='1.1' xmlns:xlink='http://www.w3.org/1999/xlink' xmlns:svgjs='http://svgjs.dev/svgjs' width='1440' height='560' preserveAspectRatio='none' viewBox='0 0 1440 560'%3e%3cg mask='url(%26quot%3b%23SvgjsMask1000%26quot%3b)' fill='none'%3e%3crect width='1440' height='560' x='0' y='0' fill='%230e2a47'%3e%3c/rect%3e%3cpath d='M909 334L908 549' stroke-width='8' stroke='url(%26quot%3b%23SvgjsLinearGradient1001%26quot%3b)' stroke-linecap='round' class='Up'%3e%3c/path%3e%3cpath d='M737 410L736 770' stroke-width='8' stroke='url(%26quot%3b%23SvgjsLinearGradient1002%26quot%3b)' stroke-linecap='round' class='Down'%3e%3c/path%3e%3cpath d='M389 340L388 546' stroke-width='6' stroke='url(%26quot%3b%23SvgjsLinearGradient1002%26quot%3b)' stroke-linecap='round' class='Down'%3e%3c/path%3e%3cpath d='M90 57L89 -341' stroke-width='8' stroke='url(%26quot%3b%23SvgjsLinearGradient1002%26quot%3b)' stroke-linecap='round' class='Down'%3e%3c/path%3e%3cpath d='M1306 205L1305 447' stroke-width='10' stroke='url(%26quot%3b%23SvgjsLinearGradient1001%26quot%3b)' stroke-linecap='round' class='Up'%3e%3c/path%3e%3cpath d='M1313 151L1312 335' stroke-width='6' stroke='url(%26quot%3b%23SvgjsLinearGradient1002%26quot%3b)' stroke-linecap='round' class='Down'%3e%3c/path%3e%3cpath d='M296 93L295 -307' stroke-width='8' stroke='url(%26quot%3b%23SvgjsLinearGradient1002%26quot%3b)' stroke-linecap='round' class='Down'%3e%3c/path%3e%3cpath d='M1056 471L1055 155' stroke-width='8' stroke='url(%26quot%3b%23SvgjsLinearGradient1002%26quot%3b)' stroke-linecap='round' class='Down'%3e%3c/path%3e%3cpath d='M1038 402L1037 733' stroke-width='6' stroke='url(%26quot%3b%23SvgjsLinearGradient1002%26quot%3b)' stroke-linecap='round' class='Down'%3e%3c/path%3e%3cpath d='M895 1L894 382' stroke-width='6' stroke='url(%26quot%3b%23SvgjsLinearGradient1002%26quot%3b)' stroke-linecap='round' class='Down'%3e%3c/path%3e%3cpath d='M1063 512L1062 840' stroke-width='10' stroke='url(%26quot%3b%23SvgjsLinearGradient1001%26quot%3b)' stroke-linecap='round' class='Up'%3e%3c/path%3e%3cpath d='M1076 349L1075 137' stroke-width='10' stroke='url(%26quot%3b%23SvgjsLinearGradient1001%26quot%3b)' stroke-linecap='round' class='Up'%3e%3c/path%3e%3cpath d='M835 214L834 -204' stroke-width='6' stroke='url(%26quot%3b%23SvgjsLinearGradient1002%26quot%3b)' stroke-linecap='round' class='Down'%3e%3c/path%3e%3cpath d='M432 209L431 405' stroke-width='6' stroke='url(%26quot%3b%23SvgjsLinearGradient1001%26quot%3b)' stroke-linecap='round' class='Up'%3e%3c/path%3e%3cpath d='M567 165L566 398' stroke-width='6' stroke='url(%26quot%3b%23SvgjsLinearGradient1002%26quot%3b)' stroke-linecap='round' class='Down'%3e%3c/path%3e%3cpath d='M995 554L994 342' stroke-width='10' stroke='url(%26quot%3b%23SvgjsLinearGradient1001%26quot%3b)' stroke-linecap='round' class='Up'%3e%3c/path%3e%3cpath d='M545 245L544 -11' stroke-width='6' stroke='url(%26quot%3b%23SvgjsLinearGradient1002%26quot%3b)' stroke-linecap='round' class='Down'%3e%3c/path%3e%3cpath d='M419 519L418 873' stroke-width='10' stroke='url(%26quot%3b%23SvgjsLinearGradient1001%26quot%3b)' stroke-linecap='round' class='Up'%3e%3c/path%3e%3cpath d='M795 280L794 652' stroke-width='10' stroke='url(%26quot%3b%23SvgjsLinearGradient1001%26quot%3b)' stroke-linecap='round' class='Up'%3e%3c/path%3e%3cpath d='M666 101L665 244' stroke-width='6' stroke='url(%26quot%3b%23SvgjsLinearGradient1001%26quot%3b)' stroke-linecap='round' class='Up'%3e%3c/path%3e%3cpath d='M558 181L557 28' stroke-width='6' stroke='url(%26quot%3b%23SvgjsLinearGradient1002%26quot%3b)' stroke-linecap='round' class='Down'%3e%3c/path%3e%3cpath d='M86 20L85 404' stroke-width='6' stroke='url(%26quot%3b%23SvgjsLinearGradient1001%26quot%3b)' stroke-linecap='round' class='Up'%3e%3c/path%3e%3cpath d='M1361 493L1360 143' stroke-width='10' stroke='url(%26quot%3b%23SvgjsLinearGradient1001%26quot%3b)' stroke-linecap='round' class='Up'%3e%3c/path%3e%3cpath d='M66 176L65 403' stroke-width='10' stroke='url(%26quot%3b%23SvgjsLinearGradient1002%26quot%3b)' stroke-linecap='round' class='Down'%3e%3c/path%3e%3cpath d='M1144 249L1143 527' stroke-width='8' stroke='url(%26quot%3b%23SvgjsLinearGradient1002%26quot%3b)' stroke-linecap='round' class='Down'%3e%3c/path%3e%3cpath d='M200 105L199 322' stroke-width='10' stroke='url(%26quot%3b%23SvgjsLinearGradient1002%26quot%3b)' stroke-linecap='round' class='Down'%3e%3c/path%3e%3cpath d='M803 392L802 735' stroke-width='10' stroke='url(%26quot%3b%23SvgjsLinearGradient1002%26quot%3b)' stroke-linecap='round' class='Down'%3e%3c/path%3e%3cpath d='M401 434L400 589' stroke-width='6' stroke='url(%26quot%3b%23SvgjsLinearGradient1001%26quot%3b)' stroke-linecap='round' class='Up'%3e%3c/path%3e%3cpath d='M991 533L990 846' stroke-width='10' stroke='url(%26quot%3b%23SvgjsLinearGradient1002%26quot%3b)' stroke-linecap='round' class='Down'%3e%3c/path%3e%3cpath d='M160 514L159 658' stroke-width='6' stroke='url(%26quot%3b%23SvgjsLinearGradient1001%26quot%3b)' stroke-linecap='round' class='Up'%3e%3c/path%3e%3cpath d='M391 385L390 605' stroke-width='10' stroke='url(%26quot%3b%23SvgjsLinearGradient1002%26quot%3b)' stroke-linecap='round' class='Down'%3e%3c/path%3e%3cpath d='M185 475L184 713' stroke-width='8' stroke='url(%26quot%3b%23SvgjsLinearGradient1002%26quot%3b)' stroke-linecap='round' class='Down'%3e%3c/path%3e%3cpath d='M1077 40L1076 -103' stroke-width='10' stroke='url(%26quot%3b%23SvgjsLinearGradient1001%26quot%3b)' stroke-linecap='round' class='Up'%3e%3c/path%3e%3cpath d='M428 272L427 -42' stroke-width='8' stroke='url(%26quot%3b%23SvgjsLinearGradient1002%26quot%3b)' stroke-linecap='round' class='Down'%3e%3c/path%3e%3cpath d='M421 504L420 107' stroke-width='6' stroke='url(%26quot%3b%23SvgjsLinearGradient1002%26quot%3b)' stroke-linecap='round' class='Down'%3e%3c/path%3e%3cpath d='M1284 432L1283 839' stroke-width='8' stroke='url(%26quot%3b%23SvgjsLinearGradient1002%26quot%3b)' stroke-linecap='round' class='Down'%3e%3c/path%3e%3c/g%3e%3cdefs%3e%3cmask id='SvgjsMask1000'%3e%3crect width='1440' height='560' fill='white'%3e%3c/rect%3e%3c/mask%3e%3clinearGradient x1='0%25' y1='100%25' x2='0%25' y2='0%25' id='SvgjsLinearGradient1001'%3e%3cstop stop-color='rgba(28%2c 83%2c 142%2c 0)' offset='0'%3e%3c/stop%3e%3cstop stop-color='%231c538e' offset='1'%3e%3c/stop%3e%3c/linearGradient%3e%3clinearGradient x1='0%25' y1='0%25' x2='0%25' y2='100%25' id='SvgjsLinearGradient1002'%3e%3cstop stop-color='rgba(28%2c 83%2c 142%2c 0)' offset='0'%3e%3c/stop%3e%3cstop stop-color='%231c538e' offset='1'%3e%3c/stop%3e%3c/linearGradient%3e%3c/defs%3e%3c/svg%3e");
+}
+
+#userList{
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+}
+
+#testInfo{
+    border-radius: 18px;
+    background-color: #000036;
+    border: 2px solid #264348;
+    padding: 24px 30px;
+    margin-top: 500px;
+}
+
+.regular{
+    background-color: #b0e0e6;
+    border-radius: 18px;
+    border: 3px solid #008b8b;
+    margin-bottom: 10px;
+}
+
+.master{
+    background-color: #f0e68c;
+    border-radius: 18px;
+    border: 3px solid #ffd700;
+    margin-bottom: 20px;
+}
+
+.user{
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    gap: 50px;
+    padding: 12px 24px;
+    font-size: 25px;
+    font-weight: bolder;
+}
+
+#testStatus{
+    display: flex;
+    gap: 10px;
+}
+
+.badge{
+    font-size: 16px;
+}
+
+.ubuntuFont{
+    color: #ededed;
+    font-family: 'Ubuntu', sans-serif;
+}
+
+.userCounterAlert{
+    color: #ffda6a;
+    background-color: #332701;
+    border: 2px solid #997404;
+    display: flex;
+    align-items: center;
+    gap: 20px;
+}
+
+.infoAlert{
+    color: #75b798;
+    background-color: #051b11;
+    border: 2px solid #0f5132;
+}
+
+.incorrectAlert{
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    color: #ea868f;
+    background-color: #2c0b0e;
+    border: 2px solid #842029;
+    font-size: 26px;
+}
+
+.correctAlert{
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    color: #75b798;
+    background-color: #051b11;
+    border: 2px solid #0f5132;
+    font-size: 26px;
+}
+
+.waitResponseAlert{
+    color: #6edff6;
+    background-color: #032830;
+    border: 2px solid #087990;
+    display: flex;
+    align-items: center;
+    gap: 20px;
+}
+
+#questionCounter{
+    display: flex;
+    align-items: end;
+    justify-content: end;
+}
