@@ -70,19 +70,41 @@ EmailController.sendHTML = async function(receiver,subject='PlushyApp Message In
     });
 };
 
-EmailController.sendErrorMail = async function(subject='', error='', message='', extraAttachments=[]){
-    const mainAttachments = [{filename: 'Logo.png', path: path.join(__dirname, '../static/img/zeus.png'),cid: 'logo'},{filename: 'Bug.png', path: path.join(__dirname, '../static/img/bug.png'),cid: 'bug'}];
-    const attachments = mainAttachments.concat(extraAttachments);
-    fs.readFile(path.join(__dirname, '../email/error.html'), 'utf-8', function(err,data) {
-        if(!err){
-            data = data.replace('{{script}}', error);
-            data = data.replace('{{scriptError}}', message);
-            EmailController.sendHTML(config.email.receiver,subject , data, attachments);
-        }else{
-            console.log(err)
+EmailController.sendErrorEmail = async function(errorObject){
+    // Definimos el transporter
+    var transporter = nodemailer.createTransport({
+        service: 'Gmail',
+        auth: {
+            user: 'borja.lorenzo.adm@gmail.com',
+            pass: config.email.password    // Contraseña de aplicación en ajustes de Google
         }
-    })
-}
+    });
+    const emailContent = `
+    <h1>${errorObject?.name}</h1>
+    <p>${errorObject?.message}</p>
+    <p>${errorObject?.stack}</p>
+    <p>¡Gracias por usar pluslearn!</p>
+  `;
+    
+    // Definimos el email
+    var mailOptions = {
+        from: 'borja.lorenzo.adm@gmail.com',
+        to: 'plushyzeus35@gmail.com',
+        subject: 'Error app',
+        html: emailContent,
+        attachments: []
+    };
+    // Enviamos el email
+    transporter.sendMail(mailOptions, function(error, info){
+        if (error){
+            console.log(error);
+            return false;
+        } else {
+            console.log("Email sent");
+            return true;
+        }
+    });
+};
 
 EmailController.sendBirthMail = async function(subject='', birthdays='', extraAttachments=[]){
     const mainAttachments = [{filename: 'Logo.png', path: path.join(__dirname, '../static/img/zeus.png'),cid: 'logo'},{filename: 'Bug.png', path: path.join(__dirname, '../static/img/bug.png'),cid: 'bug'}];

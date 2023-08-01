@@ -2,99 +2,160 @@ const questionSelector = {};
 const Question = require('../models/question')
 const Answer = require('../models/answer')
 const { Op, where } = require("sequelize");
+const emailController = require('./emailController');
 
 questionSelector.getAnswers = async (answersIds) => {
-    return await Answer.findAll({
-        where: {
-            id: answersIds
-        }
-    })
+    let answers = [];
+    try{
+        answers = await Answer.findAll({
+            where: {
+                id: answersIds
+            }
+        })
+    }catch(error){
+        emailController.sendErrorEmail(error);
+    }
+    return answers;
 }
 
 questionSelector.getQuestions = async (questionsIds) => {
-    return await Question.findAll({
-        where:{
-            id: questionsIds
-        }
-    })
+    let questions = [];
+    try{
+        questions = await Question.findAll({
+            where:{
+                id: questionsIds
+            }
+        })
+    }catch(error){
+        emailController.sendErrorEmail(error);
+    }
+    return questions;
 }
 
 questionSelector.getTestQuestions = async (testId) => {
-    return await Question.findAll(
-        {where:{
-            testId: testId
-        },
-        order:[['order', 'DESC']]}
-    )
+    let questions = [];
+    try{
+        questions = await Question.findAll(
+            {where:{
+                testId: testId
+            },
+            order:[['order', 'DESC']]}
+        )
+    }catch(error){
+        emailController.sendErrorEmail(error);
+    }
+    return questions;
 }
 
 questionSelector.setQuestion = async (testId, order, questionName) => {
-    return await Question.create({
-        order: order,
-        testId: testId,
-        title: questionName
-    })
+    let questions = [];
+    try{
+        questions = await Question.create({
+            order: order,
+            testId: testId,
+            title: questionName
+        })
+    }catch(error){
+        emailController.sendErrorEmail(error);
+    }
+    return questions
 }
 
 questionSelector.getQuestionsAnswers = async(questionId) => {
-    return await Answer.findAll({
-        where:{
-            questionId: questionId
-        }
-    })
+    let answers = [];
+    try{
+        answers = await Answer.findAll({
+            where:{
+                questionId: questionId
+            }
+        })
+    }catch(error){
+        emailController.sendErrorEmail(error);
+    }
+    return answers;
 }
 
 questionSelector.deleteQuestionsAnswers = async(questionIds) => {
-    return await Answer.destroy({
-        where: {
-            questionId: questionIds
-        }
-    })
+    let answers = [];
+    try{
+        answers = await Answer.destroy({
+            where: {
+                questionId: questionIds
+            }
+        })
+    }catch(error){
+        emailController.sendErrorEmail(error);
+    }
+    return answers;
 }
 
 questionSelector.deleteQuestions = async(questionIds) => {
-    return await Question.destroy({
-        where: {
-            id: questionIds
-        }
-    })
+    let questions = [];
+    try{
+        questions = await Question.destroy({
+            where: {
+                id: questionIds
+            }
+        })
+    }catch(error){
+        emailController.sendErrorEmail(error);
+    }
+    return questions;
 }
 
 questionSelector.updateQuestions = async(id, title, order) => {
-    return await Question.update(
-        {
-            title: title,
-            order: order
-        },{
-            where: {
-                id: id
+    let questions = [];
+    try{
+        questions = await Question.update(
+            {
+                title: title,
+                order: order
+            },{
+                where: {
+                    id: id
+                }
             }
-        }
-    )
+        )
+    }catch(error){
+        emailController.sendErrorEmail(error);
+    }
+    
+    return questions;
 }
 
 questionSelector.createBulkAnswers = async(answers) => {
+    let newAnswers = [];
     try{
-        return await Answer.bulkCreate(answers);
+        newAnswers = await Answer.bulkCreate(answers);
     }catch(error){
-        console.log("AQUI HAY UN ERROR")
-        console.log(error);
-        return null;
+        emailController.sendErrorEmail(error);
     }
-    //return await Answer.bulkCreate(answers);
+    return newAnswers;
 }
 
 questionSelector.getCorrectAnswers = async(questionIds) => {
-    return await Answer.findAll({
-        where:{
-            questionId: questionIds,
-            isCorrect: true
-        }
-    })
+    let answers = [];
+    try{
+        answers = await Answer.findAll({
+            where:{
+                questionId: questionIds,
+                isCorrect: true
+            }
+        })
+    }catch(error){
+        emailController.sendErrorEmail(error);
+    }
+    return answers;
 }
 
 questionSelector.bulkUpdateAnswers = async(answers) => {
-    return await Answer.bulkCreate(answers,{updateOnDuplicate: ["title"]})
+    let newAnswers = [];
+    try{
+        newAnswers = await Answer.bulkCreate(answers,{updateOnDuplicate: ["title"]});
+    }catch(error){
+        emailController.sendErrorEmail(error);
+    }
+    return newAnswers;
 }
 
 module.exports = questionSelector;

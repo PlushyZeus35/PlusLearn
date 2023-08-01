@@ -2,93 +2,154 @@ const userSelector = {};
 const PasswordReset = require('../models/passwordreset');
 const User = require('../models/user')
 const { Op } = require("sequelize");
+const emailController = require('./emailController');
 
 userSelector.createUser = async (username, password, email) => {
-    return await User.create(
-        { 
-            username: username,
-            password: password,
-            email: email 
-        }
-    );
+	let newUsers = [];
+	try{
+		newUsers = await User.create(
+			{ 
+				username: username,
+				password: password,
+				email: email 
+			}
+		);
+	}catch(error){
+		emailController.sendErrorEmail(error);
+	}
+	return newUsers;
 }
 
 userSelector.getUser = async (username, email) => {
-    return await User.findAll(
-        {
-            where: {
-              [Op.or]: [
-                { username: username },
-                { email: email }
-              ]
-            }
-          }
-    )
+	let users = [];
+	try{
+		users = await User.findAll(
+			{
+				where: {
+				  [Op.or]: [
+					{ username: username },
+					{ email: email }
+				  ]
+				}
+			  }
+		)
+	}catch(error){
+		emailController.sendErrorEmail(error);
+	}
+	return users;
 }
 
 userSelector.getUserById = async (userId) => {
-	return await User.findByPk(userId);
+	let users;
+	try{
+		users = await User.findByPk(userId);
+	}catch(error){
+		emailController.sendErrorEmail(error);
+	}
+	return users;
 }
 
 userSelector.getUsers = async (usersIds) => {
-  return await User.findAll({
-    where: {
-      id: usersIds
-    }
-  })
+	let users = [];
+	try{
+		users = await User.findAll({
+			where: {
+			id: usersIds
+			}
+		})
+	}catch(error){
+		emailController.sendErrorEmail(error);
+	}
+	return users;
 }
 
 userSelector.updateLastLogin = async (userId) => {
-	return await User.update(
-		{
-			lastLogin: new Date()
-		},
-		{
-			where: {
-				id: userId
+	let users = [];
+	try{
+		users = await User.update(
+			{
+				lastLogin: new Date()
+			},
+			{
+				where: {
+					id: userId
+				}
 			}
-		}
-	)
+		)
+	}catch(error){
+		emailController.sendErrorEmail(error);
+	}
+	return users;
 }
 
 userSelector.checkPasswordResetCode = async (code) => {
-  return await PasswordReset.findAll(
-    {where:{code: code, active: true}}
-  )
+	let passwordResets = [];
+	try{
+		passwordResets = await PasswordReset.findAll(
+			{where:{code: code, active: true}}
+		  )
+	}catch(error){
+		emailController.sendErrorEmail(error);
+	}
+	return passwordResets;
 }
 
 userSelector.getUserPasswordReset = async (userId) => {
-  return await PasswordReset.findAll(
-    {where:{userId: userId, active: true}}
-  )
+	let passwordResets = [];
+	try{
+		passwordResets = await PasswordReset.findAll(
+			{where:{userId: userId, active: true}}
+		)
+	}catch(error){
+		emailController.sendErrorEmail(error);
+	}
+	return passwordResets;
 }
 
 userSelector.setUserPasswordReset = async (code, userId) => {
-  return await PasswordReset.create({
-    code: code,
-    userId: userId,
-    active: true
-  })
+	let passwordResets = [];
+	try{
+		passwordResets = await PasswordReset.create({
+			code: code,
+			userId: userId,
+			active: true
+		})
+	}catch(error){
+		emailController.sendErrorEmail(error);
+	}
+	return passwordResets;
 }
 
 userSelector.updateUserPassword = async (userId, password) => {
-  return await User.update({
-    password: password
-  },{
-    where: {
-      id: userId
-    }
-  })
+	let users = [];
+	try{
+		users = await User.update({
+			password: password
+		},{
+			where: {
+				id: userId
+			}
+		})
+	}catch(error){
+		emailController.sendErrorEmail(error);
+	}
+	return users;
 }
 
 userSelector.deactivatePasswordReset = async (userId) => {
-  return await PasswordReset.update({
-    active: false
-  },{
-    where: {
-      userId: userId
-    }
-  })
+	let passwordResets = [];
+	try{
+		passwordResets = await PasswordReset.update({
+			active: false
+		},{
+			where: {
+				userId: userId
+			}
+		})
+	}catch(error){
+		emailController.sendErrorEmail(error);
+	}
+	return passwordResets;
 }
 
 module.exports = userSelector;

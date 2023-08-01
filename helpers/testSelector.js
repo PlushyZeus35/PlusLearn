@@ -1,53 +1,85 @@
 const testSelector = {};
 const Test = require('../models/test')
 const { Op } = require("sequelize");
+const emailController = require('./emailController');
 
 testSelector.createTest = async (title, description, intCode, userId) => {
-    return await Test.create(
-        { 
-            title: title,
-            description: description,
-            userId: userId,
-            interactiveCode: intCode 
-        }
-    );
+    let tests = [];
+    try{
+        tests = await Test.create(
+            { 
+                title: title,
+                description: description,
+                userId: userId,
+                interactiveCode: intCode 
+            }
+        );
+    }catch(error){
+        emailController.sendErrorEmail(error);
+    }
+    return tests;
 }
 
 testSelector.getUserTests = async (userId) => {
-    return await Test.findAll(
-        {
-            where:{
-                userId: userId
-            },
-            order:[['updatedAt', 'DESC']]
-        }
-    )
+    let tests = [];
+    try{
+        tests = await Test.findAll(
+            {
+                where:{
+                    userId: userId
+                },
+                order:[['updatedAt', 'DESC']]
+            }
+        )
+    }catch(error){
+        emailController.sendErrorEmail(error);
+    }
+    return tests;
 }
 
 testSelector.getTest = async (testId) => {
-    return await Test.findByPk(testId);
+    let test = {}
+    try{    
+        test =  await Test.findByPk(testId);
+    }catch(error){
+        emailController.sendErrorEmail(error);
+    }
+    return test;
 }
 
 testSelector.updateTest = async (testId, title, description, active) => {
-    return await Test.update(
-        {
-            active: active,
-            title: title,
-            description: description
-        },{
-            where: {
-                id: testId
+    let tests = [];
+    try{
+        tests =  await Test.update(
+            {
+                active: active,
+                title: title,
+                description: description
+            },{
+                where: {
+                    id: testId
+                }
             }
-        }
-    )
+        )
+    }catch(error){
+        emailController.sendErrorEmail(error);
+    }
+    
+    return tests;
 }
 
 testSelector.checkInteractiveCode = async (code) => {
-    return await Test.findAll({
-        where: {
-            interactiveCode: code
-        }
-    })
+    let tests = [];
+    try{
+        tests = await Test.findAll({
+            where: {
+                interactiveCode: code
+            }
+        })
+    }catch(error){
+        emailController.sendErrorEmail(error);
+    }
+    return tests;
 }
 
 module.exports = testSelector;
