@@ -48,7 +48,7 @@ sockets.initialice = async (server) => {
         // Conect a user to a room
         socket.on('room-connection', async (connectionInfo) => {
             // Validate connectionInfo.username not exists in roomInfo map
-            if(userAlreadyExists(connectionInfo.roomId, connectionInfo.username)){
+            if(await userAlreadyExists(connectionInfo.roomId, connectionInfo.username, connectionInfo.isGuestUser)){
                 socket.emit(USER_ALREADY_EXISTS,EMPTY);
             }else if(hasTestStarted(connectionInfo.roomId)){
                 socket.emit(TEST_HAS_STARTED,EMPTY);
@@ -158,7 +158,7 @@ function hasTestStarted(roomCode){
     return false;
 }
 
-function userAlreadyExists(roomCode, username){
+async function userAlreadyExists(roomCode, username, isGuest){
     // Search username in room map
     console.log("SEARCHINGG" + roomCode)
     if(rooms.has(roomCode)){
@@ -171,6 +171,12 @@ function userAlreadyExists(roomCode, username){
             if(user==username){
                 return true;
             }
+        }
+    }
+    if(isGuest){
+        const user = await userSelector.getUser(username, username);
+        if(user.length>0){
+            return true;
         }
     }
     return false;
