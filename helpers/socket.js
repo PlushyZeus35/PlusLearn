@@ -54,10 +54,10 @@ sockets.initialice = async (server) => {
                 socket.emit(TEST_HAS_STARTED,EMPTY);
             }
             else{
-                userMap.set(socket.id, {username: connectionInfo.username, roomId: connectionInfo.roomId})
+                userMap.set(socket.id, {username: connectionInfo.username, roomId: connectionInfo.roomId, isGuest: connectionInfo.isGuestUser})
                 const test = await testSelector.checkInteractiveCode(connectionInfo.roomId);
                 if(connectionInfo.isGuestUser){
-                    addUser(test[0].id, connectionInfo.username, connectionInfo.roomId, false)
+                    addUser(test[0].id, connectionInfo.username, connectionInfo.roomId, false, true)
                 }else{
                     const user = await userSelector.getUser(connectionInfo.username, connectionInfo.username);
                     //const test = await testSelector.checkInteractiveCode(connectionInfo.roomId);
@@ -65,10 +65,10 @@ sockets.initialice = async (server) => {
                     console.log(test)
                     if(user!=null && test!=null && user.length>0 && test[0].userId==user[0].id){
                         console.log('usuario identificado y master')
-                        addUser(test[0].id, connectionInfo.username, connectionInfo.roomId, true);
+                        addUser(test[0].id, connectionInfo.username, connectionInfo.roomId, true, false);
                     }else{
                         console.log('usuario identificado y no master')
-                        addUser(test[0].id, connectionInfo.username, connectionInfo.roomId, false);
+                        addUser(test[0].id, connectionInfo.username, connectionInfo.roomId, false, false);
                     }
                 }
                 socket.join(connectionInfo.roomId)
@@ -136,13 +136,15 @@ sockets.initialice = async (server) => {
     });
 }
 
-function addUser(testId, username, roomId, isMaster){
+function addUser(testId, username, roomId, isMaster, isGuest){
     if(rooms.has(roomId)){
         rooms.get(roomId).master = isMaster ? username : rooms.get(roomId).master;
         isMaster ? null : rooms.get(roomId).users.push(username);
+        isGuest ? rooms.get(roomId).guests.push(username) : null;
     }else{
-        const roomInfo = {roomId: roomId, users:[], testId: testId, started: false}
+        const roomInfo = {roomId: roomId, users:[], testId: testId, started: false, guests: []}
         isMaster ? roomInfo.master=username : roomInfo.users.push(username);
+        isGuest ? roomInfo.guests.push(username) : null;
         rooms.set(roomId, roomInfo);
     }
 }
@@ -179,7 +181,7 @@ function sendEvent(io, roomId, eventName, info){
 }
 
 // return if it is needed to inform users (true or false)
-function removeUser(username, roomId){
+function removeUser(username, roomId, isGuestUser){
     if(rooms.has(roomId)){
         const roomInfo = rooms.get(roomId);
         if(roomInfo.master == username){
@@ -187,6 +189,9 @@ function removeUser(username, roomId){
         }else{
             if(roomInfo.users.indexOf(username)>=0){
                 roomInfo.users.splice(roomInfo.users.indexOf(username), 1);
+            }
+            if(isGuestUser && roomInfo.guests.indexOf(username)>=0){
+                roomInfo.guests.splice(roomInfo.guests.indexOf(username), 1);
             }
         }
         if(roomInfo.master==undefined && roomInfo.users.length==0){

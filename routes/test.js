@@ -42,7 +42,7 @@ router.get('/d/:testId', async (req, res) => {
             isMaster = req.user.id == test[0].userId;
             userId = req.user.id;
         }
-        res.render('test', {dataFromServer: {username: username, roomId: testCode, isAuthenticatedUser: isAuthenticated, isMaster: isMaster, userId: userId, testId: test[0].id}});
+        res.render('test', {dataFromServer: {username: username, roomId: testCode, isAuthenticatedUser: isAuthenticated, isMaster: isMaster, userId: userId, testId: test[0].id, testTitle: test[0].title, testDescription: test[0].description}});
     }else{
         res.render('error');
     }

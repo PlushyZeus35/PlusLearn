@@ -14,6 +14,8 @@ let roomInfo;
 let isMasterUser = false;
 // Test info from the server
 let testInfo;
+let testTitle;
+let testDescription;
 // Correct answers group by question id
 let correctAnswers = new Map();
 // Answers received from other users
@@ -106,18 +108,21 @@ socket.on(TEST_HAS_STARTED, (empty) => {
 })
 
 socket.on(USER_ALREADY_EXISTS, (empty) => {
-    const alertContainer = $("#alertContainer")[0];
-    const alert = document.createElement('div');
-    alert.classList.add('alert');
-    alert.classList.add('alert-danger');
-    alert.role = 'alert';
-    alert.innerHTML = 'Ese nombre de usuario ya existe en la sala, especifica otro por favor.';
-    alertContainer.appendChild(alert);
-    console.log("YA EXISTE")
+    const alertDiv = $("#userRepAlert");
+    if(alertDiv.length==0){
+        const alertContainer = $("#alertContainer")[0];
+        const alert = document.createElement('div');
+        alert.classList.add('alert');
+        alert.classList.add('alert-danger');
+        alert.role = 'alert';
+        alert.innerHTML = 'Ese nombre de usuario ya existe en la sala, especifica otro por favor.';
+        alert.id = 'userRepAlert';
+        alertContainer.appendChild(alert);
+    } 
 })
 
 socket.on(USER_ANSWERED, ()=>{
-    let userCounterSpan = $("#masterUserCounter");
+    let userCounterSpan = $("#userCounterSpan");
     if(userCounterSpan.length>0){
         userCounterSpan = userCounterSpan[0];
         userAnswered--;
@@ -131,6 +136,8 @@ socket.on(USER_ANSWERED, ()=>{
 
 socket.on(START_EVENT, (testInfo) => {
     testInfo = testInfo;
+    console.log("start");
+    console.log(testInfo)
     testQuestions = testInfo.questions;
     testQuestions.sort(sortByOrder);
     sessionPhase=false;
@@ -140,23 +147,27 @@ socket.on(START_EVENT, (testInfo) => {
 
 socket.on(END_TEST, (results) => {
     hideAll();
-    const mainContainer = $('.mainContainer')[0];
+    const mainContainer = $('#mainContainer')[0];
     const userContainer = document.createElement('div');
     userContainer.classList.add('container');
     userContainer.classList.add('rounded');
-    userContainer.classList.add('participantContainer');
-    userContainer.classList.add('mt-5');
-    userContainer.classList.add('p-5');
+    userContainer.classList.add('mt-3');
+    userContainer.classList.add('p-3');
+    userContainer.classList.add('containerInfo');
 
     results.sort(sortByCorrectQuestions);
     results.reverse();
+
+    const resultsAlert = getResultsAlert();
+    userContainer.appendChild(resultsAlert);
 
     const partContainer = document.createElement('div');
     partContainer.classList.add('studentContainer');
     const title = document.createElement('h3');
     title.innerHTML = 'Resultados';
     title.classList.add('text-center');
-    title.classList.add('mainTitle')
+    title.classList.add('mainTitle');
+    title.classList.add('text-white');
 
     const saveButton = document.createElement('button');
     saveButton.id = 'saveDataButton';
@@ -176,8 +187,13 @@ socket.on(END_TEST, (results) => {
 })
 
 socket.on(SEND_ANSWER, (answers) => {
+    //? Recibo respuestas
+    console.log("recibo respuestas");
+    console.log(answers)
     answersReceived.set(targetQuestionId, answers.userAnswers);
     correctAnswers.set(targetQuestionId, answers.correct);
+    console.log(answersReceived);
+    console.log(correctAnswers)
     showResults();
 })
 
@@ -198,7 +214,7 @@ socket.on(END_QUESTION, (info) => {
             if(input.checked){
                 selectedAnswer.selectedAnswer = {
                     isNull: false,
-                    id: parseInt(input.id.split('-')[1]),
+                    id: input.id,
                     name: input.value,
                     questionId: targetQuestionId,
                     user: connectionInfo.username,
@@ -206,7 +222,7 @@ socket.on(END_QUESTION, (info) => {
                     isGuestUser: !dataFromServer.isAuthenticatedUser,
                     testId: dataFromServer.testId
                 }
-                selectedAnswerId = parseInt(input.id.split('-')[1]);
+                selectedAnswerId = parseInt(input.id);
             }
             console.log({name: input.name, checked: input.checked, id: input.id});
         }
@@ -270,8 +286,39 @@ const connectionInfo = {
 }
 init();
 
+function getResultsAlert(){
+    const alertContainer = document.createElement('div');
+    alertContainer.id = 'alertContainer';
+    alertContainer.classList.add('mb-2');
+    const infoAlert = document.createElement('div');
+    infoAlert.classList.add('alert');
+    infoAlert.classList.add('infoAlert');
+    infoAlert.role = 'alert';
+    const alertHeading = document.createElement('h4');
+    alertHeading.classList.add('alert-heading');
+    alertHeading.innerHTML = '¡Aquí están los resultados del cuestionario!';
+    const alertText = document.createElement('p');
+    alertText.innerHTML = 'Han llegado los resultados del cuestionario. Justo debajo podrás ver la clasificación de usuarios y su correspondiente puntuación.';
+    const alertSeparator = document.createElement('hr');
+    const alertSubtext = document.createElement('p');
+    if(isMasterUser){
+        alertSubtext.innerHTML = 'Podrás guardar los resultados de este cuestionario para que conste en estadísticas y análisis.';
+    }else{
+        alertSubtext.innerHTML = 'Puedes abandonar la sala cuando quieras.';
+    }
+    alertSubtext.classList.add('mb-0');
+    infoAlert.appendChild(alertHeading);
+    infoAlert.appendChild(alertText);
+    infoAlert.appendChild(alertSeparator);
+    infoAlert.appendChild(alertSubtext);
+    alertContainer.appendChild(infoAlert);
+    return alertContainer;
+}
 
 function init(){
+    testTitle = dataFromServer.testTitle;
+    testDescription = dataFromServer.testDescription;
+    console.log({testTitle, testDescription})
     hideAll();
     console.log(dataFromServer)
     let username = dataFromServer.username;
@@ -296,7 +343,7 @@ function connectToRoom(roomId, username, isGuestUser){
 }
 
 function hideAll(){
-    const mainContainer = $('.mainContainer')[0];
+    const mainContainer = $('#mainContainer')[0];
     mainContainer.innerHTML = '';
 }
 
@@ -312,10 +359,11 @@ function setGuestUser(){
 function showLoader(){
     hideAll();
     // General container
-    const mainContainer = $('.mainContainer')[0];
+    const mainContainer = $('#mainContainer')[0];
     // Loader container
     const loaderContainer = document.createElement('div');
     loaderContainer.classList.add('loaderContainer');
+    loaderContainer.classList.add('mt-4');
     // Loader animation
     const loadingAnimation = document.createElement('div');
     loadingAnimation.id = 'loadingAnimation';
@@ -341,111 +389,171 @@ function showLoader(){
 
 function showUsersTable(){
     hideAll();
-    
-    const mainContainer = $('.mainContainer')[0];
-    const userContainer = document.createElement('div');
-    userContainer.classList.add('container'); // = ['container', 'rounded', 'participantContainer', 'mt-5', 'p-5'];
-    userContainer.classList.add('rounded');
-    userContainer.classList.add('participantContainer');
-    userContainer.classList.add('mt-5');
-    userContainer.classList.add('p-5');
+    // master en roomInfo.master
+    // users en roomInfo.users
+    // isMasterUser if user is master
+    const mainContainer = $('#mainContainer')[0];
+    const testInfoContainer = getTestInfoContainer();
+    mainContainer.appendChild(testInfoContainer)
+    const userList = getUserList();
+    mainContainer.appendChild(userList);
+}
 
-    const masterTitle = document.createElement('h3');
-    masterTitle.classList.add('mainTitle');
-    masterTitle.innerHTML = 'Master';
-    userContainer.appendChild(masterTitle);
+function getUserList(){
+    const userList = document.createElement('div');
+    userList.classList.add('mt-4');
+    userList.id = 'userList';
 
-    const masterContainer = document.createElement('div');
-    masterContainer.classList.add('ownerContainer');
-    
-    const masterList = document.createElement('ul');
-    masterList.id = 'masterList';
-    masterList.classList.add('list-group');
+    const userListTitle = document.createElement('h3');
+    userListTitle.classList.add('ubuntuFont');
+    userListTitle.innerHTML = 'Participantes';
+    userList.appendChild(userListTitle);
 
-    if(roomInfo.master!=undefined && roomInfo.master!=''){
-        const masterRecord = document.createElement('li');
-        masterRecord.classList.add('list-group-item');
-        masterRecord.innerHTML = roomInfo.master;
-        masterList.appendChild(masterRecord);
+    if(roomInfo.master != null && roomInfo.master!=''){
+        const master = document.createElement('div');
+        master.classList.add('user');
+        master.classList.add('master');
+        const masterName = document.createElement('div');
+        masterName.classList.add('username');
+        masterName.innerHTML = roomInfo.master;
+        const masterType = document.createElement('div');
+        masterType.classList.add('usertype');
+        const typeImg = document.createElement('img');
+        typeImg.src = '/static/icons/check-circle-fill-blue.svg';
+        masterType.appendChild(typeImg);
+        master.appendChild(masterName);
+        master.appendChild(masterType);
+        userList.appendChild(master);
     }
 
-    masterContainer.appendChild(masterList);
-    userContainer.appendChild(masterContainer);
-
-    const partTitle = document.createElement('h3');
-    partTitle.classList.add('mt-3');
-    partTitle.classList.add('mainTitle');
-    partTitle.innerHTML = 'Participantes';
-
-    const userCounterSpan = document.createElement('span');
-    userCounterSpan.classList.add('badge');
-    userCounterSpan.classList.add('rounded-pill');
-    userCounterSpan.classList.add('text-bg-primary');
-    userCounterSpan.classList.add('ms-3');
-    userCounterSpan.innerHTML = roomInfo.users.length;
-    partTitle.appendChild(userCounterSpan);
-
-    userContainer.appendChild(partTitle);
-    
-    const partContainer = document.createElement('div');
-    partContainer.classList.add('studentContainer');
-
-    const partList = document.createElement('ul');
-    partList.id = 'userList';
-    partList.classList.add('list-group');
-
-    if(roomInfo!=undefined && roomInfo.users.length>0){
-        for(let user of roomInfo.users){
-            const userInfo = document.createElement('li');
-            userInfo.classList.add('list-group-item');
-            userInfo.innerHTML=user;
-            partList.appendChild(userInfo);
-        }
-    }
-    partContainer.appendChild(partList);
-    userContainer.appendChild(partContainer);
-
-    mainContainer.appendChild(userContainer);
-    if(isMasterUser){
-        const buttonContainer = document.createElement('div');
-        buttonContainer.classList.add('d-flex');
-        buttonContainer.classList.add('container');
-        buttonContainer.classList.add('justify-content-center');
-        buttonContainer.classList.add('mt-2');
+    for(let user of roomInfo.users){
+        const userRecord = document.createElement('div');
+        userRecord.classList.add('user');
+        userRecord.classList.add('regular');
+        const userName = document.createElement('div');
+        userName.classList.add('username');
+        userName.innerHTML = user;
         
-        const button = document.createElement('button');
-        button.classList.add('btn');
-        button.classList.add('btn-lg');
-        button.classList.add('btn-primary');
-        button.classList.add('me-3');
-        button.innerHTML = 'Comenzar';
-        if(roomInfo==undefined || roomInfo.users.length==0){
-            button.disabled = true;
+        userRecord.appendChild(userName);
+        if(!roomInfo.guests.includes(user)){
+            const userType = document.createElement('div');
+            userType.classList.add('usertype');
+            const typeImg = document.createElement('img');
+            typeImg.src = '/static/icons/check-circle-fill-blue.svg';
+            userType.appendChild(typeImg);
+            userRecord.appendChild(userType);
         }
-        button.onclick = startTest;
-
-        const buttonQR = document.createElement('button');
-        buttonQR.classList.add('btn');
-        buttonQR.classList.add('btn-lg');
-        buttonQR.classList.add('btn-outline-primary');
-        buttonQR.innerHTML = 'QR';
-        buttonQR.onclick = showQRModal;
-
-        buttonContainer.appendChild(button);
-        buttonContainer.appendChild(buttonQR);
-
-        mainContainer.appendChild(buttonContainer);
+        userList.appendChild(userRecord);
     }
-    
+    return userList;
+}
+
+function getTestInfoContainer(){
+    const testInfoCont = document.createElement('div');
+    testInfoCont.classList.add('container');
+    testInfoCont.classList.add('mt-4');
+    testInfoCont.classList.add('containerInfo');
+
+    const testTitleCont = document.createElement('div');
+    testTitleCont.id = 'testTitle';
+    const testTitleHead = document.createElement('h3');
+    testTitleHead.classList.add('text-white');
+    testTitleHead.innerHTML = testTitle;
+    testTitleCont.appendChild(testTitleHead);
+
+    const testDescriptionCont = document.createElement('div');
+    testDescriptionCont.id = 'testDescription';
+    const testDescriptionHead = document.createElement('p');
+    testDescriptionHead.classList.add('text-white');
+    testDescriptionHead.innerHTML = testDescription;
+    testDescriptionCont.appendChild(testDescriptionHead);
+
+    const alertContainer = document.createElement('div');
+    alertContainer.id = 'alertContainer';
+    const infoAlert = document.createElement('div');
+    infoAlert.classList.add('alert');
+    infoAlert.classList.add('infoAlert');
+    infoAlert.role = 'alert';
+    const alertHeading = document.createElement('h4');
+    alertHeading.classList.add('alert-heading');
+    alertHeading.innerHTML = '¡En la sala de espera!';
+    const alertText = document.createElement('p');
+    alertText.innerHTML = 'Te encuentras en la sala de espera del cuestionario. Puedes ver justo debajo una lista de las personas conectadas a esta misma sala de espera.';
+    const alertSeparator = document.createElement('hr');
+    const alertSubtext = document.createElement('p');
+    if(isMasterUser){
+        alertSubtext.innerHTML = 'Espera a que todos los participantes se encuentren en la sala de espera y dale al botón para comenzar el cuestionario. Una vez que el cuestionario comience no se podrán unir más participantes.';
+    }else{
+        alertSubtext.innerHTML = '¡Relajate! Ahora solo tienes que espera a que el maestro de sala comience el cuestionario.';
+    }
+    alertSubtext.classList.add('mb-0');
+    infoAlert.appendChild(alertHeading);
+    infoAlert.appendChild(alertText);
+    infoAlert.appendChild(alertSeparator);
+    infoAlert.appendChild(alertSubtext);
+    alertContainer.appendChild(infoAlert);
+
+    const testStatus = document.createElement('div');
+    testStatus.id = 'testStatus';
+    const userPill = document.createElement('span');
+    userPill.classList.add('badge');
+    userPill.classList.add('rounded-pill');
+    userPill.classList.add('text-bg-light');
+    const userCounter = document.createElement('strong');
+    userCounter.innerHTML = roomInfo.users.length;
+    const userCounterLabel = document.createElement('span');
+    userCounterLabel.innerHTML = ' participantes';
+    userPill.appendChild(userCounter);
+    userPill.appendChild(userCounterLabel);   
+    testStatus.appendChild(userPill);
+    if(roomInfo.master != null && roomInfo.master != ''){
+        const masterPill = document.createElement('span');
+        masterPill.classList.add('badge');
+        masterPill.classList.add('rounded-pill');
+        masterPill.classList.add('text-bg-light');
+        masterPill.innerHTML = 'Maestro listo';
+        testStatus.appendChild(masterPill);
+    }
+
+    testInfoCont.appendChild(testTitleCont);
+    testInfoCont.appendChild(testDescriptionCont);
+    testInfoCont.appendChild(alertContainer);
+    testInfoCont.appendChild(testStatus);
+
+    if(isMasterUser){
+        const optionButtons = document.createElement('div');
+        optionButtons.id = 'optionButtons';
+        optionButtons.classList.add('mt-3');
+        const startButton = document.createElement('button');
+        startButton.classList.add('btn');
+        startButton.classList.add('btn-primary');
+        startButton.classList.add('me-2');
+        startButton.innerHTML = 'Comenzar';
+        if(roomInfo.users.length==0){
+            startButton.disabled = true;
+        }
+        startButton.onclick = startTest;
+        const codeButton = document.createElement('button');
+        codeButton.classList.add('btn');
+        codeButton.classList.add('btn-outline-info');
+        codeButton.innerHTML = 'Código QR';
+        codeButton.onclick = showQRModal;
+        optionButtons.appendChild(startButton);
+        optionButtons.appendChild(codeButton);
+        testInfoCont.appendChild(optionButtons);
+    }
+
+    return testInfoCont;
 }
 
 function startTest(){
-    console.log("start!!");
     const startInfo = {roomId: connectionInfo.roomId}
     socket.emit(START_EVENT, startInfo);
 }
 
 function showNextQuestion(){
+    userAnswered = roomInfo.users.length;
+    hasAnswered = false;
     if(testQuestions.length<=index){
 
         if(isMasterUser){
@@ -454,12 +562,75 @@ function showNextQuestion(){
             sendEvent(END_TEST,{roomId: connectionInfo.roomId, answers: convertMapToObjectArray(answersReceived)});
         }
         showLoader()
-        
         return -1
     }
     let targetQuestion = testQuestions[index];
     targetQuestionId = targetQuestion.id;
     console.log(targetQuestion);
+    /*
+        #testInfo.container.mt-4
+            #userInfo 
+                .alert.waitResponseAlert(role='alert')
+                    .spinnContainer
+                        .spinner-border.text-info(role='status')
+                            span.visually-hidden Loading...
+                    strong Espera a que respondan los demás participantes.
+            #userCounter 
+                
+            #questionCounter 
+                
+            #questionTitle
+                h3.text-white Lorem ipsum dolor sit amet consectetur adipisicing elit. Natus soluta veniam sed cumque. Quae quia eos, ipsa vero accusamus ullam.
+            #answersOptions.mt-4 
+                .form-check
+                    input#flexRadioDefault1.form-check-input(type='radio' name='flexRadioDefault')
+                    label.form-check-label.text-white(for='flexRadioDefault1')
+                        | Lorem ipsum dolor, sit amet consectetur adipisicing elit.
+                .form-check
+                    input#flexRadioDefault2.form-check-input(type='radio' name='flexRadioDefault' checked='')
+                    label.form-check-label.text-white(for='flexRadioDefault2')
+                        | Lorem ipsum, dolor sit amet consectetur adipisicing elit. Voluptas saepe culpa hic!
+                .form-check
+                    input#flexRadioDefault2.form-check-input(type='radio' name='flexRadioDefault' checked='')
+                    label.form-check-label.text-white(for='flexRadioDefault2')
+                        | Lorem ipsum dolor sit amet.
+                .form-check
+                    input#flexRadioDefault2.form-check-input(type='radio' name='flexRadioDefault' checked='')
+                    label.form-check-label.text-white(for='flexRadioDefault2')
+                        | Lorem ipsum dolor sit amet consectetur adipisicing elit. Quam minima provident repudiandae ex maxime sequi. 
+    */
+    hideAll();
+    const mainContainer = $("#mainContainer")[0];
+    
+    const testInfo = document.createElement('div');
+    testInfo.classList.add('container');
+    testInfo.classList.add('mt-4');
+
+    const userInfo = document.createElement('div');
+    userInfo.id = 'userInfo';
+
+    const userCounter = createUserCounterAlert();
+    const questionCounter = createQuestionCounter();
+    const questionContainer = createQuestionContainer(targetQuestion);
+    
+    testInfo.appendChild(userInfo);
+    testInfo.appendChild(userCounter);
+    testInfo.appendChild(questionCounter);
+    testInfo.appendChild(questionContainer)
+
+    if(isMasterUser){
+        const nextButton = createElement('button', 'nextButton', '.btn.btn-primary.mt-3');
+        nextButton.innerHTML = 'Siguiente';
+        nextButton.onclick = endQuestion;
+        testInfo.appendChild(nextButton);
+    }
+    
+    mainContainer.appendChild(testInfo);
+    //
+    //
+    //
+    //
+    /*
     let main = document.getElementsByClassName('mainContainer')[0];
 
     let cont = document.createElement('div');
@@ -476,7 +647,7 @@ function showNextQuestion(){
     alertDiv.classList.add('alert-primary');
     alertDiv.classList.add('d-flex');
     alertDiv.classList.add('align-items-center');
-    hasAnswered = false;
+    
     let alertImg = document.createElement('img');
     alertImg.src = '/static/icons/info-circle-fill.svg';
     alertImg.classList.add('me-3');
@@ -551,6 +722,125 @@ function showNextQuestion(){
     cont.appendChild(questionMainContainer);
     main.appendChild(cont);
     console.log("asdf")
+    */
+}
+
+function createQuestionContainer(targetQuestion){
+    /*
+    .containerInfo
+        #questionTitle
+            h3.text-white Lorem ipsum dolor sit amet consectetur adipisicing elit. Natus soluta veniam sed cumque. Quae quia eos, ipsa vero accusamus ullam.
+        #answersOptions.mt-4 
+            .form-check
+                input#flexRadioDefault1.form-check-input(type='radio' name='flexRadioDefault')
+                label.form-check-label.text-white(for='flexRadioDefault1')
+                    | Lorem ipsum dolor, sit amet consectetur adipisicing elit.
+            .form-check
+                input#flexRadioDefault2.form-check-input(type='radio' name='flexRadioDefault' checked='')
+                label.form-check-label.text-white(for='flexRadioDefault2')
+                    | Lorem ipsum, dolor sit amet consectetur adipisicing elit. Voluptas saepe culpa hic!
+            .form-check
+                input#flexRadioDefault2.form-check-input(type='radio' name='flexRadioDefault' checked='')
+                label.form-check-label.text-white(for='flexRadioDefault2')
+                    | Lorem ipsum dolor sit amet.
+            .form-check
+                input#flexRadioDefault2.form-check-input(type='radio' name='flexRadioDefault' checked='')
+                label.form-check-label.text-white(for='flexRadioDefault2')
+                    | Lorem ipsum dolor sit amet consectetur adipisicing elit. Quam minima provident repudiandae ex maxime sequi. 
+    */
+    const questContainer = createElement('div', '', '.containerInfo.mt-3');
+    const questTitleCont = createElement('div', 'questionTitle', '');
+    const questTitle = createElement('h3', '', '.text-white');
+    questTitle.innerHTML = targetQuestion.title;
+    questTitleCont.appendChild(questTitle);
+    questContainer.appendChild(questTitleCont);
+
+    const answersCont = createElement('div', 'answersOptions', '.mt-4');
+    for(let eachAnswer of targetQuestion.answers){
+        const formCheck = createElement('div', '', '.form-check');
+        const answerInput = createElement('input', eachAnswer.id, '.form-check-input.user-answer');
+        answerInput.name = 'answerInput';
+        answerInput.value = eachAnswer.name;
+        answerInput.type = 'radio';
+        answerInput.onclick = answerOnClick;
+        if(isMasterUser){
+            answerInput.disabled = true;
+        }
+        const inputLabel = createElement('label', '', '.form-check-label.text-white');
+        inputLabel.setAttribute('for', eachAnswer.id);
+        inputLabel.innerHTML = eachAnswer.name;
+        inputLabel.onclick = answerOnClick;
+        formCheck.appendChild(answerInput);
+        formCheck.appendChild(inputLabel);
+        answersCont.appendChild(formCheck);
+    }
+    questContainer.appendChild(answersCont);
+    return questContainer;
+}
+
+function createQuestionCounter(){
+    /*
+        #questionCounter 
+            span.badge.rounded-pill.text-bg-primary 
+                | 1 / 10
+    */
+    const questionCounter = createElement('div', 'questionCounter', '');
+    const pill = createElement('span', '', '.badge.rounded-pill.text-bg-primary');
+    pill.innerHTML = '1 / 10';
+    questionCounter.appendChild(pill);
+    return questionCounter;
+}
+
+function createUserCounterAlert(){
+    /*
+    #userCounter 
+        .alert.userCounterAlert(role='alert')
+            .spinner-border.text-warning(role='status')
+                    span.visually-hidden Loading...
+            span Quedan 
+                strong 5 personas 
+                | por contestar.
+    */
+    const userCounter = document.createElement('div');
+    userCounter.id = 'userCounter';
+
+    const userCounterAlert = createElement('div', '', '.alert.userCounterAlert');
+    userCounterAlert.role = 'alert';
+
+    const spinner = createElement('div', '', '.spinner-border.text-warning');
+    spinner.role = 'status';
+    const loadingSpin = createElement('span', '', '.visually-hidden');
+    loadingSpin.innerHTML = 'Loading...';
+    spinner.appendChild(loadingSpin);
+    const alertText = createElement('span', '', '');
+    alertText.innerHTML = 'Quedan ';
+    const numPers = createElement('strong', 'userCounterSpan','');
+    numPers.innerHTML = userAnswered + ' personas';
+    alertText.appendChild(numPers);
+    alertText.innerHTML = alertText.innerHTML + ' por contestar';
+
+    userCounterAlert.appendChild(spinner);
+    userCounterAlert.appendChild(alertText);
+    userCounter.appendChild(userCounterAlert);
+    return userCounter;
+}
+
+function parseClassList(str){
+    const strSplit = str.split('.');
+    const classList = strSplit.filter((i)=>i!='.'&&i!='');
+    return classList;
+}
+
+function createElement(elementName, id, classes){
+    const classList = parseClassList(classes);
+    const element = document.createElement(elementName);
+    if(id!='' && id!=undefined){
+        element.id = id;
+    }
+    for(let eachClass of classList){
+        element.classList.add(eachClass);
+    }
+    return element;
 }
 
 function createButton(id, answer){
@@ -575,6 +865,19 @@ function createButton(id, answer){
 
 function answerOnClick(){
     if(!hasAnswered && !isMasterUser){
+        const alertCont = $("#userInfo")[0];
+        const waitResponseAlert = createElement('div', '', '.alert.waitResponseAlert');
+        waitResponseAlert.role = 'alert';
+        const spinCont = createElement('div', '', 'spinnContainer');
+        const spinner = createElement('div', '', '.spinner-border.text-info');
+        spinner.role = 'status';
+        spinCont.appendChild(spinner);
+        waitResponseAlert.appendChild(spinCont);
+        const alertText = createElement('strong', '', '');
+        alertText.innerHTML = 'Espera a que respondan los demás participantes.';
+        waitResponseAlert.appendChild(alertText);
+        alertCont.appendChild(waitResponseAlert);
+       
         console.log("He respondido!")
         sendEvent(USER_ANSWERED, {roomId: connectionInfo.roomId});
     }
@@ -606,6 +909,10 @@ function sendEvent(nameEvent, info){
 }
 
 function showResults(){
+    //? Muestro resultados
+    showCorrectAnswer();
+    showAnswersChart();
+    /*
     let questionMainContainer = $('.questionMainContainer')[0];
     
     // container.insertBefore(newFreeformLabel, container.firstChild);
@@ -678,6 +985,97 @@ function showResults(){
         buttonMaster.onclick = finishQuestion;
         questionMainContainer.appendChild(buttonMaster);
     }
+    */
+}
+
+function showCorrectAnswer(){
+    if($("#userInfo").length>0){
+        $("#userInfo")[0].innerHTML = '';
+    }
+    if($("#nextButton").length>0){
+        $("#nextButton")[0].onclick = finishQuestion;
+    }
+    const letters = ['A', 'B', 'C', 'D', 'E', 'F', 'G'];
+    $("#userCounter")[0].innerHTML = '';
+    let targetQuestion = testQuestions[index];
+    const correctAnswersList = correctAnswers.get(targetQuestionId);
+    const correctAnwersIds = [];
+    for(let ans of correctAnswersList){
+        correctAnwersIds.push(ans.id);
+    }
+    console.log(correctAnwersIds)
+    const answersOptionsCont = $("#answersOptions")[0];
+    answersOptionsCont.innerHTML = '';
+    console.log("asfasf")
+    console.log(targetQuestion);
+    let auxIndex=0;
+    for(let eachAnswer of targetQuestion.answers){
+        let targetLetter = letters[auxIndex];
+        const answerCont = createElement('div', '', '.mb-2.d-flex.align-items-center');
+        if(correctAnwersIds.includes(eachAnswer.id)){
+            let correctSVG = document.createElement('img');
+            correctSVG.src = '/static/icons/check-circle-fill.svg';
+            correctSVG.classList.add('me-3');
+            answerCont.appendChild(correctSVG);
+        }else{
+            let incorrectSVG = document.createElement('img');
+            incorrectSVG.src = '/static/icons/x-circle-fill.svg';
+            incorrectSVG.classList.add('me-3');
+            answerCont.appendChild(incorrectSVG);
+        }
+        const answerTitle = createElement('span','','.text-white');
+        answerTitle.innerHTML = targetLetter + '. ' + eachAnswer.name;
+        answerCont.appendChild(answerTitle);
+        answersOptionsCont.appendChild(answerCont);
+        auxIndex++;
+    }
+    if(!isMasterUser){
+        console.log("respuestas");
+        console.log(myAnswers.get(targetQuestionId));
+        console.log(correctAnwersIds)
+        if(correctAnwersIds.indexOf(myAnswers.get(targetQuestionId))>=0){
+            const correctAlert = createElement('div', '' , '.alert.correctAlert');
+            correctAlert.role = 'alert';
+            const emojiSpan = createElement('span', '','');
+            emojiSpan.innerHTML = '&#127881;';
+            const emojiSpan2 = createElement('span', '','');
+            emojiSpan2.innerHTML = '&#127881;';
+            const label = createElement('span', '', '.ms-2.me-2');
+            label.innerHTML = '¡CORRECTO!';
+            correctAlert.appendChild(emojiSpan);
+            correctAlert.appendChild(label);
+            correctAlert.appendChild(emojiSpan2);
+            $("#userCounter")[0].appendChild(correctAlert);
+            console.log("Has acertado")
+        }else{
+            const incorrectAlert = createElement('div', '' , '.alert.incorrectAlert');
+            incorrectAlert.role = 'alert';
+            const emojiSpan = createElement('span', '','');
+            emojiSpan.innerHTML = '&#128162;';
+            const emojiSpan2 = createElement('span', '','');
+            emojiSpan2.innerHTML = '&#128162;';
+            const label = createElement('span', '', '.ms-2.me-2');
+            label.innerHTML = '¡INCORRECTO!';
+            incorrectAlert.appendChild(emojiSpan);
+            incorrectAlert.appendChild(label);
+            incorrectAlert.appendChild(emojiSpan2);
+            $("#userCounter")[0].appendChild(incorrectAlert);
+            console.log("has fallado")
+        }
+    }
+}
+
+function showAnswersChart(){
+    let questionMainContainer = $(".containerInfo")[0];
+    // Show chart
+    let chartContainer = document.createElement('div');
+    //chartContainer.classList.add('mt-4');
+    chartContainer.classList.add('chartContainer');
+    let chartCanvas = document.createElement('canvas');
+    chartCanvas.id = 'resultChart';
+    chartContainer.appendChild(chartCanvas);
+    questionMainContainer.appendChild(chartContainer);
+    createChart();
 }
 
 function createChart(){
@@ -895,6 +1293,7 @@ function saveResults(){
       .then(function (response) {
         if(response.data.status){
             showNotification(TOAST_SUCCESS, 'Datos guardados', 'Las respuestas han sido guardadas correctamente.');
+            $("#saveDataButton")[0].innerHTML = '¡Cambios guardados!';
             $("#saveDataButton")[0].disabled = true;
         }
         console.log(response);
