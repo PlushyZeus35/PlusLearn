@@ -1,5 +1,5 @@
-console.log(flashMessages);
-console.log(flashSuccesses);
+console.log(messages);
+console.log(successes);
 
 if(flashMessages.length>0){
     for(let i=0; i<flashMessages.length; i++){

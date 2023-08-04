@@ -10,12 +10,15 @@ passport.use(new LocalStrategy({
 }, async (req, username, password, done) => {
     const userSelected = await UserSelector.getUser(username, username);
     if(userSelected.length==0 || userSelected.length>1){
+        req.flash('Message', 'No existe un usuario con esos datos en nuestra plataforma.');
         done(null, false);
     }else{
         if(await Crypt.checkPassword(userSelected[0].password,password)){
             await UserSelector.updateLastLogin(userSelected[0].id);
+            req.flash('Success', 'Inicio de sesión correcto.');
             done(null, userSelected[0]);
         }else{
+            req.flash('Message', 'Datos de inicio de sesión incorrectos.');
             done(null, false);
         }
     }
