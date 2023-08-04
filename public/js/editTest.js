@@ -107,17 +107,20 @@ function testActiveOnChange(){
 }
 
 function newQuestion(){
+    //! Question creation
     let order = getLastQuestion()+1;
     let provisionalId = getLastId()+1;
     questions.push({
         id: provisionalId,
         title: '',
         correctAnswer: {name:''},
-        incorrectAnswers: [{name: ''},{name: ''},{name: ''},{name: ''}],
+        incorrectAnswers: [{name: ''},{name: ''},{name: ''}],
         order: order,
         isNew: true,
         isDeleted: false
     })
+    console.log("QUESTIONS");
+    console.log(questions);
     // Nuevo cubo
     let cube = document.createElement('div');
     cube.classList.add('cube');
@@ -293,7 +296,10 @@ function updateUpdatedItem(item, to){
 function displayQuestion(questionId){
     const mainScreen = $('#questionInfoContainer')[0];
     cleanMainScreen();
+    // ! Aqui se despliega la info
     let targetQuestion = questions.filter((i) => i.id==questionId);
+    console.log("MOSTRAR " + questionId);
+    console.log(questions);
     if(targetQuestion.length==1){
         console.log("QUESTION");
         console.log(targetQuestion[0])
