@@ -113,7 +113,7 @@ function newQuestion(){
         id: provisionalId,
         title: '',
         correctAnswer: {name:''},
-        incorrectAnswers: [{name: ''},{name: ''},{name: ''},{name: ''}],
+        incorrectAnswers: [{name: ''},{name: ''},{name: ''}],
         order: order,
         isNew: true,
         isDeleted: false
@@ -504,4 +504,17 @@ function showUpdateNotification(){
         isSaveAlertOn = true;
     }
     
+}
+
+function deleteTest(){
+    console.log("borrar test " + testId);
+    axios.delete('/test/' + testId)
+        .then(function (response) {
+            if(response.data.status){
+                window.location.href = '/home';
+            }
+        })
+        .catch(function (error) {
+            console.log(error);
+        });
 }
