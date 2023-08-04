@@ -11,13 +11,13 @@ EmailController.sendEmail = async function(receiver,subject='PlushyApp Message I
     var transporter = nodemailer.createTransport({
         service: 'Gmail',
         auth: {
-            user: 'borja.lorenzo.adm@gmail.com',
+            user: config.email.sender,
             pass: config.email.password    // Contraseña de aplicación en ajustes de Google
         }
     });
     // Definimos el email
     var mailOptions = {
-        from: 'borja.lorenzo.adm@gmail.com',
+        from: config.email.sender,
         to: receiver,
         subject: subject,
         text: message,
@@ -43,13 +43,13 @@ EmailController.sendHTML = async function(receiver,subject='PlushyApp Message In
     var transporter = nodemailer.createTransport({
         service: 'Gmail',
         auth: {
-            user: 'borja.lorenzo.adm@gmail.com',
+            user: config.email.sender,
             pass: config.email.password    // Contraseña de aplicación en ajustes de Google
         }
     });
     // Definimos el email
     var mailOptions = {
-        from: 'borja.lorenzo.adm@gmail.com',
+        from: config.email.sender,
         to: receiver,
         subject: subject,
         html: html,
@@ -75,7 +75,7 @@ EmailController.sendErrorEmail = async function(errorObject){
     var transporter = nodemailer.createTransport({
         service: 'Gmail',
         auth: {
-            user: 'borja.lorenzo.adm@gmail.com',
+            user: config.email.sender,
             pass: config.email.password    // Contraseña de aplicación en ajustes de Google
         }
     });
@@ -88,7 +88,7 @@ EmailController.sendErrorEmail = async function(errorObject){
     
     // Definimos el email
     var mailOptions = {
-        from: 'borja.lorenzo.adm@gmail.com',
+        from: config.email.sender,
         to: 'plushyzeus35@gmail.com',
         subject: 'Error app',
         html: emailContent,
