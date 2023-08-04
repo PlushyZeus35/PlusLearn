@@ -20,7 +20,7 @@ router.post('/signup',async (req, res) => {
     // Check new username & email
     const existUser = await UserSelector.getUser(username, mail);
     if(existUser.length>0){
-        req.flash('Message', 'Ya existe un usuario con ese usuario o email.');
+        req.flash('Message', 'Ya existe un usuario con esos datos. Inicia sesión si ya tienes cuenta en la plataforma.');
         res.redirect('/register');
     }else{
         // Create user
@@ -29,7 +29,7 @@ router.post('/signup',async (req, res) => {
             req.flash('Message', 'Se ha producido un error creando el usuario.');
             res.redirect('/register');
         }else{
-            req.flash('Success', 'Usuario creado con éxito.');
+            req.flash('Success', 'Usuario creado con éxito. Ya puedes iniciar sesión.');
             res.redirect('/login');
         }
     }
