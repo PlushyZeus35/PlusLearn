@@ -28,10 +28,8 @@ const testMap = new Map();
 sockets.initialice = async (server) => {
     const io = new Server(server);
     io.on('connection', (socket) => {
-        console.log('a user connected');
 
         socket.on('disconnect', () => {
-            console.log('user disconnected');
         });
 
         // Remove user from local database
@@ -60,14 +58,9 @@ sockets.initialice = async (server) => {
                     addUser(test[0].id, connectionInfo.username, connectionInfo.roomId, false, true)
                 }else{
                     const user = await userSelector.getUser(connectionInfo.username, connectionInfo.username);
-                    //const test = await testSelector.checkInteractiveCode(connectionInfo.roomId);
-                    console.log(user);
-                    console.log(test)
                     if(user!=null && test!=null && user.length>0 && test[0].userId==user[0].id){
-                        console.log('usuario identificado y master')
                         addUser(test[0].id, connectionInfo.username, connectionInfo.roomId, true, false);
                     }else{
-                        console.log('usuario identificado y no master')
                         addUser(test[0].id, connectionInfo.username, connectionInfo.roomId, false, false);
                     }
                 }
@@ -82,7 +75,6 @@ sockets.initialice = async (server) => {
 
         // Evento recibido del master de cada test interactivo
         socket.on(END_QUESTION, async(roomInfo) => {
-            console.log('Finalizar pregunta ' + roomInfo.roomId)
             //const correctAnswer = await testController.getCorrectAnswer(roomInfo.questionId);
             sendEvent(io, roomInfo.roomId, END_QUESTION ,EMPTY);
         })
@@ -100,9 +92,6 @@ sockets.initialice = async (server) => {
         })
 
         socket.on(SEND_ANSWER, async (answersInfo) => {
-            console.log('HE RECIBIDO UNA RESPUESTA POR UN USUARIO ');
-            console.log(answersInfo);
-            //const key = answersInfo.question.id + '-' + answersInfo.roomId;
             if(testMap.has(answersInfo.roomId)){
                 const questionsMap = testMap.get(answersInfo.roomId); //.push(answersInfo.selectedAnswer);
                 if(questionsMap.has(answersInfo.selectedAnswer.questionId)){
@@ -113,11 +102,8 @@ sockets.initialice = async (server) => {
             }else{
                 testMap.set(answersInfo.roomId, new Map([[answersInfo.selectedAnswer.questionId, [answersInfo.selectedAnswer]]]));
             }
-            console.log(testMap)
             if(testMap.get(answersInfo.roomId).get(answersInfo.selectedAnswer.questionId).length >= rooms.get(answersInfo.roomId).users.length){
-                console.log("YA HE RECIBIDO DE TODOS LOS USUARIOS OS ENVIO ESTO");
                 const correctAnswer = await testController.getCorrectAnswer(answersInfo.selectedAnswer.questionId);
-                console.log({correct: correctAnswer, userAnswers: testMap.get(answersInfo.roomId).get(answersInfo.selectedAnswer.questionId)});
                 sendEvent(io, answersInfo.roomId, SEND_ANSWER, {correct: correctAnswer, userAnswers: testMap.get(answersInfo.roomId).get(answersInfo.selectedAnswer.questionId)});
             }
         });
@@ -127,9 +113,6 @@ sockets.initialice = async (server) => {
         })
 
         socket.on(END_TEST, async (answers) => {
-            console.log("RECIBIDO FIN DE TEST!");
-            console.log("RESPUESTA DE USUARIOS!");
-            console.log(answers);
             const results = await testController.getUsersResults(rooms.get(answers.roomId), answers.answers);
             sendEvent(io, answers.roomId, END_TEST, results);
             testMap.delete(answers.roomId);
@@ -162,10 +145,7 @@ function hasTestStarted(roomCode){
 
 async function userAlreadyExists(roomCode, username, isGuest){
     // Search username in room map
-    console.log("SEARCHINGG" + roomCode)
     if(rooms.has(roomCode)){
-        console.log("SEARCHING")
-        console.log(rooms.get(roomCode))
         if(rooms.get(roomCode).master == username){
             return true;
         }

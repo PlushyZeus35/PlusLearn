@@ -169,8 +169,6 @@ router.post('/saveResults', async(req, res) => {
     const userResponseMap = new Map();
     const testResponseList = [];
     for(let respu of resp){
-        console.log("Respuesta")
-        console.log(respu);
         for(let answe of respu.answers){
             if(userResponseMap.has(answe.user)){
                 userResponseMap.get(answe.user).push(answe);
@@ -194,13 +192,7 @@ router.post('/saveResults', async(req, res) => {
         testResponseList.push(newTestResponse);
         const testResponseCreated = await responseSelector.createBulkTestResponses(testResponseList);
         testResponseList.length=0;
-        console.log(testResponseCreated);
         const answerListToInsert = [];
-        console.log("ASDF");
-        console.log(answers);
-        console.log(answers[0])
-        console.log("tESTRESPONSEID");
-        console.log( testResponseCreated[0].id);
         for(let answer of answers){
             //	answerId	questionId	testresponseId	
             const newResponse = {
