@@ -136,8 +136,6 @@ socket.on(USER_ANSWERED, ()=>{
 
 socket.on(START_EVENT, (testInfo) => {
     testInfo = testInfo;
-    console.log("start");
-    console.log(testInfo)
     testQuestions = testInfo.questions;
     testQuestions.sort(sortByOrder);
     sessionPhase=false;
@@ -187,13 +185,8 @@ socket.on(END_TEST, (results) => {
 })
 
 socket.on(SEND_ANSWER, (answers) => {
-    //? Recibo respuestas
-    console.log("recibo respuestas");
-    console.log(answers)
     answersReceived.set(targetQuestionId, answers.userAnswers);
     correctAnswers.set(targetQuestionId, answers.correct);
-    console.log(answersReceived);
-    console.log(correctAnswers)
     showResults();
 })
 
@@ -224,7 +217,6 @@ socket.on(END_QUESTION, (info) => {
                 }
                 selectedAnswerId = parseInt(input.id);
             }
-            console.log({name: input.name, checked: input.checked, id: input.id});
         }
         if(selectedAnswer.selectedAnswer==null){
             selectedAnswer.selectedAnswer = {
@@ -232,7 +224,8 @@ socket.on(END_QUESTION, (info) => {
                 questionId: targetQuestionId,
                 user: connectionInfo.username,
                 userId: dataFromServer.userId,
-                isGuestUser: !dataFromServer.isAuthenticatedUser
+                isGuestUser: !dataFromServer.isAuthenticatedUser,
+                testId: dataFromServer.testId
             }
         }
         myAnswers.set(targetQuestionId, selectedAnswerId);
@@ -318,9 +311,7 @@ function getResultsAlert(){
 function init(){
     testTitle = dataFromServer.testTitle;
     testDescription = dataFromServer.testDescription;
-    console.log({testTitle, testDescription})
     hideAll();
-    console.log(dataFromServer)
     let username = dataFromServer.username;
     let roomId = dataFromServer.roomId;
     isMasterUser = dataFromServer.isMaster;
@@ -557,8 +548,6 @@ function showNextQuestion(){
     if(testQuestions.length<=index){
 
         if(isMasterUser){
-            console.log("ENVIO RESULTADOS DE TESTS");
-            console.log(answersReceived);
             sendEvent(END_TEST,{roomId: connectionInfo.roomId, answers: convertMapToObjectArray(answersReceived)});
         }
         showLoader()
@@ -566,39 +555,7 @@ function showNextQuestion(){
     }
     let targetQuestion = testQuestions[index];
     targetQuestionId = targetQuestion.id;
-    console.log(targetQuestion);
-    /*
-        #testInfo.container.mt-4
-            #userInfo 
-                .alert.waitResponseAlert(role='alert')
-                    .spinnContainer
-                        .spinner-border.text-info(role='status')
-                            span.visually-hidden Loading...
-                    strong Espera a que respondan los demás participantes.
-            #userCounter 
-                
-            #questionCounter 
-                
-            #questionTitle
-                h3.text-white Lorem ipsum dolor sit amet consectetur adipisicing elit. Natus soluta veniam sed cumque. Quae quia eos, ipsa vero accusamus ullam.
-            #answersOptions.mt-4 
-                .form-check
-                    input#flexRadioDefault1.form-check-input(type='radio' name='flexRadioDefault')
-                    label.form-check-label.text-white(for='flexRadioDefault1')
-                        | Lorem ipsum dolor, sit amet consectetur adipisicing elit.
-                .form-check
-                    input#flexRadioDefault2.form-check-input(type='radio' name='flexRadioDefault' checked='')
-                    label.form-check-label.text-white(for='flexRadioDefault2')
-                        | Lorem ipsum, dolor sit amet consectetur adipisicing elit. Voluptas saepe culpa hic!
-                .form-check
-                    input#flexRadioDefault2.form-check-input(type='radio' name='flexRadioDefault' checked='')
-                    label.form-check-label.text-white(for='flexRadioDefault2')
-                        | Lorem ipsum dolor sit amet.
-                .form-check
-                    input#flexRadioDefault2.form-check-input(type='radio' name='flexRadioDefault' checked='')
-                    label.form-check-label.text-white(for='flexRadioDefault2')
-                        | Lorem ipsum dolor sit amet consectetur adipisicing elit. Quam minima provident repudiandae ex maxime sequi. 
-    */
+
     hideAll();
     const mainContainer = $("#mainContainer")[0];
     
@@ -626,103 +583,6 @@ function showNextQuestion(){
     }
     
     mainContainer.appendChild(testInfo);
-    //
-    //
-    //
-    //
-    /*
-    let main = document.getElementsByClassName('mainContainer')[0];
-
-    let cont = document.createElement('div');
-    cont.classList = 'secondaryContainer';
-    cont.style.transition = "in:circle:hesitate";
-    cont.style.backgroundColor = getRandomColor();
-    cont.setAttribute('transition-style',getRandomAnimation())
-
-    let questionMainContainer = document.createElement('div');
-    questionMainContainer.classList.add('questionMainContainer');
- 
-    let alertDiv = document.createElement('div');
-    alertDiv.classList.add('alert');
-    alertDiv.classList.add('alert-primary');
-    alertDiv.classList.add('d-flex');
-    alertDiv.classList.add('align-items-center');
-    
-    let alertImg = document.createElement('img');
-    alertImg.src = '/static/icons/info-circle-fill.svg';
-    alertImg.classList.add('me-3');
-    alertDiv.appendChild(alertImg);
-
-    let alertContent = document.createElement('div');
-    let span1 = document.createElement('span');
-    span1.innerHTML = 'Quedan ';
-    alertContent.appendChild(span1);
-    let span2 = document.createElement('span');
-    userAnswered = roomInfo.users.length
-    span2.innerHTML = userAnswered + ' usuarios'
-    span2.id = 'masterUserCounter';
-    alertContent.appendChild(span2);
-    let span3 = document.createElement('span');
-    span3.innerHTML = ' por responder.';
-    alertContent.appendChild(span3);
-    
-
-    alertDiv.appendChild(alertContent);
-    if(isMasterUser){
-        questionMainContainer.appendChild(alertDiv);
-    }
-
-    const questionCounter = document.createElement('div');
-    questionCounter.id = 'questionCounter';
-    questionMainContainer.appendChild(questionCounter);
-
-    const counterBadge = document.createElement('span');
-    counterBadge.classList.add('badge');
-    counterBadge.classList.add('rounded-pill');
-    counterBadge.classList.add('text-bg-primary');
-    counterBadge.innerHTML = (index+1) + ' / ' + testQuestions.length;
-    questionCounter.appendChild(counterBadge);
-
-    // <h3 class="mb-5">Lorem ipsum dolor sit amet consectetur adipisicing elit. Dolores, voluptatem!</h3>
-    let title = document.createElement('h3');
-    title.classList.add('mb-5');
-    title.innerHTML = targetQuestion.title;
-
-    // <div class="buttons">
-    let buttons = document.createElement('div');
-    buttons.classList.add('buttonsContainer');
-
-    // <button type="button" class="btn btn-primary mb-3" data-bs-toggle="button">Lorem ipsum dolor sit.</button>
-    for(let targetAnswer of targetQuestion.answers){
-        let btt = document.createElement('div');
-        btt.classList.add('selectionButton');
-        btt.classList.add('d-flex');
-        let button = createButton(targetAnswer.id, targetAnswer.name);
-        if(isMasterUser){
-            button[0].disabled = true;
-        }
-        btt.appendChild(button[0]);
-        btt.appendChild(button[1]);
-        buttons.appendChild(btt);
-    }
-
-    if(isMasterUser){
-        let but = document.createElement('button');
-        but.classList.add('btn');
-        but.classList.add('btn-primary')
-        but.classList.add('mt-3');
-        but.onclick = endQuestion;
-        but.innerHTML = 'Siguiente';
-
-        buttons.appendChild(but);
-    }
-    
-    questionMainContainer.appendChild(title);
-    questionMainContainer.appendChild(buttons);
-    cont.appendChild(questionMainContainer);
-    main.appendChild(cont);
-    console.log("asdf")
-    */
 }
 
 function createQuestionContainer(targetQuestion){
@@ -878,7 +738,6 @@ function answerOnClick(){
         waitResponseAlert.appendChild(alertText);
         alertCont.appendChild(waitResponseAlert);
        
-        console.log("He respondido!")
         sendEvent(USER_ANSWERED, {roomId: connectionInfo.roomId});
     }
     hasAnswered = true;
@@ -912,80 +771,6 @@ function showResults(){
     //? Muestro resultados
     showCorrectAnswer();
     showAnswersChart();
-    /*
-    let questionMainContainer = $('.questionMainContainer')[0];
-    
-    // container.insertBefore(newFreeformLabel, container.firstChild);
-    let selectionButtons = $('.buttonsContainer')[0];
-    selectionButtons.innerHTML = '';
-    let correctAnswersAux = correctAnswers.get(targetQuestionId);
-    let correctAnswersIds = [];
-    for(let cor of correctAnswersAux){
-        correctAnswersIds.push(cor.id);
-    }
-    let targetQuestion = testQuestions[index];
-    if(!isMasterUser){
-        if(correctAnswersIds.indexOf(myAnswers.get(targetQuestionId))>=0){
-            let correctTitle = document.createElement('h2');
-            correctTitle.innerHTML = '¡CORRECTO!';
-            correctTitle.classList.add('correctTitle');
-            questionMainContainer.insertBefore(correctTitle, questionMainContainer.firstChild);
-        }else{
-            let incorrectTitle = document.createElement('h2');
-            incorrectTitle.classList.add('incorrectTitle');
-            incorrectTitle.innerHTML = '¡INCORRECTO!';
-            questionMainContainer.insertBefore(incorrectTitle, questionMainContainer.firstChild);
-        }
-    }
-    let auxIndex=0;
-    for(let targetAnswer of targetQuestion.answers){ //id name
-        const letters = ['A', 'B', 'C', 'D', 'E', 'F', 'G'];
-        const actualLetter = letters[auxIndex];
-        auxIndex++;
-        // Icons
-        let correctSVG = document.createElement('img');
-        correctSVG.src = '/static/icons/check-circle-fill.svg';
-        correctSVG.classList.add('me-3');
-        let incorrectSVG = document.createElement('img');
-        incorrectSVG.src = '/static/icons/x-circle-fill.svg';
-        incorrectSVG.classList.add('me-3');
-        console.log('respuesta ' + targetAnswer.id)
-        let displayAnswerDiv = document.createElement('div');
-        displayAnswerDiv.classList.add('d-flex');
-        displayAnswerDiv.classList.add('align-items-center');
-        if(correctAnswersIds.indexOf(targetAnswer.id) >= 0){
-            displayAnswerDiv.appendChild(correctSVG);
-        }else{
-            displayAnswerDiv.appendChild(incorrectSVG);
-        }
-        let display = document.createElement('span');
-        display.innerHTML = actualLetter + '. ' + targetAnswer.name;
-        displayAnswerDiv.appendChild(display)
-        selectionButtons.appendChild(displayAnswerDiv);
-
-        console.log(targetAnswer);
-    }
-
-    // Show chart
-    let chartContainer = document.createElement('div');
-    //chartContainer.classList.add('mt-4');
-    chartContainer.classList.add('chartContainer');
-    let chartCanvas = document.createElement('canvas');
-    chartCanvas.id = 'resultChart';
-    chartContainer.appendChild(chartCanvas);
-    questionMainContainer.appendChild(chartContainer);
-    createChart();
-    console.log(correctAnswersAux)
-
-    if(isMasterUser){
-        let buttonMaster = document.createElement('button');
-        buttonMaster.classList.add('btn');
-        buttonMaster.classList.add('btn-primary');
-        buttonMaster.innerHTML = 'Siguiente';
-        buttonMaster.onclick = finishQuestion;
-        questionMainContainer.appendChild(buttonMaster);
-    }
-    */
 }
 
 function showCorrectAnswer(){
@@ -1003,11 +788,8 @@ function showCorrectAnswer(){
     for(let ans of correctAnswersList){
         correctAnwersIds.push(ans.id);
     }
-    console.log(correctAnwersIds)
     const answersOptionsCont = $("#answersOptions")[0];
     answersOptionsCont.innerHTML = '';
-    console.log("asfasf")
-    console.log(targetQuestion);
     let auxIndex=0;
     for(let eachAnswer of targetQuestion.answers){
         let targetLetter = letters[auxIndex];
@@ -1030,9 +812,6 @@ function showCorrectAnswer(){
         auxIndex++;
     }
     if(!isMasterUser){
-        console.log("respuestas");
-        console.log(myAnswers.get(targetQuestionId));
-        console.log(correctAnwersIds)
         if(correctAnwersIds.indexOf(myAnswers.get(targetQuestionId))>=0){
             const correctAlert = createElement('div', '' , '.alert.correctAlert');
             correctAlert.role = 'alert';
@@ -1046,7 +825,6 @@ function showCorrectAnswer(){
             correctAlert.appendChild(label);
             correctAlert.appendChild(emojiSpan2);
             $("#userCounter")[0].appendChild(correctAlert);
-            console.log("Has acertado")
         }else{
             const incorrectAlert = createElement('div', '' , '.alert.incorrectAlert');
             incorrectAlert.role = 'alert';
@@ -1060,7 +838,6 @@ function showCorrectAnswer(){
             incorrectAlert.appendChild(label);
             incorrectAlert.appendChild(emojiSpan2);
             $("#userCounter")[0].appendChild(incorrectAlert);
-            console.log("has fallado")
         }
     }
 }
@@ -1138,7 +915,6 @@ function getAnswersDataFromUsers(){
 }
 
 function finishQuestion(){
-    console.log("asdfasdfasdfas");
     sendEvent(NEXT_QUESTION,connectionInfo.roomId);
     //index++;
     //hideAll();
@@ -1204,8 +980,6 @@ function getResultTable(results){
 
 function showNotification(toastType, title, text){
    const toastContainer = $(".toast-container")[0];
-   console.log('asdfasdf');
-   console.log(toastContainer)
    const liveToast = document.createElement('div');
    liveToast.classList.add('toast');
    liveToast.role = 'alert';
@@ -1284,8 +1058,6 @@ function showQRcode(roomId){
 }
 
 function saveResults(){
-    console.log("GUARDAR RESULTADOS");
-    console.log(answersReceived);
     const resultsInObjectNotation = convertMapToObjectArray(answersReceived);
     axios.post('/test/saveResults', {
         responses: resultsInObjectNotation
@@ -1296,11 +1068,9 @@ function saveResults(){
             $("#saveDataButton")[0].innerHTML = '¡Cambios guardados!';
             $("#saveDataButton")[0].disabled = true;
         }
-        console.log(response);
       })
       .catch(function (error) {
         showNotification(TOAST_FAIL, 'Algo ha ocurrido mal', 'No se han podido guardar las respuestas.');
-        console.log(error);
       });
 }
 
