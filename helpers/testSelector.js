@@ -82,4 +82,20 @@ testSelector.checkInteractiveCode = async (code) => {
     return tests;
 }
 
+testSelector.deleteTest = async (testId) => {
+    let tests = [];
+    try{
+        tests = await Test.destroy(
+            {
+                where:{
+                    id: testId
+                }
+            }
+        )
+    }catch(error){
+        emailController.sendErrorEmail(error);
+    }
+    return tests;
+}
+
 module.exports = testSelector;

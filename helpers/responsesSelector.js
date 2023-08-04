@@ -52,4 +52,32 @@ responseSelector.getUserResponses = async (testResponses) => {
     return responses;
 }
 
+responseSelector.deleteUserResponses = async (questionIds) => {
+    let responses = [];
+    try{
+        responses = await Response.destroy(
+            {where: {
+                questionId: questionIds
+            }}
+        )
+    }catch(error){
+        emailController.sendErrorEmail(error);
+    }
+    return responses;
+}
+
+responseSelector.deleteTestResponses = async (testIds) => {
+    let testResponses = [];
+    try{
+        testResponses = await TestResponse.destroy(
+            {where: {
+                testId: testIds
+            }}
+        )
+    }catch(error){
+        emailController.sendErrorEmail(error);
+    }
+    return testResponses;
+}
+
 module.exports = responseSelector;

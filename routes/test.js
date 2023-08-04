@@ -216,4 +216,10 @@ router.post('/saveResults', async(req, res) => {
     res.json({status: true})
 })
 
+router.delete('/:testId', apiIsLoggedIn, async(req, res) => {
+    const targetId = req.params.testId;
+    const testDeleted = await testController.deleteTest(targetId);
+    res.json(testDeleted);
+})
+
 module.exports = router;

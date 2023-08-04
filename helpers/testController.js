@@ -427,6 +427,29 @@ testController.getUsersResults = async (roomInfo, userAnswers) => {
     return results;
 }
 
+testController.deleteTest = async (testId) => {
+    const questionIds = [];
+    // Get test questions
+    const testQuestions = await questionSelector.getTestQuestions(testId);
+    for(let eachQuestion of testQuestions){
+        questionIds.push(eachQuestion.id);
+    }
+
+    if(questionIds.length>0){
+        // Delete userResponses
+        await responseSelector.deleteUserResponses(questionIds);
+        // Delete answers
+        await questionSelector.deleteAnswers(questionIds);
+        // Delete questions
+        await questionSelector.deleteQuestions(questionIds);
+    }
+    // Delete testResponses
+    await responseSelector.deleteTestResponses(questionIds);
+    // Delete test
+    await testSelector.deleteTest(testId);
+    return {status: true}
+}
+
 function initialiceResultArray(users){
     const results = [];
     for(let user of users){

@@ -107,7 +107,6 @@ function testActiveOnChange(){
 }
 
 function newQuestion(){
-    //! Question creation
     let order = getLastQuestion()+1;
     let provisionalId = getLastId()+1;
     questions.push({
@@ -119,8 +118,6 @@ function newQuestion(){
         isNew: true,
         isDeleted: false
     })
-    console.log("QUESTIONS");
-    console.log(questions);
     // Nuevo cubo
     let cube = document.createElement('div');
     cube.classList.add('cube');
@@ -296,10 +293,7 @@ function updateUpdatedItem(item, to){
 function displayQuestion(questionId){
     const mainScreen = $('#questionInfoContainer')[0];
     cleanMainScreen();
-    // ! Aqui se despliega la info
     let targetQuestion = questions.filter((i) => i.id==questionId);
-    console.log("MOSTRAR " + questionId);
-    console.log(questions);
     if(targetQuestion.length==1){
         console.log("QUESTION");
         console.log(targetQuestion[0])
@@ -510,4 +504,17 @@ function showUpdateNotification(){
         isSaveAlertOn = true;
     }
     
+}
+
+function deleteTest(){
+    console.log("borrar test " + testId);
+    axios.delete('/test/' + testId)
+        .then(function (response) {
+            if(response.data.status){
+                window.location.href = '/home';
+            }
+        })
+        .catch(function (error) {
+            console.log(error);
+        });
 }
