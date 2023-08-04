@@ -115,7 +115,7 @@ socket.on(USER_ALREADY_EXISTS, (empty) => {
         alert.classList.add('alert');
         alert.classList.add('alert-danger');
         alert.role = 'alert';
-        alert.innerHTML = 'Ese nombre de usuario ya existe en la sala, especifica otro por favor.';
+        alert.innerHTML = 'Ese nombre de usuario ya existe en la plataforma, especifica otro por favor.';
         alert.id = 'userRepAlert';
         alertContainer.appendChild(alert);
     } 

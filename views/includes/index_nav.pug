@@ -19,3 +19,8 @@ header.py-3.mb-4.border-bottom
         a.d-flex.align-items-center.mb-3.mb-lg-0.me-lg-auto.text-dark.text-decoration-none(href='/')
             img.me-3(src="./static/img/logo.png", alt="Logo" width='45')
             span.fs-4 PlusLearn
+        .d-flex.mb-3.mb-lg-0.ms-lg-auto
+            .input-group
+                input#codeInput.form-control(type='text' placeholder='Codigo de cuestionario')
+                button.btn.btn-outline-primary(type='button' onclick='goToTest()') Acceder
+script(src="/static/js/navigations.js") 
