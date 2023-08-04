@@ -3,6 +3,7 @@ const { Server } = require("socket.io");
 const testSelector = require("./testSelector");
 const userSelector = require("./userSelector");
 const testController = require("./testController");
+const RoomData = require("./roomsDataHandler");
 
 // Event types
 const END_QUESTION = 'end-question';
@@ -22,7 +23,6 @@ const room = {
 */
 const rooms = new Map();
 const userMap = new Map();
-const questionMap = new Map();
 const testMap = new Map();
 
 sockets.initialice = async (server) => {
@@ -132,6 +132,8 @@ sockets.initialice = async (server) => {
             console.log(answers);
             const results = await testController.getUsersResults(rooms.get(answers.roomId), answers.answers);
             sendEvent(io, answers.roomId, END_TEST, results);
+            testMap.delete(answers.roomId);
+            rooms.delete(answers.roomId)
         })
     });
 }
