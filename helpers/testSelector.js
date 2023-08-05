@@ -98,4 +98,18 @@ testSelector.deleteTest = async (testId) => {
     return tests;
 }
 
+testSelector.userTestCount = async (userId) => {
+    let test = 0;
+    try{
+        test = await Test.count({
+            where: {
+                userId: userId
+            }
+        })
+    }catch(error){
+        emailController.sendErrorEmail(error)
+    }
+    return test;
+}
+
 module.exports = testSelector;
