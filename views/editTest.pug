@@ -39,10 +39,10 @@ html(lang="es")
                     .modal-body
                         .mb-3 
                             label.form-label(for="testTitleInput") Título de test 
-                            input#testTitleInput.form-control(type="text" name="title" required oninput="testTitleOnChange();")
+                            input#testTitleInput.form-control(type="text" name="title" required oninput="testTitleOnChange();" maxlength="100")
                         .mb-3
                             label.form-label(for='testDescriptionInput') Descripci&oacute;n
-                            textarea#testDescriptionInput.form-control(style='height: 100px' name="description" oninput="testDescriptionOnChange();") 
+                            textarea#testDescriptionInput.form-control(style='height: 100px' maxlength="500" name="description" oninput="testDescriptionOnChange();") 
                         .mb-3 
                             input#isActiveTestCheckbox.form-check-input.me-2(type="checkbox" value="" oninput="testActiveOnChange();")
                             label.form-check-label(for="isActiveTestCheckbox") Activo
