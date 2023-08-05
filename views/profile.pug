@@ -1,0 +1,63 @@
+doctype html
+html(lang="es")
+    head
+        include ./includes/head.pug
+        include ./includes/bootstrap.pug
+        include ./includes/fonts.pug
+        link(rel="stylesheet", href="/static/css/profile.css")
+        script(src='https://cdn.jsdelivr.net/gh/davidshimjs/qrcodejs/qrcode.min.js')
+        script(src="https://cdn.jsdelivr.net/npm/chart.js")
+        script(src='https://cdnjs.cloudflare.com/ajax/libs/lottie-web/5.10.2/lottie.min.js' integrity='sha512-fTTVSuY9tLP+l/6c6vWz7uAQqd1rq3Q/GyKBN2jOZvJSLC5RjggSdboIFL1ox09/Ezx/AKwcv/xnDeYN9+iDDA==' crossorigin='anonymous' referrerpolicy='no-referrer')
+        script(src='https://cdn.socket.io/4.5.4/socket.io.min.js')
+    body 
+        include ./includes/light_app_nav.pug
+        #confUserModal.modal.fade(tabindex='-1' aria-labelledby='addTestLabel' aria-hidden='true')
+            .modal-dialog.modal-dialog-centered
+                .modal-content
+                    .modal-header
+                        h1#addTestLabel.modal-title.fs-5 Configuración
+                        button.btn-close(type='button' data-bs-dismiss='modal' aria-label='Close')
+                    .modal-body
+                        #alertContainer
+                        .mb-3 
+                            label.form-label(for="emailInput") Email
+                            input#emailInput.form-control(type="text" name="title" required value=dataFromServer.user.email) 
+                    .modal-footer
+                        button.btn.btn-secondary(type='button' data-bs-dismiss='modal') Cancelar
+                        button.btn.btn-primary(type='button' onclick="updateUser();") Guardar
+        #deleteUserModal.modal.fade(tabindex='-1' aria-labelledby='deletUserLabel' aria-hidden='true')
+            .modal-dialog.modal-dialog-centered
+                .modal-content
+                    .modal-header
+                        h1#deletUserLabel.modal-title.fs-5 Eliminar usario
+                        button.btn-close(type='button' data-bs-dismiss='modal' aria-label='Close')
+                    .modal-body
+                        .alert.alert-danger 
+                            | Estás a punto de borrar el usuario, ¿Quieres continuar?
+                    .modal-footer
+                        button.btn.btn-secondary(type='button' data-bs-dismiss='modal') Cancelar
+                        button.btn.btn-danger(type='button' onclick="deleteUser();") Eliminar usuario
+        #cardContainer.mt-5
+            .profileCard.p-4 
+                .profileImg 
+                    svg.bi.bi-person-circle(xmlns='http://www.w3.org/2000/svg' width='60' height='60' fill='#eaeaea' viewbox='0 0 16 16')
+                        path(d='M11 6a3 3 0 1 1-6 0 3 3 0 0 1 6 0z')
+                        path(fill-rule='evenodd' d='M0 8a8 8 0 1 1 16 0A8 8 0 0 1 0 8zm8-7a7 7 0 0 0-5.468 11.37C3.242 11.226 4.805 10 8 10s4.757 1.225 5.468 2.37A7 7 0 0 0 8 1z')
+                .profileData.mt-3.d-flex.flex-column 
+                    h3.ubuntuFont #{dataFromServer.user.username}
+                    span.profileEmail #{dataFromServer.user.email}
+                    span.profileLastLogin Ult. Conexión: #{dataFromServer.user.lastLogin}
+                .profileStats.row.mt-3 
+                    .stat1.col-6.text-center 
+                        .statTitle Cuestionarios
+                        .statValue #{dataFromServer.stats.testCounter}
+                    .stat2.col-6.text-center 
+                        .statTitle Respuestas
+                        .statValue #{dataFromServer.stats.responsesCounter}
+                if(dataFromServer.isAuthUser)
+                    .profileOptions.mt-3.d-grid.gap-2 
+                        button.btn.btn-primary.mb-2(data-bs-toggle="modal" data-bs-target="#confUserModal") Configuración 
+                        button.btn.btn-outline-danger(data-bs-toggle="modal" data-bs-target="#deleteUserModal") Eliminar
+        include ./includes/jquery.pug
+        script(src="https://unpkg.com/axios/dist/axios.min.js")
+        script(src="/static/js/profile.js")

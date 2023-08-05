@@ -80,4 +80,18 @@ responseSelector.deleteTestResponses = async (testIds) => {
     return testResponses;
 }
 
+responseSelector.getUserResponseCounter = async (userId) => {
+    let testResponses = 0;
+    try{
+        testResponses = await TestResponse.count(
+            {where: {
+                userId: userId
+            }}
+        )
+    }catch(error){
+        emailController.sendErrorEmail(error);
+    }
+    return testResponses;
+}
+
 module.exports = responseSelector;

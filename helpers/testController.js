@@ -450,6 +450,16 @@ testController.deleteTest = async (testId) => {
     return {status: true}
 }
 
+testController.getUserTestStats = async (userId) => {
+    const objReturn = {
+        testCounter: 0,
+        responsesCounter: 0
+    }
+    objReturn.testCounter = await testSelector.userTestCount(userId);
+    objReturn.responsesCounter = await responseSelector.getUserResponseCounter(userId);
+    return objReturn;
+}
+
 function initialiceResultArray(users){
     const results = [];
     for(let user of users){
