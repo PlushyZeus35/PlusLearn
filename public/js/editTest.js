@@ -364,6 +364,7 @@ function getInput(id, title, value){
     questionInput.type = 'text';
     questionInput.value = value;
     questionInput.id = id;
+    questionInput.maxLength = '200';
     //questionInput.onchange = questionUpdated;
     questionInput.oninput = questionUpdated;
     let questionSpan = document.createElement('span');
