@@ -30,7 +30,8 @@ responseSelector.getTestResponses = async (testId) => {
         testResponses = await TestResponse.findAll(
             {where: {
                 testId: testId
-            }}
+            },
+            order:[['createdAt', 'DESC']]}
         )
     }catch(error){
         emailController.sendErrorEmail(error);
@@ -93,5 +94,22 @@ responseSelector.getUserResponseCounter = async (userId) => {
     }
     return testResponses;
 }
+
+responseSelector.deactivateTestResponses = async (userId) => {
+	let testResponses = [];
+	try{
+		testResponses = await TestResponse.update({
+			userId: null
+		},{
+			where: {
+				userId: userId
+			}
+		})
+	}catch(error){
+		emailController.sendErrorEmail(error);
+	}
+	return testResponses;
+}
+
 
 module.exports = responseSelector;

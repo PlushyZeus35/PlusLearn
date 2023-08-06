@@ -81,7 +81,7 @@ router.get('/error', async(req, res) => {
     res.render('error');
 })
 
-router.get('/user/:id', async(req, res) => {
+router.get('/user/:id', isLoggedIn, async(req, res) => {
     const userId = req.params.id;
     const user = await userSelector.getUserById(userId);
     if(user){
@@ -98,8 +98,8 @@ router.get('/user/:id', async(req, res) => {
 })
 
 router.post('/user', apiIsLoggedIn, async(req, res) => {
+    const {id, email} = req.body;
     if(req.user.id == id){
-        const {id, email} = req.body;
         const response = await userController.updateEmail(id, email);
         res.json(response)
     }else{
