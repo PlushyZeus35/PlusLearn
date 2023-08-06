@@ -112,4 +112,20 @@ testSelector.userTestCount = async (userId) => {
     return test;
 }
 
+testSelector.checkInteractiveCodeActiveTest = async (code) => {
+    let tests = [];
+    try{
+        tests = await Test.findAll({
+            where: {
+                interactiveCode: code,
+                active: true
+            }
+        })
+    }catch(error){
+        emailController.sendErrorEmail(error);
+    }
+    return tests;
+}
+
+
 module.exports = testSelector;

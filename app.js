@@ -63,6 +63,9 @@ app.use(require('./routes'));
 app.use(require('./routes/index'));
 app.use('/auth',require('./routes/auth'));
 app.use('/test',require('./routes/test'));
-
+// 404 page
+app.all('*', (req, res) => {
+    res.render('error',{notFound:true})
+});
 
 module.exports = app;

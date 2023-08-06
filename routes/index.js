@@ -8,7 +8,11 @@ const userSelector = require('../helpers/userSelector');
 const userController = require('../helpers/userController');
 /* GET Index page. */
 router.get('/', (req, res) => {
-    res.render('index');
+    let authenticated = false;
+    if(req.user){
+        authenticated = true;
+    }
+    res.render('index', {isAuthenticated: authenticated});
 })
 
 router.get('/reset', (req, res) => {
