@@ -22,14 +22,16 @@ function initData(){
 function getQuestionsStadisticsData(){
 	axios.get('/test/getQuestionsStadistics/' + test.id)
 		.then(function (response) {
+			if(response.data.error){
+                window.location.href = "/error";
+            }
 			// handle success
 			console.log(response);
 			hideLoader2();
 			setQuestionsStadistics(response.data);
 		})
 		.catch(function (error) {
-			// handle error
-			console.log(error);
+			window.location.href = "/error";
 		})
 		.finally(function () {
 			// always executed
@@ -39,14 +41,16 @@ function getQuestionsStadisticsData(){
 function getGeneralStadisticsData(){
 	axios.get('/test/getGeneralStadistic/' + test.id)
 		.then(function (response) {
+			if(response.data.error){
+                window.location.href = "/error";
+            }
 			// handle success
 			console.log(response);
 			hideLoader();
 			setGeneralStadistics(response.data);
 		})
 		.catch(function (error) {
-			// handle error
-			console.log(error);
+			window.location.href = "/error";
 		})
 		.finally(function () {
 			// always executed

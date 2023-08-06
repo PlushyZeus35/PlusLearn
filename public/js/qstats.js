@@ -37,11 +37,13 @@ function initData(){
 function getStatsData(){
     axios.get('/test/getQuestionsStadistics/' + test.id)
 		.then(function (response) {
+            if(response.data.error){
+                window.location.href = "/error";
+            }
             questionsStats = response.data;
 		})
 		.catch(function (error) {
-			// handle error
-			console.log(error);
+			window.location.href = "/error";
 		})
 		.finally(function () {
 			// always executed
@@ -274,17 +276,22 @@ function getTable(questionInfo, answersCounter){
 
 function fetchData(url){
     return axios.get(url)
-        .then(response => response.data)
-        .catch(error => console.error('Error fetching data:', error));
+        .then(response => {if(response.data.error){
+            window.location.href = "/error";
+        }
+        return response.data})
+        .catch(error => window.location.href = "/error");
 }
 
 function getQuestionsData(){
     axios.get('/test/getdata/' + test.id)
         .then(function (response) {
-            
+            if(response.data.error){
+                window.location.href = "/error";
+            }
             questionsData = response.data;
         })
         .catch(function (error) {
-            console.log(error);
+            window.location.href = "/error";
         });
 }

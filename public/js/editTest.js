@@ -63,9 +63,10 @@ let loadinganimation = bodymovin.loadAnimation({
 function init(){
     axios.get('/test/getdata/' + testId)
         .then(function (response) {
+            if(response.data.error){
+                window.location.href = "/error";
+            }
             if(!response.data.error){
-                console.log("info recibida!");
-                console.log(response.data);
                 testData = response.data;
                 questions = response.data.questions;
                 console.log(questions);
@@ -73,13 +74,12 @@ function init(){
                 if(questions.length==0){
                     showNoQuestionsScreen()
                 }else{
-                    console.log(testData);
                     displayInitiateQuestions();
                 }
             }
         })
         .catch(function (error) {
-            console.log(error);
+            window.location.href = "/error";
         });
 }
 
@@ -428,10 +428,13 @@ function handleUpdate(){
         questions: questions
       })
       .then(function (response) {
+        if(response.data.error){
+            window.location.href = "/error";
+        }
         console.log(response);
       })
       .catch(function (error) {
-        console.log(error);
+        window.location.href = "/error";
       });
     console.log("asf")
 }
@@ -439,10 +442,13 @@ function handleUpdate(){
 function getServerData(){
     axios.get('/test/getdata/' + testId)
       .then(function (response) {
+        if(response.data.error){
+            window.location.href = "/error";
+        }
         console.log(response);
       })
       .catch(function (error) {
-        console.log(error);
+        window.location.href = "/error";
       });
 }
 
@@ -459,11 +465,14 @@ function saveDataServer(){
         data: testData
       })
       .then(function (response) {
+        if(response.data.error){
+            window.location.href = "/error";
+        }
         console.log(response);
         location.reload();
       })
       .catch(function (error) {
-        console.log(error);
+        window.location.href = "/error";
       });
       //console.log("GUARDAR CASO DESACTIVADO")
 }
@@ -511,11 +520,14 @@ function deleteTest(){
     console.log("borrar test " + testId);
     axios.delete('/test/' + testId)
         .then(function (response) {
+            if(response.data.error){
+                window.location.href = "/error";
+            }
             if(response.data.status){
                 window.location.href = '/home';
             }
         })
         .catch(function (error) {
-            console.log(error);
+            window.location.href = "/error";
         });
 }

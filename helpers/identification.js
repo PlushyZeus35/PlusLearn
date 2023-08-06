@@ -54,7 +54,7 @@ module.exports = {
         if(req.isAuthenticated()){
             return next();
         }else{
-            res.json({error: 302, errorMsg: 'User not authenticated'});
+            res.json({status: false, error: 302, errorMsg: 'User not authenticated'});
         }
     }
 }
