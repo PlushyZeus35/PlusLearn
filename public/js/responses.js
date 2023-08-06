@@ -36,6 +36,9 @@ function initData(){
 function getServerData(testId){
     axios.get('/test/useresponses/' + test.id)
     .then(function (response) {
+        if(response.data.error){
+            window.location.href = "/error";
+        }
         console.log(response.data);
         if(response.data.responses.length>0){
             constructAccordion(response.data.responses);
@@ -45,8 +48,7 @@ function getServerData(testId){
        
     })
     .catch(function (error) {
-        // handle error
-        console.log(error);
+        window.location.href = "/error";
     })
     .finally(function () {
         // always executed

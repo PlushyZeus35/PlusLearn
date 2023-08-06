@@ -29,6 +29,9 @@ function init(){
 function getLimitTestsData(){
 	axios.get('/test/g/getUserTests')
         .then(function (response) {
+			if(response.data.error){
+                window.location.href = "/error";
+            }
 			if(response.data.tests.length>0){
 				displayTests(response.data);
 			}else{
@@ -37,7 +40,7 @@ function getLimitTestsData(){
 			
         })
         .catch(function (error) {
-            console.log(error);
+            window.location.href = "/error";
         });
 }
 
@@ -170,11 +173,14 @@ function hideLoader(){
 function getUserTests(){
 	axios.get('/test/all/getUserTests')
         .then(function (response) {
+			if(response.data.error){
+                window.location.href = "/error";
+            }
 			console.log(response.data);
 			displayTableTests(response.data);
         })
         .catch(function (error) {
-            console.log(error);
+            window.location.href = "/error";
         });
 }
 

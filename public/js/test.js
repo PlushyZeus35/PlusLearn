@@ -1063,6 +1063,9 @@ function saveResults(){
         responses: resultsInObjectNotation
       })
       .then(function (response) {
+        if(response.data.error){
+            window.location.href = "/error";
+        }
         if(response.data.status){
             showNotification(TOAST_SUCCESS, 'Datos guardados', 'Las respuestas han sido guardadas correctamente.');
             $("#saveDataButton")[0].innerHTML = '¡Cambios guardados!';

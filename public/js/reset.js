@@ -12,6 +12,9 @@ function resetPasswordOnClick(){
                 username: username
             })
             .then(function (response) {
+                if(response.data.error){
+                    window.location.href = "/error";
+                }
                 if(response.data.status){
                     const cardBody = $("#cardBody")[0];
                     $("#cardBody")[0].innerHTML = ''
@@ -41,18 +44,23 @@ function resetPasswordOnClick(){
                 }
             })
             .catch(function (error) {
-                console.log(error);
+                window.location.href = "/error";
             });
         } 
     }else if(!changePass){
         const code = $("#codeInput")[0].value;
         axios.get('/resetCode?code=' + code)
         .then(function (response) {
+            if(response.data.error){
+                window.location.href = "/error";
+            }
             if(response.data.status){
                 codeSelected = code;
                 showChangePasswordInputs();
                 changePass = true;
             }   
+        }).catch(function(error){
+            window.location.href = "/error";
         })
     }else{
         changePasswordServer();
@@ -110,6 +118,9 @@ function changePasswordServer(){
             code: codeSelected
         })
         .then(function (response) {
+            if(response.data.error){
+                window.location.href = "/error";
+            }
             if(response.data.status){
                 console.log("CHANGED")
                 window.location.href = '/login';
@@ -118,7 +129,7 @@ function changePasswordServer(){
             }
         })
         .catch(function (error) {
-            console.log(error);
+            window.location.href = "/error";
         });
     }
 }

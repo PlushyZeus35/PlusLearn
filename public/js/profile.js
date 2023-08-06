@@ -18,6 +18,9 @@ function updateUser(){
             email: email
           })
           .then(function (response) {
+			if(response.data.error){
+                window.location.href = "/error";
+            }
             console.log(response);
             if(response.data.status){
                 location.reload();
@@ -26,7 +29,7 @@ function updateUser(){
             }
           })
           .catch(function (error) {
-            console.log(error);
+            window.location.href = "/error";
           });
     }else{
         setUpdateErrorAlert('Especifica un correo electrónico valido.');
