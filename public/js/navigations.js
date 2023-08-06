@@ -15,3 +15,9 @@ function goToTest(){
         }
     }
 }
+
+function goToProfile(){
+    const userId = $("#userIdContainer")[0].innerHTML;
+    console.log(userId)
+    window.location.href = '/user/' + userId;
+}

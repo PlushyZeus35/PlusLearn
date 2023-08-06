@@ -327,10 +327,14 @@ testController.getUserResponses = async(testId) => {
     const userResponses = await responseSelector.getUserResponses(testResponsesIds);
     const responses = [];
     for(let testResp of testResponses){
+        let createdDate = new Date(testResp.createdAt);
+        const timeStamp = DateTime.fromISO(createdDate.toISOString()).setLocale('es').toFormat('dd-MM-yyyy HH:mm')
         const resp = {
             id: testResp.id,
             user: testResp.username,
             isGuest: testResp.isGuest,
+            createdDate: timeStamp,
+            userId: testResp.userId,
             responses: []
         }
         const targetResponses = userResponses.filter((i) => i.testresponseId == testResp.id);

@@ -1,11 +1,11 @@
 function deleteUser(){
     axios.delete('/user/' + dataFromServer.user.id)
-      .then(function (response) {
-        window.location('/auth//logout')
-      })
-      .catch(function (error) {
-        console.log(error);
-      });
+		.then(function (response) {
+			window.location.href = "/auth/logout";
+		})
+		.catch(function (error) {
+			console.log(error);
+		});
 }
 
 function updateUser(){

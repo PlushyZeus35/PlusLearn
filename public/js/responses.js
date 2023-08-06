@@ -83,7 +83,7 @@ function constructAccordion(responses){
         accordionHeaderButton.setAttribute('data-bs-target','#'+testResponse.id);
         accordionHeaderButton.setAttribute('aria-expanded','false');
         accordionHeaderButton.setAttribute('aria-controls',testResponse.id);
-        accordionHeaderButton.innerHTML = testResponse.user;
+        accordionHeaderButton.innerHTML = testResponse.user + ' ' + '(' + testResponse.createdDate + ')';
 
         let accordionCollapse = document.createElement('div');
         accordionCollapse.id = testResponse.id;
@@ -93,6 +93,28 @@ function constructAccordion(responses){
 
         let accordionBody = document.createElement('div');
         accordionBody.classList.add('accordion-body');
+
+        let profileButtonCont = document.createElement('div');
+        profileButtonCont.classList.add('d-flex');
+        profileButtonCont.classList.add('justify-content-end');
+        profileButtonCont.classList.add('mb-3');
+
+        if(testResponse.userId != undefined && testResponse.userId != null && testResponse.userId != ''){
+            let profileButton = document.createElement('a');
+            profileButton.href='/user/' + testResponse.userId;
+            profileButton.classList.add('btn');
+            profileButton.classList.add('btn-primary');
+            profileButton.innerHTML = 'Ir a perfil';
+            profileButtonCont.appendChild(profileButton);
+        }else{
+            let profileButton = document.createElement('button');
+            profileButton.classList.add('btn');
+            profileButton.classList.add('btn-outline-secondary');
+            profileButton.innerHTML = 'Usuario invitado';
+            profileButton.disabled = true;
+            profileButtonCont.appendChild(profileButton);
+        }
+        accordionBody.appendChild(profileButtonCont)
 
         const progressBar = constructProgressBar(testResponse.responses);
         accordionBody.appendChild(progressBar);

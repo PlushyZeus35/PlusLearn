@@ -3,6 +3,7 @@ const userSelector = require('./userSelector');
 const emailController = require('./emailController');
 const Crypt = require('./crypt');
 const {DateTime} = require('luxon');
+const responseSelector = require('./responsesSelector');
 
 userController.getPasswordResetCode = async (userId, userMail) => {
     const passReset = await userSelector.getUserPasswordReset(userId);
@@ -59,6 +60,7 @@ userController.updateEmail = async (userId, userMail) => {
 
 userController.deleteUser = async (userId) => {
     const user = await userSelector.deleteUser(userId);
+    const testResponses = await responseSelector.deactivateTestResponses(userId);
     return {status: true}
 }
 
