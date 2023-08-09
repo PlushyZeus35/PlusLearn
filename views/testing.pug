@@ -1,0 +1,165 @@
+doctype html
+html(lang="en")
+    head
+        include ./includes/head.pug
+        include ./includes/bootstrap.pug
+        include ./includes/fonts.pug
+        link(rel="stylesheet", href="/static/css/testing.css")
+        script(src='https://cdn.jsdelivr.net/gh/davidshimjs/qrcodejs/qrcode.min.js')
+        script(src="https://cdn.jsdelivr.net/npm/chart.js")
+        script(src='https://cdnjs.cloudflare.com/ajax/libs/lottie-web/5.10.2/lottie.min.js' integrity='sha512-fTTVSuY9tLP+l/6c6vWz7uAQqd1rq3Q/GyKBN2jOZvJSLC5RjggSdboIFL1ox09/Ezx/AKwcv/xnDeYN9+iDDA==' crossorigin='anonymous' referrerpolicy='no-referrer')
+        script(src='https://cdn.socket.io/4.5.4/socket.io.min.js')
+    body 
+        include ./includes/light_app_nav.pug
+        #mainContainer 
+            #testInfo.container.mt-4.containerInfo
+                #testTitle 
+                    h3.text-white Lorem ipsum dolor sit amet consectetur adipisicing elit. Dolor iste temporibus corrupti laudantium quisquam saepe!
+                #testDescription
+                    p.text-white Lorem ipsum dolor sit amet consectetur adipisicing elit. Fugiat placeat tenetur adipisci minima atque, nam quasi beatae molestiae commodi in assumenda officia labore quae voluptatem.
+                #alertContainer 
+                    .alert.infoAlert(role='alert')
+                        h4.alert-heading ¡En la sala de espera!
+                        p
+                            | Te encuentras en la sala de espera del cuestionario. Puedes ver justo debajo una lista de las personas conectadas a esta misma sala de espera.
+                        hr
+                        p.mb-0
+                            //| ¡Relajate! Ahora solo tienes que espera a que el maestro de sala comience el cuestionario.
+                            | Espera a que todos los participantes se encuentren en la sala de espera y dale al botón para comenzar el cuestionario. Una vez que el cuestionario comience no se podrán unir más participantes.
+                #testStatus 
+                    span.badge.rounded-pill.text-bg-light 
+                        strong.me-2 5
+                        span participantes 
+                    span.badge.rounded-pill.text-bg-light 
+                        | Maestro listo 
+                //#optionButtons.mt-3 
+                    button.btn.btn-primary.me-2 Comenzar 
+                    button.btn.btn-outline-info Código QR
+
+            #userList.container.mt-4
+                h3.ubuntuFont Participantes
+                .user.master 
+                    .username Borja 
+                    .usertype 
+                        svg.bi.bi-check-circle-fill(xmlns='http://www.w3.org/2000/svg' width='28' height='28' fill='#7CB9E8' viewbox='0 0 16 16')
+                            path(d='M16 8A8 8 0 1 1 0 8a8 8 0 0 1 16 0zm-3.97-3.03a.75.75 0 0 0-1.08.022L7.477 9.417 5.384 7.323a.75.75 0 0 0-1.06 1.06L6.97 11.03a.75.75 0 0 0 1.079-.02l3.992-4.99a.75.75 0 0 0-.01-1.05z')
+                .user.regular 
+                    .username Borja 
+                    .usertype 
+                        svg.bi.bi-check-circle-fill(xmlns='http://www.w3.org/2000/svg' width='28' height='28' fill='#7CB9E8' viewbox='0 0 16 16')
+                            path(d='M16 8A8 8 0 1 1 0 8a8 8 0 0 1 16 0zm-3.97-3.03a.75.75 0 0 0-1.08.022L7.477 9.417 5.384 7.323a.75.75 0 0 0-1.06 1.06L6.97 11.03a.75.75 0 0 0 1.079-.02l3.992-4.99a.75.75 0 0 0-.01-1.05z')
+                .user.regular 
+                    .username Nombre de usuario largo de narices 
+                    //.usertype 
+                        svg.bi.bi-check-circle-fill(xmlns='http://www.w3.org/2000/svg' width='28' height='28' fill='#7CB9E8' viewbox='0 0 16 16')
+                            path(d='M16 8A8 8 0 1 1 0 8a8 8 0 0 1 16 0zm-3.97-3.03a.75.75 0 0 0-1.08.022L7.477 9.417 5.384 7.323a.75.75 0 0 0-1.06 1.06L6.97 11.03a.75.75 0 0 0 1.079-.02l3.992-4.99a.75.75 0 0 0-.01-1.05z')
+                .user.regular 
+                    .username Borja 
+                    .usertype 
+                        svg.bi.bi-check-circle-fill(xmlns='http://www.w3.org/2000/svg' width='28' height='28' fill='#7CB9E8' viewbox='0 0 16 16')
+                            path(d='M16 8A8 8 0 1 1 0 8a8 8 0 0 1 16 0zm-3.97-3.03a.75.75 0 0 0-1.08.022L7.477 9.417 5.384 7.323a.75.75 0 0 0-1.06 1.06L6.97 11.03a.75.75 0 0 0 1.079-.02l3.992-4.99a.75.75 0 0 0-.01-1.05z')
+                .user.regular 
+                    .username Borja 
+                    .usertype 
+                        svg.bi.bi-check-circle-fill(xmlns='http://www.w3.org/2000/svg' width='28' height='28' fill='#7CB9E8' viewbox='0 0 16 16')
+                            path(d='M16 8A8 8 0 1 1 0 8a8 8 0 0 1 16 0zm-3.97-3.03a.75.75 0 0 0-1.08.022L7.477 9.417 5.384 7.323a.75.75 0 0 0-1.06 1.06L6.97 11.03a.75.75 0 0 0 1.079-.02l3.992-4.99a.75.75 0 0 0-.01-1.05z')
+                .user.regular 
+                    .username Borja 
+                    .usertype 
+                        svg.bi.bi-check-circle-fill(xmlns='http://www.w3.org/2000/svg' width='28' height='28' fill='#7CB9E8' viewbox='0 0 16 16')
+                            path(d='M16 8A8 8 0 1 1 0 8a8 8 0 0 1 16 0zm-3.97-3.03a.75.75 0 0 0-1.08.022L7.477 9.417 5.384 7.323a.75.75 0 0 0-1.06 1.06L6.97 11.03a.75.75 0 0 0 1.079-.02l3.992-4.99a.75.75 0 0 0-.01-1.05z')
+                .user.regular 
+                    .username Borja 
+                    .usertype 
+                        svg.bi.bi-check-circle-fill(xmlns='http://www.w3.org/2000/svg' width='28' height='28' fill='#7CB9E8' viewbox='0 0 16 16')
+                            path(d='M16 8A8 8 0 1 1 0 8a8 8 0 0 1 16 0zm-3.97-3.03a.75.75 0 0 0-1.08.022L7.477 9.417 5.384 7.323a.75.75 0 0 0-1.06 1.06L6.97 11.03a.75.75 0 0 0 1.079-.02l3.992-4.99a.75.75 0 0 0-.01-1.05z')
+                .user.regular 
+                    .username Borja 
+                    .usertype 
+                        svg.bi.bi-check-circle-fill(xmlns='http://www.w3.org/2000/svg' width='28' height='28' fill='#7CB9E8' viewbox='0 0 16 16')
+                            path(d='M16 8A8 8 0 1 1 0 8a8 8 0 0 1 16 0zm-3.97-3.03a.75.75 0 0 0-1.08.022L7.477 9.417 5.384 7.323a.75.75 0 0 0-1.06 1.06L6.97 11.03a.75.75 0 0 0 1.079-.02l3.992-4.99a.75.75 0 0 0-.01-1.05z')
+                .user.regular 
+                    .username Borja 
+                    .usertype 
+                        svg.bi.bi-check-circle-fill(xmlns='http://www.w3.org/2000/svg' width='28' height='28' fill='#7CB9E8' viewbox='0 0 16 16')
+                            path(d='M16 8A8 8 0 1 1 0 8a8 8 0 0 1 16 0zm-3.97-3.03a.75.75 0 0 0-1.08.022L7.477 9.417 5.384 7.323a.75.75 0 0 0-1.06 1.06L6.97 11.03a.75.75 0 0 0 1.079-.02l3.992-4.99a.75.75 0 0 0-.01-1.05z')
+            #testInfo.container.mt-4
+                #userInfo 
+                    .alert.waitResponseAlert(role='alert')
+                        .spinnContainer
+                            .spinner-border.text-info(role='status')
+                                span.visually-hidden Loading...
+                        strong Espera a que respondan los demás participantes.
+                #userCounter 
+                    .alert.userCounterAlert(role='alert')
+                        .spinner-border.text-warning(role='status')
+                                span.visually-hidden Loading...
+                        span Quedan 
+                            strong 5 personas 
+                            | por contestar.
+                #questionCounter 
+                    span.badge.rounded-pill.text-bg-primary 
+                        | 1 / 10
+                #questionTitle
+                    h3.text-white Lorem ipsum dolor sit amet consectetur adipisicing elit. Natus soluta veniam sed cumque. Quae quia eos, ipsa vero accusamus ullam.
+                #answersOptions.mt-4 
+                    .form-check
+                        input#flexRadioDefault1.form-check-input(type='radio' name='flexRadioDefault')
+                        label.form-check-label.text-white(for='flexRadioDefault1')
+                            | Lorem ipsum dolor, sit amet consectetur adipisicing elit.
+                    .form-check
+                        input#flexRadioDefault2.form-check-input(type='radio' name='flexRadioDefault' checked='')
+                        label.form-check-label.text-white(for='flexRadioDefault2')
+                            | Lorem ipsum, dolor sit amet consectetur adipisicing elit. Voluptas saepe culpa hic!
+                    .form-check
+                        input#flexRadioDefault2.form-check-input(type='radio' name='flexRadioDefault' checked='')
+                        label.form-check-label.text-white(for='flexRadioDefault2')
+                            | Lorem ipsum dolor sit amet.
+                    .form-check
+                        input#flexRadioDefault2.form-check-input(type='radio' name='flexRadioDefault' checked='')
+                        label.form-check-label.text-white(for='flexRadioDefault2')
+                            | Lorem ipsum dolor sit amet consectetur adipisicing elit. Quam minima provident repudiandae ex maxime sequi.
+            //#testInfo.container.mt-4
+                #questionResult 
+                    .alert.correctAlert(role='alert')
+                        strong Correcto
+                #questionCounter 
+                    span.badge.rounded-pill.text-bg-primary 
+                        | 1 / 10
+                #questionTitle
+                    h3.text-white Lorem ipsum dolor sit amet consectetur adipisicing elit. Natus soluta veniam sed cumque. Quae quia eos, ipsa vero accusamus ullam.
+                #answersOptions.mt-4 
+                    .form-check
+                        input#flexRadioDefault1.form-check-input(type='radio' name='flexRadioDefault')
+                        label.form-check-label.text-white(for='flexRadioDefault1')
+                            | Lorem ipsum dolor, sit amet consectetur adipisicing elit.
+                    .form-check
+                        input#flexRadioDefault2.form-check-input(type='radio' name='flexRadioDefault' checked='')
+                        label.form-check-label.text-white(for='flexRadioDefault2')
+                            | Lorem ipsum, dolor sit amet consectetur adipisicing elit. Voluptas saepe culpa hic!
+                    .form-check
+                        input#flexRadioDefault2.form-check-input(type='radio' name='flexRadioDefault' checked='')
+                        label.form-check-label.text-white(for='flexRadioDefault2')
+                            | Lorem ipsum dolor sit amet.
+                    .form-check
+                        input#flexRadioDefault2.form-check-input(type='radio' name='flexRadioDefault' checked='')
+                        label.form-check-label.text-white(for='flexRadioDefault2')
+                            | Lorem ipsum dolor sit amet consectetur adipisicing elit. Quam minima provident repudiandae ex maxime sequi.
+                #userList.mt-3 
+                    table.table.table-dark.table-borderless.table-hover
+                        thead
+                            tr
+                                th(scope='col') Usuario
+                                th(scope='col') Puntuaci&oacute;n
+                        tbody
+                            tr
+                                td Mark
+                                td 4
+                            tr
+                                td Jacob
+                                td 7
+                            tr
+                                td Larry the Bird
+                                td 1
+
+

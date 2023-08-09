@@ -10,12 +10,27 @@ html(lang="es")
         script(src='https://cdnjs.cloudflare.com/ajax/libs/lottie-web/5.10.2/lottie.min.js' integrity='sha512-fTTVSuY9tLP+l/6c6vWz7uAQqd1rq3Q/GyKBN2jOZvJSLC5RjggSdboIFL1ox09/Ezx/AKwcv/xnDeYN9+iDDA==' crossorigin='anonymous' referrerpolicy='no-referrer')
         //script(src='https://cdn.socket.io/4.5.4/socket.io.min.js')
     body 
-        include ./includes/light_app_nav.pug
-        #mainCont
-            #glitchAnimation
-            .glitch-wrapper 
-                .glitch(data-text="No autorizado") No autorizado 
+        include ./includes/min_app_nav.pug
+        #mainContainer
+            #cardContainer
+                #errorCard.mt-4.text-white.text-center
+                    #errorAnimation 
+                    #errorTitle
+                        if(notFound)
+                            h3 404
+                        else if(testNotFound)
+                            h3 No encontrado 
+                        else 
+                            h3 No autorizado
+                    #errorDescription 
+                        if(notFound)
+                            p ¡Has accedido a un sitio que no existe!
+                        else if(testNotFound)
+                            p Ese cuestionario no existe o está desactivado. Avisa al propietario para activarlo.
+                        else
+                            p ¡Oups! Has accedido a un sitio que no debes ver... por ahora.
+                    #actionButton.d-grid
+                        a.btn.btn-primary(href='/') Ir a inicio
         include ./includes/jquery.pug
         script(src="https://unpkg.com/axios/dist/axios.min.js")
-        script(src="/static/js/error.js") 
-        //CDF0EA F9F9F9 F6C6EA FAF4B7
+        script(src="/static/js/error.js")

@@ -63,9 +63,10 @@ let loadinganimation = bodymovin.loadAnimation({
 function init(){
     axios.get('/test/getdata/' + testId)
         .then(function (response) {
+            if(response.data.error){
+                window.location.href = "/error";
+            }
             if(!response.data.error){
-                console.log("info recibida!");
-                console.log(response.data);
                 testData = response.data;
                 questions = response.data.questions;
                 console.log(questions);
@@ -73,13 +74,12 @@ function init(){
                 if(questions.length==0){
                     showNoQuestionsScreen()
                 }else{
-                    console.log(testData);
                     displayInitiateQuestions();
                 }
             }
         })
         .catch(function (error) {
-            console.log(error);
+            window.location.href = "/error";
         });
 }
 
@@ -113,7 +113,7 @@ function newQuestion(){
         id: provisionalId,
         title: '',
         correctAnswer: {name:''},
-        incorrectAnswers: [{name: ''},{name: ''},{name: ''},{name: ''}],
+        incorrectAnswers: [{name: ''},{name: ''},{name: ''}],
         order: order,
         isNew: true,
         isDeleted: false
@@ -364,6 +364,7 @@ function getInput(id, title, value){
     questionInput.type = 'text';
     questionInput.value = value;
     questionInput.id = id;
+    questionInput.maxLength = '200';
     //questionInput.onchange = questionUpdated;
     questionInput.oninput = questionUpdated;
     let questionSpan = document.createElement('span');
@@ -427,10 +428,13 @@ function handleUpdate(){
         questions: questions
       })
       .then(function (response) {
+        if(response.data.error){
+            window.location.href = "/error";
+        }
         console.log(response);
       })
       .catch(function (error) {
-        console.log(error);
+        window.location.href = "/error";
       });
     console.log("asf")
 }
@@ -438,10 +442,13 @@ function handleUpdate(){
 function getServerData(){
     axios.get('/test/getdata/' + testId)
       .then(function (response) {
+        if(response.data.error){
+            window.location.href = "/error";
+        }
         console.log(response);
       })
       .catch(function (error) {
-        console.log(error);
+        window.location.href = "/error";
       });
 }
 
@@ -458,11 +465,14 @@ function saveDataServer(){
         data: testData
       })
       .then(function (response) {
+        if(response.data.error){
+            window.location.href = "/error";
+        }
         console.log(response);
         location.reload();
       })
       .catch(function (error) {
-        console.log(error);
+        window.location.href = "/error";
       });
       //console.log("GUARDAR CASO DESACTIVADO")
 }
@@ -504,4 +514,20 @@ function showUpdateNotification(){
         isSaveAlertOn = true;
     }
     
+}
+
+function deleteTest(){
+    console.log("borrar test " + testId);
+    axios.delete('/test/' + testId)
+        .then(function (response) {
+            if(response.data.error){
+                window.location.href = "/error";
+            }
+            if(response.data.status){
+                window.location.href = '/home';
+            }
+        })
+        .catch(function (error) {
+            window.location.href = "/error";
+        });
 }

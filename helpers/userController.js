@@ -2,6 +2,8 @@ const userController = {};
 const userSelector = require('./userSelector');
 const emailController = require('./emailController');
 const Crypt = require('./crypt');
+const {DateTime} = require('luxon');
+const responseSelector = require('./responsesSelector');
 
 userController.getPasswordResetCode = async (userId, userMail) => {
     const passReset = await userSelector.getUserPasswordReset(userId);
@@ -34,6 +36,32 @@ userController.updatePassword = async (password, code, username) => {
         return true;
     }
     return false;
+}
+
+userController.parseUserData = (user) => {
+    const lastLogin = new Date(user.lastLogin);
+    const userToReturn = {
+        id: user.id,
+        username: user.username,
+        email: user.email,
+        lastLogin: DateTime.fromISO(lastLogin.toISOString()).setLocale('es').toRelativeCalendar()
+    }
+    return userToReturn;
+}
+
+userController.updateEmail = async (userId, userMail) => {
+    const user = await userSelector.getUser(userMail, userMail);
+    if(user.length!=0){
+        return {status: false}
+    }
+    await userSelector.updateEmail(userId, userMail);
+    return {status: true}
+}
+
+userController.deleteUser = async (userId) => {
+    const user = await userSelector.deleteUser(userId);
+    const testResponses = await responseSelector.deactivateTestResponses(userId);
+    return {status: true}
 }
 
 module.exports = userController;

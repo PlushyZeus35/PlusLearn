@@ -1,0 +1,47 @@
+body{
+    background: url('/static/img/raining_background.svg');
+    background-repeat: no-repeat;
+    background-size: cover;
+}
+
+#cardContainer{
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+.profileCard{
+    color: #eaeaea;
+    background: rgba( 6, 8, 60, 0.3 );
+    box-shadow: 0 8px 32px 0 rgba( 31, 38, 135, 0.37 );
+    backdrop-filter: blur( 4.5px );
+    -webkit-backdrop-filter: blur( 4.5px );
+    border-radius: 10px;
+    border: 1px solid rgba( 255, 255, 255, 0.18 );
+
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+}
+
+.profileData{
+    text-align: center;
+}
+
+.ubuntuFont{
+    font-family: 'Ubuntu', sans-serif;
+}
+
+.profileStats{
+    border-top: 1px solid #eaeaea;
+    border-bottom: 1px solid #eaeaea;
+}
+
+.statTitle{
+    font-style: italic;
+}
+
+.statValue{
+    font-weight: bolder;
+    font-size: 2em;
+}

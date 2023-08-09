@@ -10,7 +10,18 @@ const responseSelector = require('../helpers/responsesSelector');
 // Edit test
 router.get('/:testId',isLoggedIn, async (req, res) => {
     const targetId = req.params.testId;
-    res.render('editTest', {test: targetId, dataFromServer: targetId});
+    console.log(targetId)
+    if(targetId!=null && targetId!=undefined && targetId!=''){
+        const test = await testSelector.getTest(targetId);
+        if(test!=undefined && test.userId==req.user.id){
+            res.render('editTest', {test: targetId, dataFromServer: targetId});
+        }else{
+            res.render('error')
+        }
+    }else{
+        res.render('error');
+    }
+    
 })
 
 // Get home page of test
@@ -30,21 +41,21 @@ router.get('/s/:testId',isLoggedIn,async (req, res) => {
 // Do a test
 router.get('/d/:testId', async (req, res) => {
     const testCode = req.params.testId;
-    const test = await testSelector.checkInteractiveCode(testCode);
+    const test = await testSelector.checkInteractiveCodeActiveTest(testCode);
     let isMaster = false;
     let isAuthenticated = false;
     let userId = null;
     let username = '';
-    if(test.length == 1){
+    if(test.length == 1 && testCode!='' && testCode!=undefined && testCode!=null){
         if(req.isAuthenticated()){
             isAuthenticated = true;
             username = req.user.username,
             isMaster = req.user.id == test[0].userId;
             userId = req.user.id;
         }
-        res.render('test', {dataFromServer: {username: username, roomId: testCode, isAuthenticatedUser: isAuthenticated, isMaster: isMaster, userId: userId, testId: test[0].id}});
+        res.render('test', {dataFromServer: {username: username, roomId: testCode, isAuthenticatedUser: isAuthenticated, isMaster: isMaster, userId: userId, testId: test[0].id, testTitle: test[0].title, testDescription: test[0].description}});
     }else{
-        res.render('error');
+        res.render('error', {testNotFound: true});
     }
 })
 
@@ -169,8 +180,6 @@ router.post('/saveResults', async(req, res) => {
     const userResponseMap = new Map();
     const testResponseList = [];
     for(let respu of resp){
-        console.log("Respuesta")
-        console.log(respu);
         for(let answe of respu.answers){
             if(userResponseMap.has(answe.user)){
                 userResponseMap.get(answe.user).push(answe);
@@ -194,13 +203,7 @@ router.post('/saveResults', async(req, res) => {
         testResponseList.push(newTestResponse);
         const testResponseCreated = await responseSelector.createBulkTestResponses(testResponseList);
         testResponseList.length=0;
-        console.log(testResponseCreated);
         const answerListToInsert = [];
-        console.log("ASDF");
-        console.log(answers);
-        console.log(answers[0])
-        console.log("tESTRESPONSEID");
-        console.log( testResponseCreated[0].id);
         for(let answer of answers){
             //	answerId	questionId	testresponseId	
             const newResponse = {
@@ -214,6 +217,12 @@ router.post('/saveResults', async(req, res) => {
     }
 
     res.json({status: true})
+})
+
+router.delete('/:testId', apiIsLoggedIn, async(req, res) => {
+    const targetId = req.params.testId;
+    const testDeleted = await testController.deleteTest(targetId);
+    res.json(testDeleted);
 })
 
 module.exports = router;

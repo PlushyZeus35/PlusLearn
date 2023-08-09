@@ -30,7 +30,8 @@ responseSelector.getTestResponses = async (testId) => {
         testResponses = await TestResponse.findAll(
             {where: {
                 testId: testId
-            }}
+            },
+            order:[['createdAt', 'DESC']]}
         )
     }catch(error){
         emailController.sendErrorEmail(error);
@@ -51,5 +52,64 @@ responseSelector.getUserResponses = async (testResponses) => {
     }
     return responses;
 }
+
+responseSelector.deleteUserResponses = async (questionIds) => {
+    let responses = [];
+    try{
+        responses = await Response.destroy(
+            {where: {
+                questionId: questionIds
+            }}
+        )
+    }catch(error){
+        emailController.sendErrorEmail(error);
+    }
+    return responses;
+}
+
+responseSelector.deleteTestResponses = async (testIds) => {
+    let testResponses = [];
+    try{
+        testResponses = await TestResponse.destroy(
+            {where: {
+                testId: testIds
+            }}
+        )
+    }catch(error){
+        emailController.sendErrorEmail(error);
+    }
+    return testResponses;
+}
+
+responseSelector.getUserResponseCounter = async (userId) => {
+    let testResponses = 0;
+    try{
+        testResponses = await TestResponse.count(
+            {where: {
+                userId: userId
+            }}
+        )
+    }catch(error){
+        emailController.sendErrorEmail(error);
+    }
+    return testResponses;
+}
+
+responseSelector.deactivateTestResponses = async (userId) => {
+	let testResponses = [];
+	try{
+		testResponses = await TestResponse.update({
+			userId: null
+		},{
+			where: {
+				userId: userId
+			}
+		})
+	}catch(error){
+		emailController.sendErrorEmail(error);
+	}
+	return testResponses;
+}
+
 
 module.exports = responseSelector;

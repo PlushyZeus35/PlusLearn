@@ -8,8 +8,21 @@ html(lang="en")
         link(rel='preconnect' href='https://fonts.gstatic.com' crossorigin='')
         link(href='https://fonts.googleapis.com/css2?family=Ubuntu:wght@500&display=swap' rel='stylesheet')
         link(href='https://fonts.googleapis.com/css2?family=Nunito&display=swap' rel='stylesheet')
+        script.  
+            const errorMessages = !{JSON.stringify(messages)};
+            const successMessages = !{JSON.stringify(successes)};
     body 
         include ./includes/flashMessages.pug
+        .bg-body-secondary.position-relative.bd-example-toasts.rounded-3(aria-live='polite' aria-atomic='true')
+            #toastPlacement.toast-container.p-3.top-0.start-50.translate-middle-x
+                #toastSuccess.toast.align-items-center.text-bg-primary.border-0(role='alert' aria-live='assertive' aria-atomic='true')
+                    .d-flex
+                        #successToastBody.toast-body
+                        button.btn-close.btn-close-white.me-2.m-auto(type='button' data-bs-dismiss='toast' aria-label='Close')
+                #toastError.toast.align-items-center.text-bg-danger.border-0(role='alert' aria-live='assertive' aria-atomic='true')
+                    .d-flex
+                        #errorToastBody.toast-body
+                        button.btn-close.btn-close-white.me-2.m-auto(type='button' data-bs-dismiss='toast' aria-label='Close')
         #test4
             form(method="POST" action="/auth/signup") 
                 .test4card
@@ -18,17 +31,17 @@ html(lang="en")
                         h5.text-white.pt-3 Registro
                     .cardBody.mt-4
                         .form-floating.mb-3
-                            input#floatingInput.form-control(type='email' placeholder='name@example.com' name='email')
+                            input#floatingInput.form-control(type='email' placeholder='name@example.com' name='email' required)
                             label(for='floatingInput') Correo electrónico
                         .form-floating.mb-3
-                            input#floatingInput.form-control(type='text' placeholder='nombre' name='username')
+                            input#floatingInput.form-control(type='text' placeholder='nombre' maxlength='25' name='username' required)
                             label(for='floatingInput') Nombre de usuario
                         .form-floating
-                            input#floatingPassword.form-control(type='password' placeholder='Password' name='password')
+                            input#floatingPassword.form-control(type='password' placeholder='Password' name='password' required)
                             label(for='floatingPassword') Contraseña
                     .cardFooter.mt-3
                         .d-grid.gap-2
                             button.btn.btn-primary(type='submit') Registrarse
                             a.btn.btn-outline-secondary(href='/login') Acceder
-                            a.link-info.text-center(href='#') Recuperar la contraseña
+                            a.link-info.text-center(href='/reset') Recuperar la contraseña
         script(src='/static/js/signup.js')

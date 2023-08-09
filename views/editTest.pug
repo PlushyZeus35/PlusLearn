@@ -34,15 +34,15 @@ html(lang="es")
             .modal-dialog.modal-dialog-centered
                 form.modal-content(action='/test' method='POST')
                     .modal-header
-                        h1#addTestLabel.modal-title.fs-5 Nuevo test
+                        h1#addTestLabel.modal-title.fs-5 Configuración
                         button.btn-close(type='button' data-bs-dismiss='modal' aria-label='Close')
                     .modal-body
                         .mb-3 
                             label.form-label(for="testTitleInput") Título de test 
-                            input#testTitleInput.form-control(type="text" name="title" required oninput="testTitleOnChange();")
+                            input#testTitleInput.form-control(type="text" name="title" required oninput="testTitleOnChange();" maxlength="100")
                         .mb-3
                             label.form-label(for='testDescriptionInput') Descripci&oacute;n
-                            textarea#testDescriptionInput.form-control(style='height: 100px' name="description" oninput="testDescriptionOnChange();") 
+                            textarea#testDescriptionInput.form-control(style='height: 100px' maxlength="500" name="description" oninput="testDescriptionOnChange();") 
                         .mb-3 
                             input#isActiveTestCheckbox.form-check-input.me-2(type="checkbox" value="" oninput="testActiveOnChange();")
                             label.form-check-label(for="isActiveTestCheckbox") Activo
@@ -51,12 +51,13 @@ html(lang="es")
                             input#interactiveCodeInput.form-control(type="text" disabled) 
                     .modal-footer
                         button.btn.btn-secondary(type='button' data-bs-dismiss='modal') Cancelar
+                        button.btn.btn-danger(type='button' onclick='deleteTest();') Eliminar
                         button.btn.btn-primary(type='button' onclick='saveDataServer();') Guardar
         div#main.container-fluid.m-0.p-0
             .container
                 #questionContainer.pt-4
                     #alertContainer
-                    button.btn.btn-primary.mb-3.ms-auto(data-bs-toggle="offcanvas" href="#offcanvas" role="button" aria-controls="offcanvas") Lista de preguntas
+                    button.btn.btn-primary.mb-3.ms-auto(data-bs-toggle="offcanvas" href="#offcanvas" role="button" aria-controls="offcanvas") Configuración
                     #questionInfoContainer
                         #animationContainer
                             #loadingAnimation

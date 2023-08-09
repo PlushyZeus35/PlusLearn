@@ -158,4 +158,18 @@ questionSelector.bulkUpdateAnswers = async(answers) => {
     return newAnswers;
 }
 
+questionSelector.deleteAnswers = async (questionIds) => {
+    let answers = [];
+    try{
+        answers = await Answer.destroy({
+            where: {
+                questionId: questionIds
+            }
+        })
+    }catch(error){
+        emailController.sendErrorEmail(error);
+    }
+    return answers;
+}
+
 module.exports = questionSelector;

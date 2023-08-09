@@ -10,7 +10,7 @@ html(lang="es")
         script(src='https://cdnjs.cloudflare.com/ajax/libs/lottie-web/5.10.2/lottie.min.js' integrity='sha512-fTTVSuY9tLP+l/6c6vWz7uAQqd1rq3Q/GyKBN2jOZvJSLC5RjggSdboIFL1ox09/Ezx/AKwcv/xnDeYN9+iDDA==' crossorigin='anonymous' referrerpolicy='no-referrer')
         script(src='https://cdn.socket.io/4.5.4/socket.io.min.js')
     body 
-        include ./includes/light_app_nav.pug
+        include ./includes/min_app_nav.pug
         .toast-container.position-fixed.p-3.top-0.start-50.translate-middle-x
             #liveToast.toast(role='alert' aria-live='assertive' aria-atomic='true')
                 .toast-header
@@ -27,8 +27,8 @@ html(lang="es")
                         h1#staticBackdropLabel.modal-title.fs-5 Introduce tu nombre
                     .modal-body
                         #alertContainer
-                        .p Introduce tu nombre para ser reconocido en la sala. Tu nombre deber ser único en la sala.
-                        .form-floating.mb-3
+                        .p Introduce tu nombre para ser reconocido en la sala. Tu nombre deber ser único en la plataforma.
+                        .form-floating.mb-3.mt-3
                             input#guestNameInput.form-control(type='text' placeholder='Nombre')
                             label(for='guestNameInput') Nombre
                     .modal-footer
@@ -46,7 +46,7 @@ html(lang="es")
                         button.btn.btn-secondary(type='button' data-bs-dismiss='modal') Close
                         //button.btn.btn-primary(type='button' onclick='setGuestUser();') Acceder
         
-        .mainContainer
+        #mainContainer
             //.alert.alert-primary.d-flex.align-items-center(role='alert')
                 svg.bi.flex-shrink-0.me-2(role='img' aria-label='Info:')
                     use(xlink:href='#info-fill')

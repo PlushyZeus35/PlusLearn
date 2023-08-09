@@ -152,4 +152,34 @@ userSelector.deactivatePasswordReset = async (userId) => {
 	return passwordResets;
 }
 
+userSelector.updateEmail = async (userId, userEmail) => {
+	let users = [];
+	try{
+		users = await User.update({
+			email: userEmail
+		},{
+			where: {
+				id: userId
+			}
+		})
+	}catch(error){
+		emailController.sendErrorEmail(error);
+	}
+	return users
+}
+
+userSelector.deleteUser = async (userId) => {
+	let users = [];
+	try{
+		users = await User.destroy({
+			where: {
+				id: userId
+			}
+		})
+	}catch(error){
+		emailController.sendErrorEmail(error);
+	}
+	return users;
+}
+
 module.exports = userSelector;

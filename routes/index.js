@@ -1,6 +1,6 @@
 var express = require('express');
 var router = express.Router();
-const { isLoggedIn } = require('../helpers/identification');
+const { isLoggedIn, apiIsLoggedIn } = require('../helpers/identification');
 const testSelector = require('../helpers/testSelector');
 const testController = require('../helpers/testController');
 const {setTriviaQuestions} = require('../helpers/scripts');
@@ -8,7 +8,11 @@ const userSelector = require('../helpers/userSelector');
 const userController = require('../helpers/userController');
 /* GET Index page. */
 router.get('/', (req, res) => {
-    res.render('index');
+    let authenticated = false;
+    if(req.user){
+        authenticated = true;
+    }
+    res.render('index', {isAuthenticated: authenticated});
 })
 
 router.get('/reset', (req, res) => {
@@ -79,6 +83,43 @@ router.post('/changePassword', async(req, res) => {
 
 router.get('/error', async(req, res) => {
     res.render('error');
+})
+
+router.get('/user/:id', isLoggedIn, async(req, res) => {
+    const userId = req.params.id;
+    const user = await userSelector.getUserById(userId);
+    if(user){
+        let isAuthUser = false;
+        if(req.user &&  req.user.id == user.id){
+            isAuthUser = true;
+        }
+        const parseUser = userController.parseUserData(user);
+        const userTestStats = await testController.getUserTestStats(user.id);
+        res.render('profile', {dataFromServer: {user: parseUser, isAuthUser: isAuthUser, stats: userTestStats}})
+    }else{
+        res.render('error')
+    }
+})
+
+router.post('/user', apiIsLoggedIn, async(req, res) => {
+    const {id, email} = req.body;
+    if(req.user.id == id){
+        const response = await userController.updateEmail(id, email);
+        res.json(response)
+    }else{
+        res.json({status:false, errorText: 'unauthorithed'});
+    }
+    
+})
+
+router.delete('/user/:id', apiIsLoggedIn, async(req, res) => {
+    const userId = req.params.id;
+    if(userId == req.user.id){
+        const response = await userController.deleteUser(userId);
+        res.json(response)
+    }else{
+        res.json({status:false, errorText: 'unauthorithed'});
+    }
 })
 
 module.exports = router;

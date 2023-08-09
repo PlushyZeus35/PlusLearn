@@ -3,6 +3,7 @@ const { Server } = require("socket.io");
 const testSelector = require("./testSelector");
 const userSelector = require("./userSelector");
 const testController = require("./testController");
+const RoomData = require("./roomsDataHandler");
 
 // Event types
 const END_QUESTION = 'end-question';
@@ -13,6 +14,7 @@ const END_TEST = 'end-test';
 const USER_ANSWERED = 'user-answered';
 const USER_ALREADY_EXISTS = 'user-exists';
 const TEST_HAS_STARTED = 'test-started';
+const MASTER_OUT = 'master-out';
 /*
 const room = {
     roomId: 'XXXXX',
@@ -22,16 +24,13 @@ const room = {
 */
 const rooms = new Map();
 const userMap = new Map();
-const questionMap = new Map();
 const testMap = new Map();
 
 sockets.initialice = async (server) => {
     const io = new Server(server);
     io.on('connection', (socket) => {
-        console.log('a user connected');
 
         socket.on('disconnect', () => {
-            console.log('user disconnected');
         });
 
         // Remove user from local database
@@ -39,36 +38,40 @@ sockets.initialice = async (server) => {
             if(userMap.has(socket.id)){
                 const userInfo = userMap.get(socket.id);
                 userMap.delete(socket.id);
-                if(removeUser(userInfo.username, userInfo.roomId)){
-                    io.to(userInfo.roomId).emit('userconnect',{roomInfo: rooms.get(userInfo.roomId), userTarget: {isNew: false, name: userInfo.username}});
-                }
+                console.log("DISCONECTING");
+                const {username, roomId} = userInfo;
+                console.log({username, roomId})
+                if(isMaster(roomId, username) && hasTestStarted(roomId)){
+                    rooms.delete(roomId);
+                    testMap.delete(roomId);
+                    io.to(userInfo.roomId).emit(MASTER_OUT, EMPTY);
+                }else{
+                    if(removeUser(userInfo.username, userInfo.roomId)){
+                        io.to(userInfo.roomId).emit('userconnect',{roomInfo: rooms.get(userInfo.roomId), userTarget: {isNew: false, name: userInfo.username}});
+                    }
+                } 
             }
         })
 
         // Conect a user to a room
         socket.on('room-connection', async (connectionInfo) => {
             // Validate connectionInfo.username not exists in roomInfo map
-            if(userAlreadyExists(connectionInfo.roomId, connectionInfo.username)){
+            if(await userAlreadyExists(connectionInfo.roomId, connectionInfo.username, connectionInfo.isGuestUser)){
                 socket.emit(USER_ALREADY_EXISTS,EMPTY);
             }else if(hasTestStarted(connectionInfo.roomId)){
                 socket.emit(TEST_HAS_STARTED,EMPTY);
             }
             else{
-                userMap.set(socket.id, {username: connectionInfo.username, roomId: connectionInfo.roomId})
+                userMap.set(socket.id, {username: connectionInfo.username, roomId: connectionInfo.roomId, isGuest: connectionInfo.isGuestUser})
                 const test = await testSelector.checkInteractiveCode(connectionInfo.roomId);
                 if(connectionInfo.isGuestUser){
-                    addUser(test[0].id, connectionInfo.username, connectionInfo.roomId, false)
+                    addUser(test[0].id, connectionInfo.username, connectionInfo.roomId, false, true)
                 }else{
                     const user = await userSelector.getUser(connectionInfo.username, connectionInfo.username);
-                    //const test = await testSelector.checkInteractiveCode(connectionInfo.roomId);
-                    console.log(user);
-                    console.log(test)
                     if(user!=null && test!=null && user.length>0 && test[0].userId==user[0].id){
-                        console.log('usuario identificado y master')
-                        addUser(test[0].id, connectionInfo.username, connectionInfo.roomId, true);
+                        addUser(test[0].id, connectionInfo.username, connectionInfo.roomId, true, false);
                     }else{
-                        console.log('usuario identificado y no master')
-                        addUser(test[0].id, connectionInfo.username, connectionInfo.roomId, false);
+                        addUser(test[0].id, connectionInfo.username, connectionInfo.roomId, false, false);
                     }
                 }
                 socket.join(connectionInfo.roomId)
@@ -82,7 +85,6 @@ sockets.initialice = async (server) => {
 
         // Evento recibido del master de cada test interactivo
         socket.on(END_QUESTION, async(roomInfo) => {
-            console.log('Finalizar pregunta ' + roomInfo.roomId)
             //const correctAnswer = await testController.getCorrectAnswer(roomInfo.questionId);
             sendEvent(io, roomInfo.roomId, END_QUESTION ,EMPTY);
         })
@@ -100,9 +102,6 @@ sockets.initialice = async (server) => {
         })
 
         socket.on(SEND_ANSWER, async (answersInfo) => {
-            console.log('HE RECIBIDO UNA RESPUESTA POR UN USUARIO ');
-            console.log(answersInfo);
-            //const key = answersInfo.question.id + '-' + answersInfo.roomId;
             if(testMap.has(answersInfo.roomId)){
                 const questionsMap = testMap.get(answersInfo.roomId); //.push(answersInfo.selectedAnswer);
                 if(questionsMap.has(answersInfo.selectedAnswer.questionId)){
@@ -113,11 +112,8 @@ sockets.initialice = async (server) => {
             }else{
                 testMap.set(answersInfo.roomId, new Map([[answersInfo.selectedAnswer.questionId, [answersInfo.selectedAnswer]]]));
             }
-            console.log(testMap)
             if(testMap.get(answersInfo.roomId).get(answersInfo.selectedAnswer.questionId).length >= rooms.get(answersInfo.roomId).users.length){
-                console.log("YA HE RECIBIDO DE TODOS LOS USUARIOS OS ENVIO ESTO");
                 const correctAnswer = await testController.getCorrectAnswer(answersInfo.selectedAnswer.questionId);
-                console.log({correct: correctAnswer, userAnswers: testMap.get(answersInfo.roomId).get(answersInfo.selectedAnswer.questionId)});
                 sendEvent(io, answersInfo.roomId, SEND_ANSWER, {correct: correctAnswer, userAnswers: testMap.get(answersInfo.roomId).get(answersInfo.selectedAnswer.questionId)});
             }
         });
@@ -127,22 +123,23 @@ sockets.initialice = async (server) => {
         })
 
         socket.on(END_TEST, async (answers) => {
-            console.log("RECIBIDO FIN DE TEST!");
-            console.log("RESPUESTA DE USUARIOS!");
-            console.log(answers);
             const results = await testController.getUsersResults(rooms.get(answers.roomId), answers.answers);
             sendEvent(io, answers.roomId, END_TEST, results);
+            testMap.delete(answers.roomId);
+            rooms.delete(answers.roomId)
         })
     });
 }
 
-function addUser(testId, username, roomId, isMaster){
+function addUser(testId, username, roomId, isMaster, isGuest){
     if(rooms.has(roomId)){
         rooms.get(roomId).master = isMaster ? username : rooms.get(roomId).master;
         isMaster ? null : rooms.get(roomId).users.push(username);
+        isGuest ? rooms.get(roomId).guests.push(username) : null;
     }else{
-        const roomInfo = {roomId: roomId, users:[], testId: testId, started: false}
+        const roomInfo = {roomId: roomId, users:[], testId: testId, started: false, guests: []}
         isMaster ? roomInfo.master=username : roomInfo.users.push(username);
+        isGuest ? roomInfo.guests.push(username) : null;
         rooms.set(roomId, roomInfo);
     }
 }
@@ -156,12 +153,18 @@ function hasTestStarted(roomCode){
     return false;
 }
 
-function userAlreadyExists(roomCode, username){
+function isMaster(roomId, username){
+    if(rooms.has(roomId)){
+        if(rooms.get(roomId).master == username){
+            return true;
+        }
+    }
+    return false;
+}
+
+async function userAlreadyExists(roomCode, username, isGuest){
     // Search username in room map
-    console.log("SEARCHINGG" + roomCode)
     if(rooms.has(roomCode)){
-        console.log("SEARCHING")
-        console.log(rooms.get(roomCode))
         if(rooms.get(roomCode).master == username){
             return true;
         }
@@ -169,6 +172,12 @@ function userAlreadyExists(roomCode, username){
             if(user==username){
                 return true;
             }
+        }
+    }
+    if(isGuest){
+        const user = await userSelector.getUser(username, username);
+        if(user.length>0){
+            return true;
         }
     }
     return false;
@@ -179,7 +188,7 @@ function sendEvent(io, roomId, eventName, info){
 }
 
 // return if it is needed to inform users (true or false)
-function removeUser(username, roomId){
+function removeUser(username, roomId, isGuestUser){
     if(rooms.has(roomId)){
         const roomInfo = rooms.get(roomId);
         if(roomInfo.master == username){
@@ -187,6 +196,9 @@ function removeUser(username, roomId){
         }else{
             if(roomInfo.users.indexOf(username)>=0){
                 roomInfo.users.splice(roomInfo.users.indexOf(username), 1);
+            }
+            if(isGuestUser && roomInfo.guests.indexOf(username)>=0){
+                roomInfo.guests.splice(roomInfo.guests.indexOf(username), 1);
             }
         }
         if(roomInfo.master==undefined && roomInfo.users.length==0){

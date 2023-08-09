@@ -327,10 +327,14 @@ testController.getUserResponses = async(testId) => {
     const userResponses = await responseSelector.getUserResponses(testResponsesIds);
     const responses = [];
     for(let testResp of testResponses){
+        let createdDate = new Date(testResp.createdAt);
+        const timeStamp = DateTime.fromISO(createdDate.toISOString()).setLocale('es').toFormat('dd-MM-yyyy HH:mm')
         const resp = {
             id: testResp.id,
             user: testResp.username,
             isGuest: testResp.isGuest,
+            createdDate: timeStamp,
+            userId: testResp.userId,
             responses: []
         }
         const targetResponses = userResponses.filter((i) => i.testresponseId == testResp.id);
@@ -425,6 +429,39 @@ testController.getUsersResults = async (roomInfo, userAnswers) => {
     console.log("CORRECT COUNTER");
     console.log(results);
     return results;
+}
+
+testController.deleteTest = async (testId) => {
+    const questionIds = [];
+    // Get test questions
+    const testQuestions = await questionSelector.getTestQuestions(testId);
+    for(let eachQuestion of testQuestions){
+        questionIds.push(eachQuestion.id);
+    }
+
+    if(questionIds.length>0){
+        // Delete userResponses
+        await responseSelector.deleteUserResponses(questionIds);
+        // Delete answers
+        await questionSelector.deleteAnswers(questionIds);
+        // Delete questions
+        await questionSelector.deleteQuestions(questionIds);
+    }
+    // Delete testResponses
+    await responseSelector.deleteTestResponses(questionIds);
+    // Delete test
+    await testSelector.deleteTest(testId);
+    return {status: true}
+}
+
+testController.getUserTestStats = async (userId) => {
+    const objReturn = {
+        testCounter: 0,
+        responsesCounter: 0
+    }
+    objReturn.testCounter = await testSelector.userTestCount(userId);
+    objReturn.responsesCounter = await responseSelector.getUserResponseCounter(userId);
+    return objReturn;
 }
 
 function initialiceResultArray(users){

@@ -82,4 +82,50 @@ testSelector.checkInteractiveCode = async (code) => {
     return tests;
 }
 
+testSelector.deleteTest = async (testId) => {
+    let tests = [];
+    try{
+        tests = await Test.destroy(
+            {
+                where:{
+                    id: testId
+                }
+            }
+        )
+    }catch(error){
+        emailController.sendErrorEmail(error);
+    }
+    return tests;
+}
+
+testSelector.userTestCount = async (userId) => {
+    let test = 0;
+    try{
+        test = await Test.count({
+            where: {
+                userId: userId
+            }
+        })
+    }catch(error){
+        emailController.sendErrorEmail(error)
+    }
+    return test;
+}
+
+testSelector.checkInteractiveCodeActiveTest = async (code) => {
+    let tests = [];
+    try{
+        tests = await Test.findAll({
+            where: {
+                interactiveCode: code,
+                active: true
+            }
+        })
+    }catch(error){
+        emailController.sendErrorEmail(error);
+    }
+    return tests;
+}
+
+
 module.exports = testSelector;
