@@ -663,9 +663,16 @@ function createQuestionCounter(){
     */
     const questionCounter = createElement('div', 'questionCounter', '');
     const pill = createElement('span', '', '.badge.rounded-pill.text-bg-primary');
-    pill.innerHTML = '1 / 10';
+    const questionCounterString = getQuestionCounter();
+    pill.innerHTML = questionCounterString;
     questionCounter.appendChild(pill);
     return questionCounter;
+}
+
+function getQuestionCounter(){
+    let str = '';
+    str = index+1 + ' / ' + testQuestions.length;
+    return str;
 }
 
 function createUserCounterAlert(){
