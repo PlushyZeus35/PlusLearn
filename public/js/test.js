@@ -70,7 +70,7 @@ socket.on(TEST_HAS_STARTED, (empty) => {
     // This test has started 
     myModal.hide();
     hideAll();
-    const mainContainer = $('.mainContainer')[0];
+    const mainContainer = $('#mainContainer')[0];
     /*<div class="card text-bg-warning mb-3" style="max-width: 18rem;">
         <div class="card-header">Header</div>
         <div class="card-body">
@@ -78,33 +78,25 @@ socket.on(TEST_HAS_STARTED, (empty) => {
             <p class="card-text">Some quick example text to build on the card title and make up the bulk of the card's content.</p>
         </div>
     </div>*/
-    const alertCard = document.createElement('div');
-    alertCard.classList.add('card');
-    alertCard.classList.add('text-bg-warning');
-    alertCard.classList.add('mt-5');
+    const alertContainer = document.createElement('div')
+    alertContainer.classList.add('container');
+    alertContainer.classList.add('mt-4');
 
-    const alertCardHeader = document.createElement('div');
-    alertCardHeader.classList.add('card-header');
-    alertCardHeader.innerHTML = 'Atención';
+    const infoAlert = document.createElement('div');
+    infoAlert.classList.add('alert');
+    infoAlert.classList.add('warningAlert');
+    infoAlert.role = 'alert';
+    const alertHeading = document.createElement('h4');
+    alertHeading.classList.add('alert-heading');
+    alertHeading.innerHTML = '¡Este cuestionario ya ha comenzado!';
+    const alertText = document.createElement('p');
+    alertText.innerHTML = 'El maestro de sala ha dado comienzo del cuestionario, no es posible unirse a un cuestionario que ha dado comienzo.';
+   
+    infoAlert.appendChild(alertHeading);
+    infoAlert.appendChild(alertText);
+    alertContainer.appendChild(infoAlert);
 
-    const alertCardBody = document.createElement('div');
-    alertCardBody.classList.add('card-body');
-
-    const alertCardTitle = document.createElement('h5');
-    alertCardTitle.classList.add('card-title');
-    alertCardTitle.innerHTML = 'Cuestionario comenzado';
-
-    const alertCardText = document.createElement('p');
-    alertCardText.classList.add('card-text');
-    alertCardText.innerHTML = 'Este cuestionario ya ha comenzado. No está permitido unirse a un cuestionario ya comenzado';
-
-    alertCardBody.appendChild(alertCardTitle);
-    alertCardBody.appendChild(alertCardText);
-    alertCard.appendChild(alertCardHeader);
-    alertCard.appendChild(alertCardBody);
-    
-    mainContainer.appendChild(alertCard)
-
+    mainContainer.appendChild(alertContainer)
 })
 
 socket.on(USER_ALREADY_EXISTS, (empty) => {
