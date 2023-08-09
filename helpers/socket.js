@@ -14,6 +14,7 @@ const END_TEST = 'end-test';
 const USER_ANSWERED = 'user-answered';
 const USER_ALREADY_EXISTS = 'user-exists';
 const TEST_HAS_STARTED = 'test-started';
+const MASTER_OUT = 'master-out';
 /*
 const room = {
     roomId: 'XXXXX',
@@ -37,9 +38,18 @@ sockets.initialice = async (server) => {
             if(userMap.has(socket.id)){
                 const userInfo = userMap.get(socket.id);
                 userMap.delete(socket.id);
-                if(removeUser(userInfo.username, userInfo.roomId)){
-                    io.to(userInfo.roomId).emit('userconnect',{roomInfo: rooms.get(userInfo.roomId), userTarget: {isNew: false, name: userInfo.username}});
-                }
+                console.log("DISCONECTING");
+                const {username, roomId} = userInfo;
+                console.log({username, roomId})
+                if(isMaster(roomId, username) && hasTestStarted(roomId)){
+                    rooms.delete(roomId);
+                    testMap.delete(roomId);
+                    io.to(userInfo.roomId).emit(MASTER_OUT, EMPTY);
+                }else{
+                    if(removeUser(userInfo.username, userInfo.roomId)){
+                        io.to(userInfo.roomId).emit('userconnect',{roomInfo: rooms.get(userInfo.roomId), userTarget: {isNew: false, name: userInfo.username}});
+                    }
+                } 
             }
         })
 
@@ -137,6 +147,15 @@ function addUser(testId, username, roomId, isMaster, isGuest){
 function hasTestStarted(roomCode){
     if(rooms.has(roomCode)){
         if(rooms.get(roomCode).started){
+            return true;
+        }
+    }
+    return false;
+}
+
+function isMaster(roomId, username){
+    if(rooms.has(roomId)){
+        if(rooms.get(roomId).master == username){
             return true;
         }
     }
