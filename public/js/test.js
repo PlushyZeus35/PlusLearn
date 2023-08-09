@@ -40,6 +40,7 @@ const END_TEST = 'end-test';
 const USER_ANSWERED = 'user-answered';
 const USER_ALREADY_EXISTS = 'user-exists';
 const TEST_HAS_STARTED = 'test-started';
+const MASTER_OUT = 'master-out';
 const myModal = new bootstrap.Modal('#staticBackdrop', {
     keyboard: false
 })
@@ -111,6 +112,30 @@ socket.on(USER_ALREADY_EXISTS, (empty) => {
         alert.id = 'userRepAlert';
         alertContainer.appendChild(alert);
     } 
+})
+
+socket.on(MASTER_OUT, (empty) => {
+    hideAll();
+    const masterContent = $("#mainContainer")[0];
+    const alertContainer = document.createElement('div')
+    alertContainer.classList.add('container');
+    alertContainer.classList.add('mt-4');
+
+    const infoAlert = document.createElement('div');
+    infoAlert.classList.add('alert');
+    infoAlert.classList.add('warningAlert');
+    infoAlert.role = 'alert';
+    const alertHeading = document.createElement('h4');
+    alertHeading.classList.add('alert-heading');
+    alertHeading.innerHTML = '¡El cuestionario ha terminado!';
+    const alertText = document.createElement('p');
+    alertText.innerHTML = 'El maestro de sala ha abandonado el cuestionario. Puedes abandonar la sala cuando quieras o recarga la página para volver a comenzar.';
+   
+    infoAlert.appendChild(alertHeading);
+    infoAlert.appendChild(alertText);
+    alertContainer.appendChild(infoAlert);
+
+    mainContainer.appendChild(alertContainer)
 })
 
 socket.on(USER_ANSWERED, ()=>{
