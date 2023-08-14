@@ -52,12 +52,18 @@ const qrModal = new bootstrap.Modal('#qrCodeModal')
 
 // Init socket events
 var socket = io();
+/**
+ * Event to receive the connection status of a user to the actual room.
+ * This re-render the user list and displays a notifications with the new user info
+ * @param {object} roomInfoS - Info of the connection status.
+ */
 socket.on(RECEIVECONNECTION_EVENT, (roomInfoS) => {
     if(sessionPhase){
         myModal.hide();
         showLoader();
         roomInfo = roomInfoS.roomInfo;
         const targetUser = roomInfoS.userTarget;
+        // Show notification to user
         if(targetUser.isNew){
             showNotification(TOAST_SUCCESS, 'Usuario conectado', targetUser.name + ' se ha conectado');
         }else{
@@ -67,18 +73,14 @@ socket.on(RECEIVECONNECTION_EVENT, (roomInfoS) => {
     }
 })
 
+/**
+ * Event the user receives when try to connect to a test that has started.
+ */
 socket.on(TEST_HAS_STARTED, (empty) => {
     // This test has started 
     myModal.hide();
     hideAll();
     const mainContainer = $('#mainContainer')[0];
-    /*<div class="card text-bg-warning mb-3" style="max-width: 18rem;">
-        <div class="card-header">Header</div>
-        <div class="card-body">
-            <h5 class="card-title">Warning card title</h5>
-            <p class="card-text">Some quick example text to build on the card title and make up the bulk of the card's content.</p>
-        </div>
-    </div>*/
     const alertContainer = document.createElement('div')
     alertContainer.classList.add('container');
     alertContainer.classList.add('mt-4');
@@ -100,6 +102,10 @@ socket.on(TEST_HAS_STARTED, (empty) => {
     mainContainer.appendChild(alertContainer)
 })
 
+/**
+ * Event to receive when the username specified from a guest user is repeated.
+ * When a guest user try to connect with a existing username, it displays an alert on screen.
+ */
 socket.on(USER_ALREADY_EXISTS, (empty) => {
     const alertDiv = $("#userRepAlert");
     if(alertDiv.length==0){
@@ -114,6 +120,10 @@ socket.on(USER_ALREADY_EXISTS, (empty) => {
     } 
 })
 
+/**
+ * Event to receive when the master user exits the room.
+ * When the master user has disconnected from the room, the interactive test ends with no data save.
+ */
 socket.on(MASTER_OUT, (empty) => {
     hideAll();
     const masterContent = $("#mainContainer")[0];
@@ -138,6 +148,10 @@ socket.on(MASTER_OUT, (empty) => {
     mainContainer.appendChild(alertContainer)
 })
 
+/**
+ * Event to receive an alert when a user has check an answer in the question.
+ * This is needed to display on screen the users left to answer the question.
+ */
 socket.on(USER_ANSWERED, ()=>{
     let userCounterSpan = $("#userCounterSpan");
     if(userCounterSpan.length>0){
@@ -151,6 +165,11 @@ socket.on(USER_ANSWERED, ()=>{
     }
 });
 
+/**
+ * Event to start the test.
+ * We receive all questions info and start to display the first question.
+ * @param {object} testInfo - Info of interactive test. It contains all the questions and possible answers.
+ */
 socket.on(START_EVENT, (testInfo) => {
     testInfo = testInfo;
     testQuestions = testInfo.questions;
@@ -160,6 +179,11 @@ socket.on(START_EVENT, (testInfo) => {
     showNextQuestion();
 })
 
+/**
+ * Event to receive when the interactive test has finished.
+ * It displays the final results on screen.
+ * @param {object} results - Results of the interactive test.
+ */
 socket.on(END_TEST, (results) => {
     hideAll();
     const mainContainer = $('#mainContainer')[0];
@@ -201,18 +225,29 @@ socket.on(END_TEST, (results) => {
     mainContainer.appendChild(userContainer);
 })
 
+/**
+ * Event to receive the answers from the rest of users and the correct answer of current question.
+ * @param {object} answers - Correct answer and selected answers of rest of users from current question.
+ */
 socket.on(SEND_ANSWER, (answers) => {
     answersReceived.set(targetQuestionId, answers.userAnswers);
     correctAnswers.set(targetQuestionId, answers.correct);
     showResults();
 })
 
+/**
+ * Event to display next question to users
+ */
 socket.on(NEXT_QUESTION, (info) => {
     index++;
     hideAll();
     showNextQuestion();
 })
 
+/**
+ * Event to end the current question.
+ * Need to catch the user selected answer and send it to the rest of users.
+ */
 socket.on(END_QUESTION, (info) => {
     if(!isMasterUser){ 
         const inputs = $(".user-answer");
@@ -252,7 +287,13 @@ socket.on(END_QUESTION, (info) => {
     }
 })
 
-// custom compare method by order attribute
+/**
+ * Custom sort algorithm.
+ * This method is used inside a sort() method to sort user list by correct question counter.
+ * @param {number} a - First response object to compare
+ * @param {number} b - Second response object to compare
+ * @returns {boolean} - Boolean to use inside the sort method.
+ */
 function sortByCorrectQuestions(a, b) {
     // Compare based on the 'name' property
     if (a.correctCounter < b.correctCounter) {
@@ -271,7 +312,13 @@ function sortByCorrectQuestions(a, b) {
     }
   }
 
-// custom compare method by order attribute
+/**
+ * Custom sort algorithm.
+ * This method is used inside a sort() method to sort question list by order.
+ * @param {number} a - First quesiton object to compare
+ * @param {number} b - Second question object to compare
+ * @returns {boolean} - Boolean to use inside the sort method.
+ */
 function sortByOrder(a, b) {
     // Compare based on the 'name' property
     if (a.order < b.order) {
@@ -296,6 +343,10 @@ const connectionInfo = {
 }
 init();
 
+/**
+ * Create the results alert
+ * @returns {DOM} - Alert to display on screen in the results list.
+ */
 function getResultsAlert(){
     const alertContainer = document.createElement('div');
     alertContainer.id = 'alertContainer';
@@ -325,6 +376,10 @@ function getResultsAlert(){
     return alertContainer;
 }
 
+/**
+ * Initializacion method
+ * It displays loader, try to connect to socket room and init some parameters.
+ */
 function init(){
     testTitle = dataFromServer.testTitle;
     testDescription = dataFromServer.testDescription;
@@ -341,6 +396,12 @@ function init(){
     }
 }
 
+/**
+ * Method to try to connecto to a socket room
+ * @param {string} roomId - room code to connect
+ * @param {string} username - username of the user to connect
+ * @param {boolean} isGuestUser - Boolean to check if the user is not logued in
+ */
 function connectToRoom(roomId, username, isGuestUser){
     const connectionInfo = {
         roomId: roomId,
@@ -350,11 +411,17 @@ function connectToRoom(roomId, username, isGuestUser){
     socket.emit(CONNECT_EVENT, connectionInfo);
 }
 
+/**
+ * Hide all contents inside main container
+ */
 function hideAll(){
     const mainContainer = $('#mainContainer')[0];
     mainContainer.innerHTML = '';
 }
 
+/**
+ * Method to try to connect if the user is a guest user and has selected a temporal username in the modal screen.
+ */
 function setGuestUser(){
     const nameInput = $('#guestNameInput')[0];
     if(nameInput.value!=''){
@@ -364,6 +431,9 @@ function setGuestUser(){
     }
 }
 
+/**
+ * Displays the loader animation in the main container
+ */
 function showLoader(){
     hideAll();
     // General container
@@ -395,11 +465,11 @@ function showLoader(){
     })
 }
 
+/**
+ * Displays the user table. It shows all users in the waiting room.
+ */
 function showUsersTable(){
     hideAll();
-    // master en roomInfo.master
-    // users en roomInfo.users
-    // isMasterUser if user is master
     const mainContainer = $('#mainContainer')[0];
     const testInfoContainer = getTestInfoContainer();
     mainContainer.appendChild(testInfoContainer)
@@ -407,6 +477,10 @@ function showUsersTable(){
     mainContainer.appendChild(userList);
 }
 
+/**
+ * Method to create the list of users to display in the waiting room
+ * @returns {DOM} user list connected in the room to display in screen.
+ */
 function getUserList(){
     const userList = document.createElement('div');
     userList.classList.add('mt-4');
@@ -456,6 +530,10 @@ function getUserList(){
     return userList;
 }
 
+/**
+ * Method to get the main test info container to display in the waiting room
+ * @param {DOM} - Dom container with the test info
+ */
 function getTestInfoContainer(){
     const testInfoCont = document.createElement('div');
     testInfoCont.classList.add('container');
@@ -554,11 +632,17 @@ function getTestInfoContainer(){
     return testInfoCont;
 }
 
+/**
+ * Events executed when the master user clicks on the start button.
+ */
 function startTest(){
     const startInfo = {roomId: connectionInfo.roomId}
     socket.emit(START_EVENT, startInfo);
 }
 
+/**
+ * Display next question on the screen or the results table if test has ended.
+ */
 function showNextQuestion(){
     userAnswered = roomInfo.users.length;
     hasAnswered = false;
@@ -602,29 +686,12 @@ function showNextQuestion(){
     mainContainer.appendChild(testInfo);
 }
 
+/**
+ * Method to create the DOM necessary to display the question
+ * @param {object} targetQuestion - the target question info
+ * @returns {DOM} - Container to display the question and posible answers in radio buttons.
+ */
 function createQuestionContainer(targetQuestion){
-    /*
-    .containerInfo
-        #questionTitle
-            h3.text-white Lorem ipsum dolor sit amet consectetur adipisicing elit. Natus soluta veniam sed cumque. Quae quia eos, ipsa vero accusamus ullam.
-        #answersOptions.mt-4 
-            .form-check
-                input#flexRadioDefault1.form-check-input(type='radio' name='flexRadioDefault')
-                label.form-check-label.text-white(for='flexRadioDefault1')
-                    | Lorem ipsum dolor, sit amet consectetur adipisicing elit.
-            .form-check
-                input#flexRadioDefault2.form-check-input(type='radio' name='flexRadioDefault' checked='')
-                label.form-check-label.text-white(for='flexRadioDefault2')
-                    | Lorem ipsum, dolor sit amet consectetur adipisicing elit. Voluptas saepe culpa hic!
-            .form-check
-                input#flexRadioDefault2.form-check-input(type='radio' name='flexRadioDefault' checked='')
-                label.form-check-label.text-white(for='flexRadioDefault2')
-                    | Lorem ipsum dolor sit amet.
-            .form-check
-                input#flexRadioDefault2.form-check-input(type='radio' name='flexRadioDefault' checked='')
-                label.form-check-label.text-white(for='flexRadioDefault2')
-                    | Lorem ipsum dolor sit amet consectetur adipisicing elit. Quam minima provident repudiandae ex maxime sequi. 
-    */
     const questContainer = createElement('div', '', '.containerInfo.mt-3');
     const questTitleCont = createElement('div', 'questionTitle', '');
     const questTitle = createElement('h3', '', '.text-white');
@@ -655,12 +722,11 @@ function createQuestionContainer(targetQuestion){
     return questContainer;
 }
 
+/**
+ * Method to create the DOM necessary to question counter in screen
+ * @returns {DOM} - Container to display the question counter in screen.
+ */
 function createQuestionCounter(){
-    /*
-        #questionCounter 
-            span.badge.rounded-pill.text-bg-primary 
-                | 1 / 10
-    */
     const questionCounter = createElement('div', 'questionCounter', '');
     const pill = createElement('span', '', '.badge.rounded-pill.text-bg-primary');
     const questionCounterString = getQuestionCounter();
@@ -669,22 +735,21 @@ function createQuestionCounter(){
     return questionCounter;
 }
 
+/**
+ * Method to get the question counter
+ * @returns {string} - Question counter in format {x / x}
+ */
 function getQuestionCounter(){
     let str = '';
     str = index+1 + ' / ' + testQuestions.length;
     return str;
 }
 
+/**
+ * Method to get the users left to answer the question alert.
+ * @returns {DOM} - Alert to display in screen users left to answer the question
+ */
 function createUserCounterAlert(){
-    /*
-    #userCounter 
-        .alert.userCounterAlert(role='alert')
-            .spinner-border.text-warning(role='status')
-                    span.visually-hidden Loading...
-            span Quedan 
-                strong 5 personas 
-                | por contestar.
-    */
     const userCounter = document.createElement('div');
     userCounter.id = 'userCounter';
 
@@ -709,12 +774,24 @@ function createUserCounterAlert(){
     return userCounter;
 }
 
+/**
+ * Split a string to separate a class like string to a array like
+ * @param {string} str - string like class
+ * @returns {array} - Array of the classes in the str like param
+ */
 function parseClassList(str){
     const strSplit = str.split('.');
     const classList = strSplit.filter((i)=>i!='.'&&i!='');
     return classList;
 }
 
+/**
+ * Create a specific element with an id and a set of clases
+ * @param {string} elementName - name of the element to create
+ * @param {string} id - id of the element
+ * @param {string} classes - classes in str like to add to the element
+ * @returns {DOM} - Element created
+ */
 function createElement(elementName, id, classes){
     const classList = parseClassList(classes);
     const element = document.createElement(elementName);
@@ -727,8 +804,14 @@ function createElement(elementName, id, classes){
     return element;
 }
 
+/**
+ * Create a specific element with an id and a set of clases
+ * @param {string} elementName - name of the element to create
+ * @param {string} id - id of the element
+ * @param {string} classes - classes in str like to add to the element
+ * @returns {DOM} - Element created
+ */
 function createButton(id, answer){
-
     let button = document.createElement('input');
     button.type = 'radio';
     button.classList.add('user-answer')
@@ -743,8 +826,6 @@ function createButton(id, answer){
     buttonLabel.onclick = answerOnClick;
 
     return [button, buttonLabel];
-
-
 }
 
 function answerOnClick(){
