@@ -10,11 +10,13 @@ html(lang="es")
         script(src='https://cdnjs.cloudflare.com/ajax/libs/lottie-web/5.10.2/lottie.min.js' integrity='sha512-fTTVSuY9tLP+l/6c6vWz7uAQqd1rq3Q/GyKBN2jOZvJSLC5RjggSdboIFL1ox09/Ezx/AKwcv/xnDeYN9+iDDA==' crossorigin='anonymous' referrerpolicy='no-referrer')
     body 
         include ./includes/light_app_nav.pug
+        .toast-container.position-fixed.p-3.top-0.start-50.translate-middle-x
+
         #offcanvas.offcanvas.offcanvas-end.text-bg-dark(tabindex='-1' aria-labelledby='offcanvasLabel')
             .offcanvas-header
                 h5#offcanvasLabel.offcanvas-title Listado
                 button.btn-close.btn-close-white(type='button' data-bs-dismiss='offcanvas' aria-label='Close')
-            .offcanvas-body
+            .offcanvas-body.pt-0
                 #actionButtons.d-grid.gap-2 
                     button.btn.btn-warning(data-bs-toggle="modal" data-bs-target="#confTestModal")
                         svg.bi.bi-gear-fill.me-2(xmlns='http://www.w3.org/2000/svg' width='16' height='16' fill='currentColor' viewbox='0 0 16 16')
