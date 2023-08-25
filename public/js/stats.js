@@ -191,7 +191,7 @@ function initialiceQuestionsCharts(serverData){
 		'Sin contestar'
 		],
 		datasets: [{
-		label: 'My First Dataset',
+		label: 'Respuestas',
 		data: [serverDataResume.correct, serverDataResume.incorrect, serverDataResume.empty],
 		backgroundColor: [
 			'rgb(51, 204, 51)',
@@ -224,7 +224,7 @@ function initialiceQuestionsCharts(serverData){
 	const bar_data = {
         labels: labels,
         datasets: [{
-          label: 'My First Dataset',
+          label: 'Respuestas',
           data: array_data,
           backgroundColor: [
             'rgb(255, 99, 132)',
@@ -319,7 +319,7 @@ function initialiceUsersChart(serverData){
           'Invitados'
         ],
         datasets: [{
-          label: 'My First Dataset',
+          label: 'Usuarios',
           data: [serverData.register, serverData.guest],
           backgroundColor: [
             'rgb(255, 99, 132)',
@@ -373,7 +373,7 @@ function setUserTypesChart(){
           'Invitados'
         ],
         datasets: [{
-          label: 'My First Dataset',
+          label: 'Usuarios',
           data: [8, 2],
           backgroundColor: [
             'rgb(255, 99, 132)',
@@ -416,7 +416,7 @@ function setCorrectAnswersByQuestionChart(){
 		  '10'
         ],
         datasets: [{
-          label: 'My First Dataset',
+          label: 'Respuestas correctas',
           data: [8, 2, 3,4,1,3,7,8,1,0],
           backgroundColor: [
             'rgb(255, 99, 132)',
@@ -481,7 +481,7 @@ function setQuestionStats(){
 		'Sin contestar'
 		],
 		datasets: [{
-		label: 'My First Dataset',
+		label: 'Respuestas',
 		data: [8, 4, 3],
 		backgroundColor: [
 			'rgb(51, 204, 51)',

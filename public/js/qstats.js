@@ -149,41 +149,6 @@ function setQuestionsList(questions, stats, answerCounter){
         runQuestionChart(canvasId, question, stats);
     }
     
-    
-
-
-    /*const data = {
-		labels: [
-		'Correctas',
-		'Incorrectas',
-		'Sin contestar'
-		],
-		datasets: [{
-		label: 'My First Dataset',
-		data: [8,5,2],
-		backgroundColor: [
-			'rgb(51, 204, 51)',
-			'rgb(255, 51, 0)',
-			'rgb(102, 204, 255)'
-		],
-		hoverOffset: 4
-		}]
-	};
-	const config = {
-		type: 'pie',
-		data: data,
-		options: {
-			responsive: true,
-			maintainAspectRatio: false,
-			plugins:{
-				title:{
-					display: false
-				}
-			}
-		}
-	};
-	const ctx = document.getElementById('chart1');
-	new Chart(ctx, config);*/
 }
 
 function runQuestionChart(canvasId, questionInfo, statInfo){
@@ -195,7 +160,7 @@ function runQuestionChart(canvasId, questionInfo, statInfo){
 		'Sin contestar'
 		],
 		datasets: [{
-		label: 'My First Dataset',
+		label: 'Respuestas',
 		data: [statData.correct,statData.incorrect,statData.empty],
 		backgroundColor: [
 			'rgb(51, 204, 51)',
