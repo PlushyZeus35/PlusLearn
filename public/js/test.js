@@ -968,7 +968,7 @@ function createChart(){
         data: {
         labels: ['A', 'B', 'C', 'D'],
         datasets: [{
-            label: '# of Votes',
+            label: 'Respuestas',
             data: getAnswersDataFromUsers(),
             borderWidth: 1
         }]
