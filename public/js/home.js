@@ -93,10 +93,10 @@ function displayTests(serverData){
 
 		let testLink = document.createElement('a');
 		testLink.classList.add('btn');
-		testLink.classList.add('btn-outline-secondary');
+		testLink.classList.add('btn-info');
 		testLink.classList.add('me-3');
 		testLink.href = '/test/stats/' + test.id;
-		testLink.innerHTML = 'Configurar';
+		testLink.innerHTML = 'Administrar';
 
 		let accessLink = document.createElement('a');
 		accessLink.classList.add('btn');
