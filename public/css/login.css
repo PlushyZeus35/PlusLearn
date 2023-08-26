@@ -35,3 +35,9 @@
 .cardFooter{
     font-family: 'Nunito', sans-serif;
 }
+
+.alertContainer{
+    color: #ffda6a;
+    background-color: #332701;
+    border: 1px solid #997404;
+}
