@@ -22,7 +22,8 @@ html(lang="en")
                         label(for='username') Usuario/email
                 .cardFooter.mt-3
                     .d-grid.gap-2
-                        button.btn.btn-primary(type='button' onclick="resetPasswordOnClick();") Cambiar contraseña
+                        button#insertCode.btn.btn-primary.d-none(type='button' onclick="insertCodeOnClick();") Insertar código
+                        button#changePassword.btn.btn-primary(type='button' onclick="checkUsernameOnClick();") Cambiar contraseña
                         a.btn.btn-outline-secondary(href='/register') Registro
                         a.link-info.text-center(href='/login') Ya tengo una cuenta
         include ./includes/jquery.pug
