@@ -92,6 +92,9 @@ function init(){
                 }else{
                     displayInitiateQuestions();
                 }
+                if(!testData.active){
+                    $("#noActiveTestAlert")[0].classList.remove('d-none')
+                }
             }
         })
         .catch(function (error) {
