@@ -56,8 +56,11 @@ html(lang="es")
                         button.btn.btn-danger(type='button' onclick='deleteTest();') Eliminar
                         button.btn.btn-primary(type='button' onclick='saveDataServer();') Guardar
         div#main.container-fluid.m-0.p-0
-            .container
-                #questionContainer.pt-4
+            .container.pt-3
+                #noActiveTestAlert.alert.alert-warning.d-none 
+                    | Este cuestionario no está activo, necesitas activarlo para poder utilizarlo.
+                    button.btn.btn-sm.btn-primary.ms-3(data-bs-toggle="modal" data-bs-target="#confTestModal") Configurar
+                #questionContainer
                     #alertContainer
                     button.btn.btn-primary.mb-3.ms-auto(data-bs-toggle="offcanvas" href="#offcanvas" role="button" aria-controls="offcanvas") Configuración
                     #questionInfoContainer
