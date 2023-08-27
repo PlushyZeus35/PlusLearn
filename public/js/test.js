@@ -530,6 +530,15 @@ function getUserList(){
     return userList;
 }
 
+const copyLinkOnClick = async () => {
+    try {
+        await navigator.clipboard.writeText(window.location);
+        showNotification(TOAST_SUCCESS, 'Enlace copiado', 'El enlace del cuestionario ha sido copiado al portapapeles.')
+    } catch (error) {
+        console.error('Failed to copy text: ', error);
+    }
+}
+
 /**
  * Method to get the main test info container to display in the waiting room
  * @param {DOM} - Dom container with the test info
@@ -564,17 +573,29 @@ function getTestInfoContainer(){
     alertHeading.classList.add('alert-heading');
     alertHeading.innerHTML = '¡En la sala de espera!';
     const alertText = document.createElement('p');
-    alertText.innerHTML = 'Te encuentras en la sala de espera del cuestionario. Puedes ver justo debajo una lista de las personas conectadas a esta misma sala de espera.';
+    alertText.innerHTML = `Te encuentras en la sala de espera del cuestionario. Puedes ver justo debajo una lista de las personas conectadas a esta misma sala de espera.`;
     const alertSeparator = document.createElement('hr');
+    const alertCodeTest = document.createElement('p');
+    alertCodeTest.innerHTML = `Comparte el siguiente código para que se puedan unir otros participantes: <strong>${connectionInfo.roomId}</strong> o comparte el siguiente enlace para que se unan directamente: ${window.location}`;
+    
+    const copyLinkButton = document.createElement('button');
+    copyLinkButton.classList.add('btn');
+    copyLinkButton.classList.add('btn-sm');
+    copyLinkButton.classList.add('btn-primary');
+    copyLinkButton.innerHTML = 'Copiar enlace';
+    copyLinkButton.onclick = copyLinkOnClick;
+
     const alertSubtext = document.createElement('p');
     if(isMasterUser){
-        alertSubtext.innerHTML = 'Espera a que todos los participantes se encuentren en la sala de espera y dale al botón para comenzar el cuestionario. Una vez que el cuestionario comience no se podrán unir más participantes.';
+        alertSubtext.innerHTML = 'Espera a que todos los participantes se encuentren en la sala de espera y dale al botón para comenzar el cuestionario. Una vez que el cuestionario comience no se podrán unir más participantes';
     }else{
         alertSubtext.innerHTML = '¡Relajate! Ahora solo tienes que espera a que el maestro de sala comience el cuestionario.';
     }
     alertSubtext.classList.add('mb-0');
     infoAlert.appendChild(alertHeading);
     infoAlert.appendChild(alertText);
+    infoAlert.appendChild(alertCodeTest);
+    infoAlert.appendChild(copyLinkButton);
     infoAlert.appendChild(alertSeparator);
     infoAlert.appendChild(alertSubtext);
     alertContainer.appendChild(infoAlert);
