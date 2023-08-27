@@ -218,11 +218,20 @@ function constructResponseTable(responses){
         const responseQuestion = document.createElement('td');
         if(eachResponse.isCorrect){
             responseQuestion.classList.add('table-success');
+        }else if(eachResponse.isEmpty){
+            responseQuestion.classList.add('table-secondary');
         }else{
             responseQuestion.classList.add('table-danger');
         }
         responseQuestion.innerHTML = eachResponse.questionTitle;
         const responseSelected = document.createElement('td');
+        if(eachResponse.isCorrect){
+            responseSelected.classList.add('table-success');
+        }else if(eachResponse.isEmpty){
+            responseSelected.classList.add('table-secondary');
+        }else{
+            responseSelected.classList.add('table-danger');
+        }
         responseSelected.innerHTML = eachResponse.title;
 
         response.appendChild(responseQuestion);

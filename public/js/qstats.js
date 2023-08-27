@@ -207,8 +207,10 @@ function getTable(questionInfo, answersCounter){
     const tableBody = document.createElement('tbody');
     const correctAnswer = document.createElement('tr');
     const correctAnswerTitle = document.createElement('td');
+    correctAnswerTitle.classList.add('table-success');
     correctAnswerTitle.innerHTML = questionInfo.correctAnswer.name;
     const correctAnswerCounter = document.createElement('td');
+    correctAnswerCounter.classList.add('table-success');
     const corrAnsCounter = answersCounter.filter((i) => i.answerId == questionInfo.correctAnswer.id);
     if(corrAnsCounter.length==0){
         correctAnswerCounter.innerHTML = 0;
@@ -223,8 +225,10 @@ function getTable(questionInfo, answersCounter){
         console.log(eachincorrectAnswer)
         const incorrectAnswer = document.createElement('tr');
         const incorrectAnswerTitle = document.createElement('td');
+        incorrectAnswerTitle.classList.add('table-danger');
         incorrectAnswerTitle.innerHTML = eachincorrectAnswer.name;
         const incorrectAnswerCounter = document.createElement('td');
+        incorrectAnswerCounter.classList.add('table-danger');
         const ansCounter = answersCounter.filter((i) => i.answerId == eachincorrectAnswer.id);
         if(ansCounter.length==0){
             incorrectAnswerCounter.innerHTML = 0;
