@@ -82,6 +82,16 @@
     background-color: #198754;
 }
 
+.emptyAlert{
+    color: #ffda6a;
+    background-color: #332701;
+    border: 2px solid #997404;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    font-size: 26px;
+}
+
 .toast-fail-img{
     height: 20px;
     width: 20px;
