@@ -917,7 +917,20 @@ function showCorrectAnswer(){
         auxIndex++;
     }
     if(!isMasterUser){
-        if(correctAnwersIds.indexOf(myAnswers.get(targetQuestionId))>=0){
+        if(!hasAnswered){
+            const correctAlert = createElement('div', '' , '.alert.emptyAlert');
+            correctAlert.role = 'alert';
+            const emojiSpan = createElement('span', '','');
+            emojiSpan.innerHTML = '&#11093';
+            const emojiSpan2 = createElement('span', '','');
+            emojiSpan2.innerHTML = '&#11093';
+            const label = createElement('span', '', '.ms-2.me-2');
+            label.innerHTML = '¡NO HAS CONTESTADO!';
+            correctAlert.appendChild(emojiSpan);
+            correctAlert.appendChild(label);
+            correctAlert.appendChild(emojiSpan2);
+            $("#userCounter")[0].appendChild(correctAlert);
+        }else if(correctAnwersIds.indexOf(myAnswers.get(targetQuestionId))>=0){
             const correctAlert = createElement('div', '' , '.alert.correctAlert');
             correctAlert.role = 'alert';
             const emojiSpan = createElement('span', '','');
