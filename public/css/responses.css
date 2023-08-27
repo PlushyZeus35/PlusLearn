@@ -17,6 +17,10 @@ body{
     background-position: 54px 55px, 0px 0px, 0px 0px, 0px 0px, 0px 0px;
 }
 
+.table-empty{
+    background-color: rgb(102, 204, 255);
+}
+
 #mainContainer{
     background-color: #2b2b2b;
 }
