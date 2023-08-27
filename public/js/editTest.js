@@ -4,6 +4,21 @@ let isSaveAlertOn = false;
 let orderTarget = 0;
 debug();
 
+window.addEventListener('beforeunload', (event) => {
+    if(isSaveAlertOn){
+        // Cancel the event to prevent the browser from navigating away immediately
+        event.preventDefault();
+        // Chrome requires the return value to be set for the alert message to be shown
+        event.returnValue = '';
+
+        // Display the alert message
+        const confirmationMessage = '¿Estás seguro de que quieres salir? Hay datos sin guardar que podrías perder.';
+        event.returnValue = confirmationMessage;
+        return confirmationMessage;
+    }
+    
+});
+
 const question = {
     id: 12,
     title: 'Example of question title',
@@ -580,6 +595,7 @@ function saveDataServer(){
         data: testData
       })
       .then(function (response) {
+        isSaveAlertOn = false;
         if(response.data.error){
             window.location.href = "/error";
         }
