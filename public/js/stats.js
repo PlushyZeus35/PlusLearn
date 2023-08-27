@@ -66,15 +66,6 @@ function hideLoader2(){
 }
 
 function setQuestionsStadistics(serverData){
-	console.log(serverData);
-	//#mainStat1.d-flex.justify-content-center.align-items-center.flex-column.col-12.col-md-6 
-	//	span.statTitle Número de preguntas 
-	//	span.statResult 10
-	//.col-12.col-md-6.d-flex.justify-content-center.align-items-center.flex-column
-	//	#questionStatContainer
-	//		canvas#questionStat
-	//#questionCorrectAnswerChartContainer.mb-3.col-12
-	//	canvas#questionMainStat
 	const statContainer = $("#questionsStadistics")[0];
 
 	const mainStat = document.createElement('div');
@@ -181,8 +172,6 @@ function setGeneralStadistics(serverData){
 function initialiceQuestionsCharts(serverData){
 	const serverDataResume = resumeServerData(serverData);
 	const sortServerData = serverData.sort((a, b) => a.order - b.order);
-	console.log("aa");
-	console.log(sortServerData)
 	// Set donut chart
 	const data = {
 		labels: [
@@ -191,7 +180,7 @@ function initialiceQuestionsCharts(serverData){
 		'Sin contestar'
 		],
 		datasets: [{
-		label: 'My First Dataset',
+		label: 'Respuestas',
 		data: [serverDataResume.correct, serverDataResume.incorrect, serverDataResume.empty],
 		backgroundColor: [
 			'rgb(51, 204, 51)',
@@ -224,23 +213,21 @@ function initialiceQuestionsCharts(serverData){
 	const bar_data = {
         labels: labels,
         datasets: [{
-          label: 'My First Dataset',
-          data: array_data,
-          backgroundColor: [
-            'rgb(255, 99, 132)',
-            'rgb(54, 162, 235)',
-			'rgba(255, 99, 132, 0.2)',
-			'rgba(255, 159, 64, 0.2)',
-			'rgba(255, 205, 86, 0.2)',
-			'rgba(75, 192, 192, 0.2)',
-			'rgba(54, 162, 235, 0.2)',
-			'rgba(153, 102, 255, 0.2)',
-			'rgba(201, 203, 207, 0.2)',
-			'rgb(255, 99, 132)',
-            'rgb(54, 162, 235)'
-          ],
-          hoverOffset: 4
-        }]
+			label: 'Respuestas correctas',
+			data: array_data.correctArray,
+			backgroundColor: 'rgb(51, 204, 51)',
+			hoverOffset: 4
+        },{
+			label: 'Respuestas incorrectas',
+			data: array_data.incorrectArray,
+			backgroundColor: 'rgb(255, 51, 0)',
+			hoverOffset: 4
+		},{
+			label: 'Sin responder',
+			data: array_data.emptyArray,
+			backgroundColor: 'rgb(102, 204, 255)',
+			hoverOffset: 4
+		}]
       };
       const bar_config = {
         type: 'bar',
@@ -259,9 +246,6 @@ function initialiceQuestionsCharts(serverData){
                 }
             },
 			plugins: {
-                legend: {
-                    display: false
-                },
                 title: {
                     display: true,
                     text: 'Respuestas correctas por pregunta',
@@ -279,7 +263,6 @@ function initialiceQuestionsCharts(serverData){
       };
     const barChart = document.getElementById('questionMainStat');
 	new Chart(barChart, bar_config);
-	console.log(serverDataResume);
 }
 
 function getArrayLabels(arr){
@@ -291,11 +274,16 @@ function getArrayLabels(arr){
 }
 
 function getArrayCorrects(arr){
+	console.info(arr)
 	const correctArray = [];
+	const incorrectArray = [];
+	const emptyArray = [];
 	for(let ar of arr){
 		correctArray.push(ar.correct);
+		incorrectArray.push(ar.incorrect);
+		emptyArray.push(ar.empty)
 	}
-	return correctArray
+	return {correctArray, incorrectArray, emptyArray}
 }
 
 function resumeServerData(serverData){
@@ -319,7 +307,7 @@ function initialiceUsersChart(serverData){
           'Invitados'
         ],
         datasets: [{
-          label: 'My First Dataset',
+          label: 'Usuarios',
           data: [serverData.register, serverData.guest],
           backgroundColor: [
             'rgb(255, 99, 132)',
@@ -373,7 +361,7 @@ function setUserTypesChart(){
           'Invitados'
         ],
         datasets: [{
-          label: 'My First Dataset',
+          label: 'Usuarios',
           data: [8, 2],
           backgroundColor: [
             'rgb(255, 99, 132)',
@@ -416,7 +404,7 @@ function setCorrectAnswersByQuestionChart(){
 		  '10'
         ],
         datasets: [{
-          label: 'My First Dataset',
+          label: 'Respuestas correctas',
           data: [8, 2, 3,4,1,3,7,8,1,0],
           backgroundColor: [
             'rgb(255, 99, 132)',
@@ -481,7 +469,7 @@ function setQuestionStats(){
 		'Sin contestar'
 		],
 		datasets: [{
-		label: 'My First Dataset',
+		label: 'Respuestas',
 		data: [8, 4, 3],
 		backgroundColor: [
 			'rgb(51, 204, 51)',

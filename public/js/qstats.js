@@ -149,41 +149,6 @@ function setQuestionsList(questions, stats, answerCounter){
         runQuestionChart(canvasId, question, stats);
     }
     
-    
-
-
-    /*const data = {
-		labels: [
-		'Correctas',
-		'Incorrectas',
-		'Sin contestar'
-		],
-		datasets: [{
-		label: 'My First Dataset',
-		data: [8,5,2],
-		backgroundColor: [
-			'rgb(51, 204, 51)',
-			'rgb(255, 51, 0)',
-			'rgb(102, 204, 255)'
-		],
-		hoverOffset: 4
-		}]
-	};
-	const config = {
-		type: 'pie',
-		data: data,
-		options: {
-			responsive: true,
-			maintainAspectRatio: false,
-			plugins:{
-				title:{
-					display: false
-				}
-			}
-		}
-	};
-	const ctx = document.getElementById('chart1');
-	new Chart(ctx, config);*/
 }
 
 function runQuestionChart(canvasId, questionInfo, statInfo){
@@ -195,7 +160,7 @@ function runQuestionChart(canvasId, questionInfo, statInfo){
 		'Sin contestar'
 		],
 		datasets: [{
-		label: 'My First Dataset',
+		label: 'Respuestas',
 		data: [statData.correct,statData.incorrect,statData.empty],
 		backgroundColor: [
 			'rgb(51, 204, 51)',
@@ -242,8 +207,10 @@ function getTable(questionInfo, answersCounter){
     const tableBody = document.createElement('tbody');
     const correctAnswer = document.createElement('tr');
     const correctAnswerTitle = document.createElement('td');
+    correctAnswerTitle.classList.add('table-success');
     correctAnswerTitle.innerHTML = questionInfo.correctAnswer.name;
     const correctAnswerCounter = document.createElement('td');
+    correctAnswerCounter.classList.add('table-success');
     const corrAnsCounter = answersCounter.filter((i) => i.answerId == questionInfo.correctAnswer.id);
     if(corrAnsCounter.length==0){
         correctAnswerCounter.innerHTML = 0;
@@ -258,8 +225,10 @@ function getTable(questionInfo, answersCounter){
         console.log(eachincorrectAnswer)
         const incorrectAnswer = document.createElement('tr');
         const incorrectAnswerTitle = document.createElement('td');
+        incorrectAnswerTitle.classList.add('table-danger');
         incorrectAnswerTitle.innerHTML = eachincorrectAnswer.name;
         const incorrectAnswerCounter = document.createElement('td');
+        incorrectAnswerCounter.classList.add('table-danger');
         const ansCounter = answersCounter.filter((i) => i.answerId == eachincorrectAnswer.id);
         if(ansCounter.length==0){
             incorrectAnswerCounter.innerHTML = 0;

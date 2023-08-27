@@ -39,11 +39,16 @@ router.post('/test', isLoggedIn, async (req, res) => {
     // Retrieve form data
     const testTitle = req.body.title;
     const testDescription = req.body.description;
+    let newTest;
     if(testTitle && req.user){
         let intCode = await testController.createInteractiveCode();
-        await testSelector.createTest(testTitle, testDescription, intCode, req.user.id);
+        newTest = await testSelector.createTest(testTitle, testDescription, intCode, req.user.id);
     }
-    res.redirect('/home');
+    if(newTest){
+        res.redirect(`/test/${newTest.id}`)
+    }else{
+        res.redirect('/home');
+    }
 })
 
 router.post('/reset', async(req, res) => {

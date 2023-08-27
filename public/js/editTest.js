@@ -1,7 +1,23 @@
 const DEBUG = false;
 const testId = dataFromServer;
 let isSaveAlertOn = false;
+let orderTarget = 0;
 debug();
+
+window.addEventListener('beforeunload', (event) => {
+    if(isSaveAlertOn){
+        // Cancel the event to prevent the browser from navigating away immediately
+        event.preventDefault();
+        // Chrome requires the return value to be set for the alert message to be shown
+        event.returnValue = '';
+
+        // Display the alert message
+        const confirmationMessage = '¿Estás seguro de que quieres salir? Hay datos sin guardar que podrías perder.';
+        event.returnValue = confirmationMessage;
+        return confirmationMessage;
+    }
+    
+});
 
 const question = {
     id: 12,
@@ -133,6 +149,7 @@ function newQuestion(){
     displayQuestion(provisionalId);
     console.log("preguntas: " + JSON.stringify(questions))
     showUpdateNotification();
+    showNotification('Nueva pregunta', 'Se ha creado una nueva pregunta')
 }
 
 function cleanMainScreen(){
@@ -295,6 +312,7 @@ function displayQuestion(questionId){
     cleanMainScreen();
     let targetQuestion = questions.filter((i) => i.id==questionId);
     if(targetQuestion.length==1){
+        orderTarget = parseInt(targetQuestion[0].order);
         console.log("QUESTION");
         console.log(targetQuestion[0])
         questionTargeted = targetQuestion[0].id;
@@ -317,20 +335,131 @@ function displayQuestion(questionId){
         incorrectInput3.classList.add('incorrectInput');
         mainScreen.appendChild(incorrectInput3);
 
-        let span = document.createElement('span');
-        span.classList.add('badge');
-        span.classList.add('rounded-pill');
-        span.classList.add('text-bg-info');
-        span.innerHTML = targetQuestion[0].order;
-        mainScreen.appendChild(span);
+        let buttonContainer = document.createElement('div');
+        buttonContainer.classList.add('d-flex');
+        buttonContainer.classList.add('flex-column-reverse');
+        buttonContainer.classList.add('flex-md-row')
 
         let deleteButton = document.createElement('button');
         deleteButton.classList.add('btn');
         deleteButton.classList.add('btn-outline-danger');
+        deleteButton.classList.add('mt-3');
         deleteButton.id = targetQuestion[0].id +'d';
         deleteButton.innerHTML = 'Eliminar';
         deleteButton.onclick = onClickDeleteQuestion;
-        mainScreen.appendChild(deleteButton);
+
+        let btnGroup = document.createElement('div');
+        btnGroup.classList.add('btn-group');
+        btnGroup.classList.add('paginationBtn')
+        btnGroup.classList.add('mt-3')
+        btnGroup.role = 'group';
+
+        let previousButton = document.createElement('button');
+        previousButton.classList.add('btn');
+        previousButton.classList.add('btn-primary');
+        previousButton.id = 'previousButton';
+        if(!searchQuestionByOrder(orderTarget-1)){
+            previousButton.classList.add('d-none')
+        }
+        previousButton.onclick = displayPreviousQuestion;
+
+        let preImg = document.createElement('img');
+        preImg.src = '/static/icons/chevron-double-left.svg';
+        previousButton.appendChild(preImg);
+
+        let orderButton = document.createElement('button');
+        orderButton.classList.add('btn');
+        orderButton.classList.add('btn-outline-primary');
+        orderButton.innerHTML = targetQuestion[0].order;
+
+        let nextButton = document.createElement('button');
+        nextButton.classList.add('btn');
+        nextButton.classList.add('btn-primary');
+        nextButton.id = 'nextButton';
+        nextButton.onclick = displayNextQuestion;
+        
+        let nextImg = document.createElement('img');
+        nextImg.src = '/static/icons/chevron-double-right.svg';
+        nextButton.appendChild(nextImg);
+
+        btnGroup.appendChild(previousButton);
+        btnGroup.appendChild(orderButton);
+        btnGroup.appendChild(nextButton);
+
+        buttonContainer.appendChild(deleteButton);
+        mainScreen.appendChild(buttonContainer);
+        buttonContainer.appendChild(btnGroup);
+
+    }
+}
+
+const displayNextQuestion = () => {
+    let nextOrder = orderTarget + 1;
+    let nextQuestion = searchQuestionByOrder(nextOrder);
+    if(nextQuestion){
+        displayQuestion(nextQuestion)
+    }else{
+        newQuestion();
+    }
+}
+
+const displayPreviousQuestion = () => {
+    let previousOrder = orderTarget - 1;
+    let previousQuestion = searchQuestionByOrder(previousOrder);
+    if(previousQuestion){
+        displayQuestion(previousQuestion)
+    }
+}
+
+const showNotification = (title='', text='') => {
+    const toastContainer = $(".toast-container")[0];
+    const liveToast = document.createElement('div');
+    liveToast.classList.add('toast');
+    liveToast.role = 'alert';
+    liveToast.ariaLive = 'assertive';
+    liveToast.ariaAtomic = 'true';
+
+    const toastHeader = document.createElement('div');
+    toastHeader.classList.add('toast-header');
+
+    const toastImg = document.createElement('div');
+    toastImg.classList.add('rounded');
+    toastImg.classList.add('toast-success-img');
+   
+    toastImg.classList.add('me-2');
+
+    const toastTitle = document.createElement('strong');
+    toastTitle.classList.add('me-auto')
+    toastTitle.innerHTML = title;
+
+    const toastButton = document.createElement('button');
+    toastButton.classList.add('btn-close');
+    toastButton.type = 'button';
+    toastButton.setAttribute('data-bs-dismiss', 'toast');
+    toastButton.ariaLabel = 'Close';
+
+    toastHeader.appendChild(toastImg);
+    toastHeader.appendChild(toastTitle);
+    toastHeader.appendChild(toastButton);
+
+    const toastBody = document.createElement('div');
+    toastBody.classList.add('toast-body');
+    toastBody.innerHTML = text;
+
+    liveToast.appendChild(toastHeader);
+    liveToast.appendChild(toastBody);
+
+    toastContainer.appendChild(liveToast);
+    const toastBootstrap = bootstrap.Toast.getOrCreateInstance(liveToast)
+    toastBootstrap.show()
+}
+
+const searchQuestionByOrder = (order) => {
+    let targetQuestion = questions.filter((i) => i.order==order);
+    if(targetQuestion.length==0){
+        return null;
+    }else{
+        return targetQuestion[0].id;
     }
 }
 
@@ -353,6 +482,7 @@ function onClickDeleteQuestion(){
     }
     displayInitiateQuestions();
     showUpdateNotification();
+    showNotification('Pregunta eliminada', 'Se ha eliminado una pregunta.')
 }
 
 function getInput(id, title, value){
@@ -465,6 +595,7 @@ function saveDataServer(){
         data: testData
       })
       .then(function (response) {
+        isSaveAlertOn = false;
         if(response.data.error){
             window.location.href = "/error";
         }
