@@ -1183,7 +1183,7 @@ function showQRModal(){
 function showQRcode(roomId){
     if(!qrCodeIsRendered){
         const qrcode = new QRCode(document.getElementById('qrcode'), {
-            text: window.location,
+            text: window.location.href,
             width: 128,
             height: 128,
             colorDark : '#000',

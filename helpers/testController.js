@@ -273,6 +273,9 @@ testController.getQuestionsStadistics = async(testId) => {
     const userResponses = await responseSelector.getUserResponses(testResponsesIds);
     for(let userResponse of userResponses){
         console.log("ANALISIS " + userResponse.questionId)
+        if(userResponse.questionId==null){
+            break;
+        }
         if(userResponse.answerId==null){
             console.log("EMPTY")
             questionMap.get(userResponse.questionId).empty++;
