@@ -78,3 +78,8 @@ To contribute to the project follow the next steps:
 ## Authors
 
 - [@PlushyZeus35](https://www.github.com/PlushyZeus35)
+
+## Powered by
+
+This project was created for a final thesis of the degree in computer engineering of university of Salamanca.
+![Logo](https://web.gcompostela.org/wp-content/uploads/2019/02/University-of-Salamanca-1024x334.png)
