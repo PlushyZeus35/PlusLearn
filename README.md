@@ -60,7 +60,7 @@ To run this project, you will need to add the following environment variables to
 
 Contributions are always welcome!
 
-This repository don't have `contributing.md` at this moment.
+This repository doesn't have `contributing.md` at this moment.
 To contribute to the project follow the next steps:
 
 - Create a feature branch from the dev branch
