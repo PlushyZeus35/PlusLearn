@@ -1,4 +1,4 @@
-# Project Title
+# PlusLearn
 
 Web application, accessible by any user, that allows an educator to conduct interactive quizzes. This methodology will serve the educator as a guide to reinforce knowledge in students while being able to perform an analysis to find weaknesses in student learning.
 
