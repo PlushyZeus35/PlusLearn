@@ -1,4 +1,5 @@
 module.exports = {
+    maintenance: process.env.PLUSLEARN_MAINTENANCE,
     database: {
         password: process.env.PLUSLEARNDB_PASSWORD,
         database: process.env.PLUSLEARNDB_DATABASE,

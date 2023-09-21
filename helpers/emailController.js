@@ -3,6 +3,7 @@ const fs = require('fs');
 const path = require('path');
 const config = require('../config');
 const { promisify } = require('util');
+const { maintenance} = require('../config');
 const EmailController = {};
 
 // email sender function
@@ -71,39 +72,41 @@ EmailController.sendHTML = async function(receiver,subject='PlushyApp Message In
 };
 
 EmailController.sendErrorEmail = async function(errorObject){
-    // Definimos el transporter
-    var transporter = nodemailer.createTransport({
-        service: 'Gmail',
-        auth: {
-            user: config.email.sender,
-            pass: config.email.password    // Contraseña de aplicación en ajustes de Google
-        }
-    });
-    const emailContent = `
-    <h1>${errorObject?.name}</h1>
-    <p>${errorObject?.message}</p>
-    <p>${errorObject?.stack}</p>
-    <p>¡Gracias por usar pluslearn!</p>
-  `;
-    
-    // Definimos el email
-    var mailOptions = {
-        from: config.email.sender,
-        to: 'plushyzeus35@gmail.com',
-        subject: 'Error app',
-        html: emailContent,
-        attachments: []
-    };
-    // Enviamos el email
-    transporter.sendMail(mailOptions, function(error, info){
-        if (error){
-            console.log(error);
-            return false;
-        } else {
-            console.log("Email sent");
-            return true;
-        }
-    });
+    if(maintenance!=='1'){
+        // Definimos el transporter
+        var transporter = nodemailer.createTransport({
+            service: 'Gmail',
+            auth: {
+                user: config.email.sender,
+                pass: config.email.password    // Contraseña de aplicación en ajustes de Google
+            }
+        });
+        const emailContent = `
+        <h1>${errorObject?.name}</h1>
+        <p>${errorObject?.message}</p>
+        <p>${errorObject?.stack}</p>
+        <p>¡Gracias por usar pluslearn!</p>
+    `;
+        
+        // Definimos el email
+        var mailOptions = {
+            from: config.email.sender,
+            to: 'plushyzeus35@gmail.com',
+            subject: 'Error app',
+            html: emailContent,
+            attachments: []
+        };
+        // Enviamos el email
+        transporter.sendMail(mailOptions, function(error, info){
+            if (error){
+                console.log(error);
+                return false;
+            } else {
+                console.log("Email sent");
+                return true;
+            }
+        });
+    }
 };
 
 EmailController.sendBirthMail = async function(subject='', birthdays='', extraAttachments=[]){
