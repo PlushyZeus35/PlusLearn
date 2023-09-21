@@ -40,7 +40,6 @@ const maintenanceStatus = (req, res, next) => {
     if(maintenance === "1"){
         res.render('maintenance')
     }
-    next();
 }
 app.use(maintenanceStatus);
 
