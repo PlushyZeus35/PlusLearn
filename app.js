@@ -39,6 +39,8 @@ app.set('view engine', 'pug');
 const maintenanceStatus = (req, res, next) => {
     if(maintenance === "1"){
         res.render('maintenance')
+    }else{
+        next();
     }
 }
 app.use(maintenanceStatus);
