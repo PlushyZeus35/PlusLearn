@@ -2,7 +2,7 @@ const express = require('express');
 const path = require('path');
 const bodyParser = require('body-parser');
 const sequelize = require('./models/index');
-const { database} = require('./config');
+const { database, maintenance} = require('./config');
 const MariaDBStore = require('express-session-mariadb-store');
 require('./models/associations');
 const passport = require('passport');
@@ -36,6 +36,14 @@ app.set('views', './views');
 app.set('view engine', 'pug');
 
 // MIDDLEWARES
+const maintenanceStatus = (req, res, next) => {
+    if(maintenance === "1"){
+        res.render('maintenance')
+    }
+    next();
+}
+app.use(maintenanceStatus);
+
 app.use(session({ 
     cookie: { 
         maxAge: 6000000 
