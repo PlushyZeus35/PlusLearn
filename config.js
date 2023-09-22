@@ -5,7 +5,7 @@ module.exports = {
         database: process.env.PLUSLEARNDB_DATABASE,
         host: process.env.PLUSLEARNDB_HOST,
         user: process.env.PLUSLEARNDB_USER,
-        port: 3306
+        port: process.env.DATABASE_PORT
     },
     email: {
         password: process.env.EMAIL_PASSWORD,
